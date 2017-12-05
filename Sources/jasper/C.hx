@@ -16,7 +16,7 @@
 
 package jasper;
 
-class EditInfo
+class C 
 {
 
 }

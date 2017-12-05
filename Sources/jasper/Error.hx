@@ -1,49 +1,22 @@
-// Copyright (C) 1998-2000 Greg J. Badros
-// Use of this source code is governed by http://www.apache.org/licenses/LICENSE-2.0
-//
-// Parts Copyright (C) 2011-2015, Alex Russell (slightlyoff@chromium.org)
+/*
+ * Copyright (c) 2017 Jeremy Meltingtallow
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
-(function(c){
-  "use strict";
+package jasper;
 
-  c.Error = c.inherit({
-    // extends: Error,
-    initialize: function(s /*String*/) { if (s) { this._description = s; } },
-    _name: "c.Error",
-    _description: "An error has occured in Cassowary",
-    set description(v)   { this._description = v; },
-    get description()    { return "(" + this._name + ") " + this._description; },
-    get message()        { return this.description; },
-    toString: function() { return this.description; },
-  });
+class Error
+{
 
-  var errorType = function(name, error) {
-    return c.inherit({
-      extends: c.Error,
-      initialize: function() { c.Error.apply(this, arguments); },
-      _name: name||"", _description: error||""
-    });
-  };
-
-  c.ConstraintNotFound =
-    errorType("c.ConstraintNotFound",
-        "Tried to remove a constraint never added to the tableu");
-
-  c.InternalError =
-    errorType("c.InternalError");
-
-  c.NonExpression =
-    errorType("c.NonExpression",
-        "The resulting expression would be non");
-
-  c.NotEnoughStays =
-    errorType("c.NotEnoughStays",
-        "There are not enough stays to give specific values to every variable");
-
-  c.RequiredFailure =
-    errorType("c.RequiredFailure", "A required constraint cannot be satisfied");
-
-  c.TooDifficult =
-    errorType("c.TooDifficult", "The constraints are too difficult to solve");
-
-})(this["c"]||module.parent.exports||{});
+}
