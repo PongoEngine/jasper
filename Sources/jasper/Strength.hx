@@ -16,7 +16,6 @@
 
 package jasper;
 
-import haxe.ds.Either;
 import jasper.SymbolicWeight;
 
 //Looks complete but not tested
@@ -31,16 +30,24 @@ class Strength
      *  [Description]
      *  @param name - 
      *  @param symbolicWeight - 
-     *  @param w2 - 
-     *  @param w3 - 
      */
-    public function new(name :String, symbolicWeight :Either<SymbolicWeight, Int>, w2 :Int, w3 :Int) : Void
+    public function new(name :String, symbolicWeight :SymbolicWeight) : Void
     {
         this.name = name;
-        this.symbolicWeight = switch symbolicWeight {
-            case Left(s): s;
-            case Right(w1): new SymbolicWeight(w1, w2, w3);
-        }
+        this.symbolicWeight = symbolicWeight;
+    }
+
+    /**
+     *  [Description]
+     *  @param name - 
+     *  @param w1 - 
+     *  @param w2 - 
+     *  @param w3 - 
+     *  @return Strength
+     */
+    public static inline function fromWeights(name :String, w1 :Int, w2 :Int, w3 :Int) : Strength
+    {
+        return new Strength(name, new SymbolicWeight(w1, w2, w3));
     }
     
     /**
@@ -61,9 +68,8 @@ class Strength
         return this.name + (!this.required ? (":" + this.symbolicWeight) : "");
     }
 
-    public static var REQUIRED = new Strength("<Required>", Right(1000), 1000, 1000);
-    public static var STRONG = new Strength("strong", Right(1), 0, 0);
-    public static var MEDIUM = new Strength("medium", Right(0), 1, 0);
-    public static var WEAK = new Strength("weak", Right(0), 0, 1);
-
+    public static var REQUIRED = Strength.fromWeights("<Required>", 1000, 1000, 1000);
+    public static var STRONG = Strength.fromWeights("strong", 1, 0, 0);
+    public static var MEDIUM = Strength.fromWeights("medium", 0, 1, 0);
+    public static var WEAK = Strength.fromWeights("weak", 0, 0, 1);
 }

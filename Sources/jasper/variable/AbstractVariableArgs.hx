@@ -14,9 +14,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper;
+package jasper.variable;
 
-class Variable 
+import jasper.variable.AbstractValue;
+
+//Looks complete but not tested
+
+typedef AbstractVariableArgs =
 {
-
+    @:optional var name :String;
+    @:optional var value :AbstractValue;
+    @:optional var prefix :String;
 }

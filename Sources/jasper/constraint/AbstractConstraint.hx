@@ -21,7 +21,7 @@ package jasper.constraint;
 import jasper.C;
 import jasper.Strength;
 import jasper.Expression;
-import jasper.Variable;
+import jasper.variable.Variable;
 
 class AbstractConstraint
 {
