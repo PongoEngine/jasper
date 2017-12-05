@@ -14,14 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper;
+package jasper.constraint;
 
-class C 
+class Inequality extends Constraint
 {
-
-    public static function _inc() : Int
-    { 
-        return COUNT++; 
-    };
-    private static var COUNT :Int = 1;
+    
 }

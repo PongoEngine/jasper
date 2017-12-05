@@ -14,14 +14,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper;
+package jasper.constraint;
 
-class C 
+//Looks complete but not tested
+
+import jasper.Expression;
+
+class Constraint extends AbstractConstraint
 {
-
-    public static function _inc() : Int
-    { 
-        return COUNT++; 
-    };
-    private static var COUNT :Int = 1;
+    public function new(cle :Expression, strength :Strength, weight :Float) : Void
+    {
+        super(strength, weight);
+        this.expression = cle;
+    }
 }

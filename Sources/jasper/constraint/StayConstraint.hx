@@ -14,9 +14,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper;
+package jasper.constraint;
 
-class Constraint
+//stubbed out to be complete not tested
+
+import jasper.Variable;
+import jasper.Strength;
+import jasper.Expression;
+
+class StayConstraint extends AbstractConstraint
 {
+    public function new(cv :Variable, ?_strength :Strength, ?weight :Null<Float>) : Void
+    {
+        var strength = (_strength == null)
+            ? Strength.STRONG
+            : _strength;
 
+        super(strength, weight);
+        this.variable = cv;
+        // this.expression = new Expression(cv, -1, cv.value);
+        this.isStay = true;
+    }
+
+    override public function toString() : String
+    {
+        return "stay:" + super.toString();
+    }   
 }

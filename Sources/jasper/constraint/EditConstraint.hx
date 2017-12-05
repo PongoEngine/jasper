@@ -14,14 +14,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper;
+package jasper.constraint;
 
-class C 
+//stubbed out to be complete not tested
+
+import jasper.Variable;
+import jasper.Strength;
+import jasper.Expression;
+
+class EditConstraint extends AbstractConstraint
 {
+    public function new(cv :Variable, ?_strength :Strength, ?weight :Null<Float>) : Void
+    {
+        var strength = (_strength == null)
+            ? Strength.STRONG
+            : _strength;
 
-    public static function _inc() : Int
-    { 
-        return COUNT++; 
-    };
-    private static var COUNT :Int = 1;
+        super(strength, weight);
+        this.variable = cv;
+        // this.expression = new Expression(cv, -1, cv.value);
+        this.isEdit = true;
+    }
+
+    override public function toString() : String
+    {
+        return "edit:" + super.toString();
+    }
 }
