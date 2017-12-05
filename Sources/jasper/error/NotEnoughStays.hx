@@ -14,23 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper.constraint;
+package jasper.error;
 
 //Looks complete but not tested
 
-import jasper.Expression;
-
-class Constraint extends AbstractConstraint
+class NotEnoughStays extends Error
 {
-    /**
-     *  [Description]
-     *  @param cle - 
-     *  @param strength - 
-     *  @param weight - 
-     */
-    public function new(cle :Expression, strength :Strength, weight :Float) : Void
+    public function new() : Void
     {
-        super(strength, weight);
-        this.expression = cle;
+        super("NotEnoughStays", "There are not enough stays to give specific values to every variable");
     }
 }

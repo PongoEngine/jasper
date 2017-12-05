@@ -14,9 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper;
+package jasper.error;
 
-class Error
+//Looks complete but not tested
+
+class TooDifficult extends Error
 {
-
+    public function new() : Void
+    {
+        super("TooDifficult", "The constraints are too difficult to solve");
+    }
 }

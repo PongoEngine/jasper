@@ -24,6 +24,12 @@ import jasper.Expression;
 
 class StayConstraint extends AbstractConstraint
 {
+    /**
+     *  [Description]
+     *  @param cv - 
+     *  @param _strength - 
+     *  @param weight - 
+     */
     public function new(cv :Variable, ?_strength :Strength, ?weight :Null<Float>) : Void
     {
         var strength = (_strength == null)
@@ -36,6 +42,10 @@ class StayConstraint extends AbstractConstraint
         this.isStay = true;
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     override public function toString() : String
     {
         return "stay:" + super.toString();

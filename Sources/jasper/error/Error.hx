@@ -14,23 +14,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package jasper.constraint;
+package jasper.error;
 
 //Looks complete but not tested
 
-import jasper.Expression;
-
-class Constraint extends AbstractConstraint
+class Error
 {
-    /**
-     *  [Description]
-     *  @param cle - 
-     *  @param strength - 
-     *  @param weight - 
-     */
-    public function new(cle :Expression, strength :Strength, weight :Float) : Void
+    public var message (get, null) : String;
+    public var description (get, set) : String;
+
+    public function new(name :String, description :String) : Void
     {
-        super(strength, weight);
-        this.expression = cle;
+        _name = name;
+        _description = description;
     }
+
+    private function get_description() : String
+    {
+        return "(" + this._name + ") " + this._description;
+    }
+
+    private function set_description(desc :String) : String
+    {
+        return this._description = desc;
+    }
+
+    private function get_message() : String
+    {
+        return this.description;
+    }
+
+    public function toString() : String
+    {
+        return this.description;
+    }
+
+    private var _description :String;
+    private var _name :String;
 }
