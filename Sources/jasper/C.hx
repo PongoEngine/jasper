@@ -11,33 +11,33 @@ import jasper.Expression;
 
 class C 
 {
-    // public static function plus(e1, e2) : Expression
-    // {
-    //     e1 = exprFromVarOrValue(e1);
-    //     e2 = exprFromVarOrValue(e2);
-    //     return e1.plus(e2);
-    // }
+    public static function plus(e1, e2) : Expression
+    {
+        e1 = exprFromVarOrValue(e1);
+        e2 = exprFromVarOrValue(e2);
+        return e1.plus(e2);
+    }
 
-    // public static function minus(e1, e2) : Expression
-    // {
-    //     e1 = exprFromVarOrValue(e1);
-    //     e2 = exprFromVarOrValue(e2);
-    //     return e1.minus(e2);
-    // }
+    public static function minus(e1, e2) : Expression
+    {
+        e1 = exprFromVarOrValue(e1);
+        e2 = exprFromVarOrValue(e2);
+        return e1.minus(e2);
+    }
 
-    // public static function times(e1, e2) : Expression
-    // {
-    //     e1 = exprFromVarOrValue(e1);
-    //     e2 = exprFromVarOrValue(e2);
-    //     return e1.times(e2);
-    // }
+    public static function times(e1, e2) : Expression
+    {
+        e1 = exprFromVarOrValue(e1);
+        e2 = exprFromVarOrValue(e2);
+        return e1.times(e2);
+    }
 
-    // public static function divide(e1, e2) : Expression
-    // {
-    //     e1 = exprFromVarOrValue(e1);
-    //     e2 = exprFromVarOrValue(e2);
-    //     return e1.divide(e2);
-    // }
+    public static function divide(e1, e2) : Expression
+    {
+        e1 = exprFromVarOrValue(e1);
+        e2 = exprFromVarOrValue(e2);
+        return e1.divide(e2);
+    }
 
     /**
      *  [Description]
@@ -75,15 +75,16 @@ class C
         return _COUNT++; 
     };
 
-    // private static function exprFromVarOrValue(v) : Expression
-    // {
-    //     if (typeof v == "number" ) {
-    //         return c.Expression.fromConstant(v);
-    //     } else if(v instanceof c.Variable) {
-    //         return c.Expression.fromVariable(v);
-    //     }
-    //     return v;
-    // }
+    private static function exprFromVarOrValue(v) : Expression
+    {
+        // if (typeof v == "number" ) {
+        //     return c.Expression.fromConstant(v);
+        // } else if(v instanceof c.Variable) {
+        //     return c.Expression.fromVariable(v);
+        // }
+        // return v;
+        return null;
+    }
     private static var _COUNT :Int = 1;
 }
 
