@@ -8,5 +8,12 @@ package jasper;
 
 class HashTable
 {
+    public function new() : Void
+    {
+    }
 
+    public function clone() : HashTable
+    {
+        return new HashTable();
+    }
 }

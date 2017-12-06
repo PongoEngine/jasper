@@ -8,5 +8,8 @@ package jasper;
 
 class HashSet
 {
+    public function new() : Void
+    {
+    }
 
 }

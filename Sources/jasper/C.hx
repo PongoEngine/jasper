@@ -6,12 +6,89 @@
 
 package jasper;
 
+//needs expression to be defined
+import jasper.Expression;
+
 class C 
 {
+    // public static function plus(e1, e2) : Expression
+    // {
+    //     e1 = exprFromVarOrValue(e1);
+    //     e2 = exprFromVarOrValue(e2);
+    //     return e1.plus(e2);
+    // }
 
+    // public static function minus(e1, e2) : Expression
+    // {
+    //     e1 = exprFromVarOrValue(e1);
+    //     e2 = exprFromVarOrValue(e2);
+    //     return e1.minus(e2);
+    // }
+
+    // public static function times(e1, e2) : Expression
+    // {
+    //     e1 = exprFromVarOrValue(e1);
+    //     e2 = exprFromVarOrValue(e2);
+    //     return e1.times(e2);
+    // }
+
+    // public static function divide(e1, e2) : Expression
+    // {
+    //     e1 = exprFromVarOrValue(e1);
+    //     e2 = exprFromVarOrValue(e2);
+    //     return e1.divide(e2);
+    // }
+
+    /**
+     *  [Description]
+     *  @param a - 
+     *  @param b - 
+     *  @return Bool
+     */
+    public static function approx(a :Float, b :Float) : Bool
+    {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        if (a == b) { 
+            return true; 
+        }
+
+        if (a == 0) {
+            return (Math.abs(b) < epsilon);
+        }
+
+        if (b == 0) {
+            return (Math.abs(a) < epsilon);
+        }
+
+        return (Math.abs(a - b) < Math.abs(a) * epsilon);
+    }
+
+    public static inline var epsilon :Float = 1e-8;
+
+    /**
+     *  [Description]
+     *  @return Int
+     */
     public static function _inc() : Int
     { 
-        return COUNT++; 
+        return _COUNT++; 
     };
-    private static var COUNT :Int = 1;
+
+    // private static function exprFromVarOrValue(v) : Expression
+    // {
+    //     if (typeof v == "number" ) {
+    //         return c.Expression.fromConstant(v);
+    //     } else if(v instanceof c.Variable) {
+    //         return c.Expression.fromVariable(v);
+    //     }
+    //     return v;
+    // }
+    private static var _COUNT :Int = 1;
+}
+
+@:enum
+abstract Constant(Int) {
+    var GEQ = 1;
+    var LEQ = 2;
 }
