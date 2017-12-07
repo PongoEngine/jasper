@@ -13,12 +13,26 @@ class HashTable<K:Hashable, V> implements Hashable
 
     public var hashCode (default, null):Int;
 
-    public function new() : Void
+    public function new(?ht :HashTable<K,V>) : Void
     {
+        _store = new Map<Int,V>();
+
+        if(ht != null) {
+            for(key in _store.keys()) {
+                _store.set(key, _store.get(key));
+            }
+        }
+    }
+
+    public function get(key :K) : V
+    {
+        return _store.get(key.hashCode);
     }
 
     public function clone() : HashTable<K,V>
     {
-        return new HashTable();
+        return new HashTable(this);
     }
+
+    private var _store :Map<Int,V>;
 }
