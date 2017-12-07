@@ -14,6 +14,10 @@ class HashSet<T:Hashable> implements Hashable
     public var hashCode (default, null) : Int;
     public var size (get, null) : Int;
 
+    /**
+     *  [Description]
+     *  @param iter - 
+     */
     public function new(?iter :Iterable<T>) : Void
     {
         this.hashCode = C._inc();
@@ -26,27 +30,47 @@ class HashSet<T:Hashable> implements Hashable
         }
     }
 
+    /**
+     *  [Description]
+     *  @param item - 
+     */
     public function add(item :T) : Void
     {
         this._store.set(item.hashCode, item);
     }
 
+    /**
+     *  [Description]
+     *  @param item - 
+     *  @return Bool
+     */
     public function has(item :T) : Bool
     {   
         return this._store.exists(item.hashCode);
     }
 
+    /**
+     *  [Description]
+     *  @return Int
+     */
     private function get_size() : Int
     {
         // return this._store.size;
         return 0;
     }
 
+    /**
+     *  [Description]
+     */
     public function clear() : Void
     {
     //   this._store.clear();
     }
 
+    /**
+     *  [Description]
+     *  @return Array<T>
+     */
     public function values() : Array<T>
     {
         var values :Array<T> = [];
@@ -56,6 +80,10 @@ class HashSet<T:Hashable> implements Hashable
         return values;
     }
 
+    /**
+     *  [Description]
+     *  @return T
+     */
     public function first() : T
     {
         var iter = this._store.iterator();
@@ -65,19 +93,35 @@ class HashSet<T:Hashable> implements Hashable
         return null;
     }
 
+    /**
+     *  [Description]
+     *  @param item - 
+     */
     public function delete(item :T) : Void
     {
         this._store.remove(item.hashCode);
     }
 
+    /**
+     *  [Description]
+     *  @param callback - 
+     */
     public function each (callback : T -> Void) : Void
     {
     }
 
+    /**
+     *  [Description]
+     *  @param func - 
+     */
     public function escapingEach(func : T -> Void) : Void
     {
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     public function toString() : String
     {
         var answer = this.size + " {";
