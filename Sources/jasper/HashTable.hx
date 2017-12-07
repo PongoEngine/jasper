@@ -8,7 +8,7 @@ package jasper;
 
 import jasper.Hashable;
 
-class HashTable implements Hashable
+class HashTable<K:Hashable, V> implements Hashable
 {
 
     public var hashCode (default, null):Int;
@@ -17,7 +17,7 @@ class HashTable implements Hashable
     {
     }
 
-    public function clone() : HashTable
+    public function clone() : HashTable<K,V>
     {
         return new HashTable();
     }

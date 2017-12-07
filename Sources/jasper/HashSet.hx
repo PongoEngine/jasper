@@ -8,7 +8,7 @@ package jasper;
 
 import jasper.Hashable;
 
-class HashSet implements Hashable
+class HashSet<T:Hashable> implements Hashable
 {
 
     public var hashCode (default, null):Int;

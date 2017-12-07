@@ -14,8 +14,8 @@ import jasper.variable.AbstractVariable;
 class Expression
 {
     public var constant :Float;
-    public var terms :HashTable;
-    public var externalVariables :HashSet;
+    public var terms :HashTable<AbstractVariable, Float>;
+    public var externalVariables :HashSet<AbstractVariable>;
     public var solver :SimplexSolver;
     public var isConstant (get, null) : Bool;
 
@@ -34,7 +34,7 @@ class Expression
      *  @param terms - 
      *  @return Expression
      */
-    public function initializeFromHash(constant :Float, terms :HashTable) : Expression
+    public function initializeFromHash(constant :Float, terms :HashTable<AbstractVariable, Float>) : Expression
     {
         this.constant = constant;
         this.terms = terms.clone();
