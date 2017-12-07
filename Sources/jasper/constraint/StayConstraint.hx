@@ -8,7 +8,7 @@ package jasper.constraint;
 
 //stubbed out to be complete not tested
 
-import jasper.Variable;
+import jasper.variable.Variable;
 import jasper.Strength;
 import jasper.Expression;
 

@@ -6,19 +6,7 @@
 
 package jasper;
 
-import jasper.Hashable;
-
-class HashTable implements Hashable
+interface Hashable
 {
-
-    public var hashCode (default, null):Int;
-
-    public function new() : Void
-    {
-    }
-
-    public function clone() : HashTable
-    {
-        return new HashTable();
-    }
+    var hashCode (default, null):Int;
 }

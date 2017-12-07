@@ -12,10 +12,11 @@ import jasper.C;
 import jasper.Strength;
 import jasper.Expression;
 import jasper.variable.Variable;
+import jasper.Hashable;
 
-class AbstractConstraint
+class AbstractConstraint implements Hashable
 {
-    public var hashCode :Int;
+    public var hashCode (default, null):Int;
     public var strength :Strength;
     public var weight :Float;
 

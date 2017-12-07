@@ -6,8 +6,13 @@
 
 package jasper;
 
-class HashSet
+import jasper.Hashable;
+
+class HashSet implements Hashable
 {
+
+    public var hashCode (default, null):Int;
+
     public function new() : Void
     {
     }

@@ -9,12 +9,13 @@ package jasper.variable;
 import jasper.C;
 import jasper.variable.AbstractVariableArgs;
 import jasper.variable.AbstractValue;
+import jasper.Hashable;
 
 //Looks complete but not tested
 
-class AbstractVariable
+class AbstractVariable implements Hashable
 {
-    public var hashCode :Int;
+    public var hashCode (default, null):Int;
 
     public var isDummy :Bool = false;
     public var isExternal: Bool = false;
