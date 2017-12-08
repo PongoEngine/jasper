@@ -6,8 +6,21 @@
 
 package jasper.data;
 
-abstract Constant(Float) {
+abstract Constant(Float)
+{
     inline public function new(const :Float) {
         this = const;
     }
+
+    public function toVal() : Float
+    {
+        return this;
+    }
+
+    @:op(A + B) static public function add(lhs:Constant, rhs:Constant):Constant;
+    @:op(A * B) static public function multiply(lhs:Constant, rhs:Constant):Constant;
+    @:op(A / B) static public function divide(lhs:Constant, rhs:Constant):Constant;
+    @:op(A == B) static public function equals(lhs:Constant, rhs:Constant):Bool;
+
+    
 }

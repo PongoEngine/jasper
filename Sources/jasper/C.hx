@@ -46,23 +46,25 @@ class C
      *  @param b - 
      *  @return Bool
      */
-    public static function approx(a :Float, b :Float) : Bool
+    public static function approx(a :jasper.data.Constant, b :Float) : Bool
     {
-        a = Math.abs(a);
+        var aVal = a.toVal();
+
+        aVal = Math.abs(aVal);
         b = Math.abs(b);
-        if (a == b) { 
+        if (aVal == b) { 
             return true; 
         }
 
-        if (a == 0) {
+        if (aVal == 0) {
             return (Math.abs(b) < epsilon);
         }
 
         if (b == 0) {
-            return (Math.abs(a) < epsilon);
+            return (Math.abs(aVal) < epsilon);
         }
 
-        return (Math.abs(a - b) < Math.abs(a) * epsilon);
+        return (Math.abs(aVal - b) < Math.abs(aVal) * epsilon);
     }
 
     public static inline var epsilon :Float = 1e-8;

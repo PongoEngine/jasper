@@ -10,4 +10,9 @@ abstract Value(Float) {
     inline public function new(flt:Float) {
         this = flt;
     }
+
+    public inline function toVal() : Float
+    {
+        return this;
+    }
 }
