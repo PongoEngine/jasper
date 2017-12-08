@@ -25,46 +25,148 @@ class Expression
     public var solver :SimplexSolver;
     public var isConstant (get, null) : Bool;
 
+    /**
+     *  [Description]
+     *  @param cvar - 
+     *  @param value - 
+     *  @param constant - 
+     */
     public function new(cvar :AbstractVariable, value :Value, constant :Constant) : Void
     {
+        this.constant = constant;
+        this.terms = new HashTable();
+        this.externalVariables = new HashSet();
+        this.solver = null;
+        this.setVariable(cvar, value);
     }
 
+    /**
+     *  [Description]
+     *  @param constant - 
+     *  @param terms - 
+     *  @return Expression
+     */
     public function initializeFromHash(constant :Constant, terms :HashTable<AbstractVariable, Constant>) : Expression
     {
-        return null;
+        this.constant = constant;
+        this.terms = terms.clone();
+        return this;
     }
 
+    /**
+     *  [Description]
+     *  @param x - 
+     *  @return Expression
+     */
     public function multiplyMe(x :Constant) : Expression
     {
-        return null;
+        this.constant *= x;
+        var t = this.terms;
+        t.each(function(clv :AbstractVariable, coeff :Constant) { 
+            t.set(clv, coeff * x);
+        });
+
+        return this;
     }
 
+    /**
+     *  [Description]
+     *  @return Expression
+     */
     public function clone() : Expression
     {
-        return null;
+        var e = Expression.empty();
+        e.initializeFromHash(this.constant, this.terms);
+        e.solver = this.solver;
+        return e;
     }
 
-    public function times(?x :Null<Constant>, ?expr :Expression) : Expression
-    {
-        return null;
-    }
-
+    /**
+     *  [Description]
+     *  @param expr - 
+     *  @param vari - 
+     *  @return Expression
+     */
     public function plus(?expr :Expression, ?vari :AbstractVariable)  : Expression
     {
-        return null;
+        if (expr != null) {
+            return this.clone().addExpression(expr, 1);
+        } 
+        else if (vari != null) {
+            return this.clone().addVariable(vari, 1);
+        }
+        else {
+            throw new Error("Expression.hx", "plus");
+        }
     }
 
+    /**
+     *  [Description]
+     *  @param expr - 
+     *  @param vari - 
+     *  @return Expression
+     */
     public function minus(?expr :Expression, ?vari :AbstractVariable) : Expression
     {
-        return null;
+        if (expr != null) {
+            return this.clone().addExpression(expr, -1);
+        } 
+        else if (vari != null) {
+            return this.clone().addVariable(vari, -1);
+        }
+        else {
+            throw new Error("Expression.hx", "minus");
+        }
     }
 
-    public function divide(?x :Constant, ?expr :Expression) : Expression
+    /**
+     *  [Description]
+     *  @param x - 
+     *  @param expr - 
+     *  @return Expression
+     */
+    public function times(?x :Null<Constant>, ?expr :Expression) : Expression
     {
-        return null;
+        if (x != null) {
+            return (this.clone()).multiplyMe(x);
+        } 
+        else {
+            if (this.isConstant) {
+                return expr.times(this.constant);
+            } else if (expr.isConstant) {
+                return this.times(expr.constant);
+            } else {
+                throw new NonExpression();
+            }
+        }
     }
 
-    public function addExpression(?expr :Expression, ?vari :AbstractVariable, ?n :Constant, ?subject :AbstractVariable) : Expression
+    /**
+     *  [Description]
+     *  @param x - 
+     *  @param expr - 
+     *  @return Expression
+     */
+    public function divide(?x :Null<Constant>, ?expr :Expression) : Expression
+    {
+        if (x != null) {
+            if (C.approx(x, 0)) {
+                throw new NonExpression();
+            }
+            return this.times(new Constant(1) / x);
+        } 
+        else if (expr != null) {
+            if (!expr.isConstant) {
+                throw new NonExpression();
+            }
+            return this.times(new Constant(1) / expr.constant);
+        }
+        else {
+            throw new Error("Expression.hx", "divide");
+        }
+    }
+
+    public function addExpression(?expr :Dynamic, ?vari :Dynamic, ?n :Dynamic, ?subject :Dynamic) : Expression
     {
         return null;
     }
@@ -78,7 +180,7 @@ class Expression
     {
     }
 
-    public function setVariable(v :AbstractVariable, c :Constant) : Expression
+    public function setVariable(v :AbstractVariable, c :Value) : Expression
     {
         return null;
     }

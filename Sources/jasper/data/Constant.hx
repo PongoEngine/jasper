@@ -8,13 +8,8 @@ package jasper.data;
 
 abstract Constant(Float)
 {
-    inline public function new(const :Float) {
+    public inline function new(const :Float) {
         this = const;
-    }
-
-    public function toVal() : Float
-    {
-        return this;
     }
 
     @:op(A + B) static public function add(lhs:Constant, rhs:Constant):Constant;
