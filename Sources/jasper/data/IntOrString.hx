@@ -4,14 +4,10 @@
 // Parts Copyright (C) 2011-2015, Alex Russell (slightlyoff@chromium.org)
 // Haxe Port (C) 2017, Jeremy Meltingtallow
 
-package jasper.error;
+package jasper.data;
 
-//Looks complete but not tested
-
-class InternalError extends Error
+enum IntOrString
 {
-    public function new(str :String) : Void
-    {
-        super("InternalError", str);
-    }
+    INT(val :Int);
+    STR(val :String);
 }

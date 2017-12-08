@@ -6,13 +6,13 @@
 
 package jasper.variable;
 
-import jasper.variable.AbstractValue;
+import jasper.data.IntOrString;
 
 //Looks complete but not tested
 
 typedef AbstractVariableArgs =
 {
     @:optional var name :String;
-    @:optional var value :AbstractValue;
+    @:optional var value :IntOrString;
     @:optional var prefix :String;
 }

@@ -10,6 +10,10 @@ import jasper.HashTable;
 import jasper.HashSet;
 import jasper.SimplexSolver;
 import jasper.variable.AbstractVariable;
+import jasper.error.NonExpression;
+import jasper.error.InternalError;
+import jasper.error.Error;
+import jasper.C;
 
 class Expression
 {
@@ -45,146 +49,148 @@ class Expression
     {
         this.constant *= x;
         var t = this.terms;
-        // t.each(function(clv, coeff) { t.set(clv, coeff * x); });
+        t.each(function(clv, coeff) { t.set(clv, coeff * x); });
         return this;
     }
 
     public function clone() : Expression
     {
-        // var e = Expression.empty();
-        // e.initializeFromHash(this.constant, this.terms);
-        // e.solver = this.solver;
-        // return e;
-        return null;
+        var e = Expression.empty();
+        e.initializeFromHash(this.constant, this.terms);
+        e.solver = this.solver;
+        return e;
     }
 
-    public function times(x) : Expression
+    public function times(?x :Null<Float>, ?expr :Expression) : Expression
     {
-        // if (typeof x == 'number') {
-        // return (this.clone()).multiplyMe(x);
-        // } else {
-        // if (this.isConstant) {
-        // return x.times(this.constant);
-        // } else if (x.isConstant) {
-        // return this.times(x.constant);
-        // } else {
-        // throw new c.NonExpression();
-        // }
-        // }
-        return null;
+        if (x != null) {
+            return (this.clone()).multiplyMe(x);
+        } 
+        else {
+            if (this.isConstant) {
+                return expr.times(this.constant);
+            } 
+            else if (expr.isConstant) {
+                return this.times(expr.constant);
+            } 
+            else {
+                throw new NonExpression();
+            }
+        }
     }
 
-    public function plus(expr /*c.Expression*/)  : Expression
+    public function plus(?expr :Expression, ?vari :AbstractVariable)  : Expression
     {
-        // if (expr instanceof c.Expression) {
-        // return this.clone().addExpression(expr, 1);
-        // } else if (expr instanceof c.Variable) {
-        // return this.clone().addVariable(expr, 1);
-        // }
-        return null;
+        if (expr != null) {
+            return this.clone().addExpression(expr, 1);
+        } else if (vari != null) {
+            return this.clone().addVariable(vari, 1);
+        }
+        throw new Error("plus", "plus");
     }
 
-    public function minus(expr /*c.Expression*/) : Expression
+    public function minus(?expr :Expression, ?vari :AbstractVariable) : Expression
     {
-        // if (expr instanceof c.Expression) {
-        // return this.clone().addExpression(expr, -1);
-        // } else if (expr instanceof c.Variable) {
-        // return this.clone().addVariable(expr, -1);
-        // }
-        return null;
+        if (expr != null) {
+            return this.clone().addExpression(expr, -1);
+        } else if (vari != null) {
+            return this.clone().addVariable(vari, -1);
+        }
+        throw new Error("minus", "minus");
     }
 
-    public function divide(x) : Expression
+    public function divide(?x :Float, ?expr :Expression) : Expression
     {
-        // if (typeof x == 'number') {
-        // if (c.approx(x, 0)) {
-        // throw new c.NonExpression();
-        // }
-        // return this.times(1 / x);
-        // } else if (x instanceof c.Expression) {
-        // if (!x.isConstant) {
-        // throw new c.NonExpression();
-        // }
-        // return this.times(1 / x.constant);
-        // }
-        return null;
+        if (x != null) {
+            if (C.approx(x, 0)) {
+                throw new NonExpression();
+            }
+            return this.times(1 / x);
+        } else if (expr != null) {
+            if (!expr.isConstant) {
+                throw new NonExpression();
+            }
+            return this.times(1 / expr.constant);
+        }
+        throw new Error("divide", "divide");
     }
 
-    public function addExpression(expr /*c.Expression*/, n /*double*/, subject /*c.AbstractVariable*/) : Expression
+    public function addExpression(?expr :Expression, ?vari :AbstractVariable, ?n :Float, ?subject :AbstractVariable) : Expression
     {
-        // if (expr instanceof c.AbstractVariable) {
-        // expr = c.Expression.fromVariable(expr);
-        // }
-        // n = checkNumber(n, 1);
-        // this.constant += (n * expr.constant);
-        // expr.terms.each(function(clv, coeff) {
-        // /*
-        // if (clv.isExternal) {
-        // console.log("clv:", clv, "coeff:", coeff, "subject:", subject);
-        // }
-        // */
-        // this.addVariable(clv, coeff * n, subject);
-        // this._updateIfExternal(clv);
-        // }, this);
+        if (vari != null) {
+            expr = Expression.fromVariable(vari);
+        }
+        n = (n == null) ? 1 : n;
+
+        this.constant += (n * expr.constant);
+        expr.terms.each(function(clv, coeff) {
+            this.addVariable(clv, coeff * n, subject);
+            this._updateIfExternal(clv);
+        });
         return this;
     }
 
-    public function addVariable(v /*c.AbstractVariable*/, cd /*double*/, subject) : Expression
+    public function addVariable(v :AbstractVariable, ?cd :Float, ?subject) : Expression
     {
-        // if (cd == null) { cd = 1; }
+        cd = (cd == null) ? 1 : cd;
+        var coeff = this.terms.get(v);
 
-        // var coeff = this.terms.get(v);
-        // if (coeff) {
-        // var newCoefficient = coeff + cd;
-        // if (newCoefficient == 0 || c.approx(newCoefficient, 0)) {
-        // if (this.solver) {
-        // this.solver.noteRemovedVariable(v, subject);
-        // }
-        // this.terms.delete(v);
-        // } else {
-        // this.setVariable(v, newCoefficient);
-        // }
-        // } else {
-        // if (!c.approx(cd, 0)) {
-        // this.setVariable(v, cd);
-        // if (this.solver) {
-        // this.solver.noteAddedVariable(v, subject);
-        // }
-        // }
-        // }
+        if (coeff != null) {
+            var newCoefficient = coeff + cd;
+            if (newCoefficient == 0 || C.approx(newCoefficient, 0)) {
+                if (this.solver != null) {
+                    // this.solver.noteRemovedVariable(v, subject);
+                }
+                this.terms.delete(v);
+            } 
+            else {
+                this.setVariable(v, newCoefficient);
+            }
+        } 
+        else {
+            if (!C.approx(cd, 0)) {
+                this.setVariable(v, cd);
+                if (this.solver != null) {
+                    // this.solver.noteAddedVariable(v, subject);
+                }
+            }   
+        }
+
         return this;
     }
 
-    private function _updateIfExternal(v) : Void
+    private function _updateIfExternal(v :AbstractVariable) : Void
     {
-        // if (v.isExternal) {
-        // this.externalVariables.add(v);
-        // if (this.solver) {
-        // this.solver._noteUpdatedExternal(v);
-        // }
-        // }
+        if (v.isExternal) {
+           this.externalVariables.add(v);
+            if (this.solver != null) {
+                // this.solver._noteUpdatedExternal(v);
+            }
+        }
     }
 
-    public function setVariable(v /*c.AbstractVariable*/, c /*double*/) : Expression
+    public function setVariable(v :AbstractVariable, c :Float) : Expression
     {
-        // this.terms.set(v, c);
+        this.terms.set(v, c);
         this._updateIfExternal(v);
         return this;
     }
 
-    public function anyPivotableVariable() 
+    public function anyPivotableVariable() : Dynamic
     {
-        // if (this.isConstant) {
-        // throw new c.InternalError("anyPivotableVariable called on a constant");
-        // }
+        if (this.isConstant) {
+            throw new InternalError("anyPivotableVariable called on a constant");
+        }
 
-        // var rv = this.terms.escapingEach(function(clv, c) {
-        // if (clv.isPivotable) return { retval: clv };
-        // });
+        var rv :Dynamic = this.terms.escapingEach(function(clv :AbstractVariable, c) {
+            return clv.isPivotable
+                ? { retval: clv }
+                : null;
+        });
 
-        // if (rv && rv.retval !== undefined) {
-        // return rv.retval;
-        // }
+        if (rv != null && rv.retval != null) {
+            return rv.retval;
+        }
 
         return null;
     }
@@ -293,52 +299,55 @@ class Expression
         return false;
     }
 
-    public function Plus(e1 /*c.Expression*/, e2 /*c.Expression*/)
+    public function Plus(e1 :Expression, e2 :Expression) : Expression
     {
         return e1.plus(e2);
     }
 
-    public function Minus(e1 /*c.Expression*/, e2 /*c.Expression*/) 
+    public function Minus(e1 :Expression, e2 :Expression) : Expression
     {
         return e1.minus(e2);
     }
 
-    public function Times(e1 /*c.Expression*/, e2 /*c.Expression*/) {
+    public function Times(e1 :Expression, e2 :Expression) : Expression
+    {
         return e1.times(e2);
     }
 
-    public function Divide(e1 /*c.Expression*/, e2 /*c.Expression*/) {
+    public function Divide(e1 :Expression, e2 :Expression) : Expression
+    {
         return e1.divide(e2);
     }
 
 
-    public static function empty(solver) {
-        // var e = new Expression(undefined, 1, 0);
-        // e.solver = solver;
-        // return e;
-        return null;
+    public static function empty(?solver :SimplexSolver) : Expression
+    {
+        var e = new Expression(null, 1, 0);
+        e.solver = solver;
+        return e;
     }
 
-    public static function fromConstant(cons, solver) {
+    public static function fromConstant(constant :Float, ?solver :SimplexSolver) : Expression
+    {
         // var e = new Expression(cons);
         // e.solver = solver;
         // return e;
         return null;
     }
 
-    public static function fromValue(v, solver) {
-        // v = Math.abs(v);
-        // var e = new Expression(undefined, v, 0);
-        // e.solver = solver;
-        // return e;
-        return null;
+    public static function fromValue(value :Float, ?solver :SimplexSolver) : Expression
+    {
+        value = Math.abs(value);
+        var e = new Expression(null, value, 0);
+        e.solver = solver;
+        return e;
     }
 
-    public static function fromVariable(v, solver) {
-        // var e = new Expression(v, 1, 0);
-        // e.solver = solver;
-        // return e;
-        return null;
+    public static function fromVariable(cvar :AbstractVariable, ?solver :SimplexSolver) : Expression
+    {
+        var e = new Expression(cvar, 1, 0);
+        e.solver = solver;
+        return e;
     }
 
 }

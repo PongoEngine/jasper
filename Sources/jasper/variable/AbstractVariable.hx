@@ -8,7 +8,7 @@ package jasper.variable;
 
 import jasper.C;
 import jasper.variable.AbstractVariableArgs;
-import jasper.variable.AbstractValue;
+import jasper.data.IntOrString;
 import jasper.Hashable;
 
 //Looks complete but not tested
@@ -24,7 +24,7 @@ class AbstractVariable implements Hashable
 
     public var _prefix : String = "";
     public var name : String = "";
-    public var value : AbstractValue = INT(0);
+    public var value : IntOrString = INT(0);
 
     /**
      *  [Description]
@@ -48,9 +48,9 @@ class AbstractVariable implements Hashable
 
     /**
      *  [Description]
-     *  @return AbstractValue
+     *  @return IntOrString
      */
-    public function valueOf() : AbstractValue
+    public function valueOf() : IntOrString
     {
         return this.value; 
     }

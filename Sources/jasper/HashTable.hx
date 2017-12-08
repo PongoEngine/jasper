@@ -95,11 +95,7 @@ class HashTable<K:Hashable, V> implements Hashable
         this._store.remove(key.hashCode);
     }
 
-    /**
-     *  [Description]
-     *  @param callback - 
-     */
-    public function each(callback : V -> Void) : Void
+    public function each(callback) : Void
     {
     }
 
@@ -107,8 +103,9 @@ class HashTable<K:Hashable, V> implements Hashable
      *  [Description]
      *  @param callback - 
      */
-    public function escapingEach(callback : V -> Void) : Void
+    public function escapingEach(callback)
     {
+        return null;
     }
 
     /**

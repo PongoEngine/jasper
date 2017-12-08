@@ -27,9 +27,10 @@ class C
 
     public static function times(e1, e2) : Expression
     {
-        e1 = exprFromVarOrValue(e1);
-        e2 = exprFromVarOrValue(e2);
-        return e1.times(e2);
+        // e1 = exprFromVarOrValue(e1);
+        // e2 = exprFromVarOrValue(e2);
+        // return e1.times(e2);
+        return null;
     }
 
     public static function divide(e1, e2) : Expression
