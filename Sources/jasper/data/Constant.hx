@@ -16,6 +16,10 @@ abstract Constant(Float)
     @:op(A * B) static public function multiply(lhs:Constant, rhs:Constant):Constant;
     @:op(A / B) static public function divide(lhs:Constant, rhs:Constant):Constant;
     @:op(A == B) static public function equals(lhs:Constant, rhs:Constant):Bool;
+    @:op(-A) static public function negate(rhs:Constant):Constant;
 
-    
+    public function toValue() : Value
+    {
+        return new Value(this);
+    }
 }

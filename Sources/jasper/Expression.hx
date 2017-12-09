@@ -22,7 +22,7 @@ class Expression
     public var constant :Constant;
     public var terms :HashTable<AbstractVariable, Constant>;
     public var externalVariables :HashSet<AbstractVariable>;
-    public var solver :SimplexSolver;
+    public var solver :SimplexSolver = null;
     public var isConstant (get, null) : Bool;
 
     /**
@@ -31,13 +31,15 @@ class Expression
      *  @param value - 
      *  @param constant - 
      */
-    public function new(cvar :AbstractVariable, value :Value, constant :Constant) : Void
+    public function new(?cvar :AbstractVariable, ?value :Value, constant :Constant) : Void
     {
         this.constant = constant;
         this.terms = new HashTable();
         this.externalVariables = new HashSet();
-        this.solver = null;
-        this.setVariable(cvar, value);
+
+        if(cvar != null) {
+            this.setVariable(cvar, value);
+        }
     }
 
     /**
@@ -90,10 +92,10 @@ class Expression
     public function plus(?expr :Expression, ?vari :AbstractVariable)  : Expression
     {
         if (expr != null) {
-            return this.clone().addExpression(expr, 1);
+            return this.clone().addExpression(expr, new Constant(1));
         } 
         else if (vari != null) {
-            return this.clone().addVariable(vari, 1);
+            return this.clone().addVariable(vari, new Constant(1));
         }
         else {
             throw new Error("Expression.hx", "plus");
@@ -109,10 +111,10 @@ class Expression
     public function minus(?expr :Expression, ?vari :AbstractVariable) : Expression
     {
         if (expr != null) {
-            return this.clone().addExpression(expr, -1);
+            return this.clone().addExpression(expr, new Constant(-1));
         } 
         else if (vari != null) {
-            return this.clone().addVariable(vari, -1);
+            return this.clone().addVariable(vari, new Constant(-1));
         }
         else {
             throw new Error("Expression.hx", "minus");
@@ -166,49 +168,97 @@ class Expression
         }
     }
 
-    public function addExpression(?expr :Dynamic, ?vari :Dynamic, ?n :Dynamic, ?subject :Dynamic) : Expression
+    public function addExpression(expr :Expression, n :Constant, ?subject :AbstractVariable) : Expression
     {
-        return null;
+        this.constant += (n * expr.constant);
+        expr.terms.each(function(clv, coeff) {
+            this.addVariable(clv, coeff * n, subject);
+            this._updateIfExternal(clv);
+        });
+        return this;
     }
 
-    public function addVariable(v :AbstractVariable, ?cd :Constant, ?subject) : Expression
+    //determine setVariable first
+    public function addVariable(v :AbstractVariable, cd :Constant, ?subject :AbstractVariable) : Expression
     {
-        return null;
+        return this;
     }
 
+    /**
+     *  [Description]
+     *  @param v - 
+     */
     private function _updateIfExternal(v :AbstractVariable) : Void
     {
+        if (v.isExternal) {
+            this.externalVariables.add(v);
+            if (this.solver != null) {
+                // this.solver._noteUpdatedExternal(v);
+            }
+        }
     }
 
-    public function setVariable(v :AbstractVariable, c :Value) : Expression
+    public function setVariable(variable :AbstractVariable, value :Value) : Expression
     {
-        return null;
+        this.terms.set(variable, value.toConstant());
+        this._updateIfExternal(variable);
+        return this;
     }
 
+    //type more then come back
     public function anyPivotableVariable() : Dynamic
     {
         return null;
     }
 
-    public function substituteOut(outvar  /*c.AbstractVariable*/, expr /*c.Expression*/, subject /*c.AbstractVariable*/) : Void
+    //type more then come back
+    public function substituteOut(outvar :AbstractVariable, expr :Expression, subject :AbstractVariable) : Void
     {
     }
 
-    public function changeSubject (old_subject /*c.AbstractVariable*/, new_subject /*c.AbstractVariable*/) : Void
+    /**
+     *  [Description]
+     *  @param old_subject - 
+     *  @param new_subject - 
+     */
+    public function changeSubject (old_subject :AbstractVariable, new_subject :AbstractVariable) : Void
     {
+        this.setVariable(old_subject, this.newSubject(new_subject).toValue());
     }
 
-    public function newSubject (subject /*c.AbstractVariable*/) 
+    /**
+     *  [Description]
+     *  @param subject - 
+     *  @return Constant
+     */
+    public function newSubject (subject :AbstractVariable) : Constant
     {
+        var reciprocal :Constant = new Constant(1) / this.terms.get(subject);
+        this.terms.delete(subject);
+        this.multiplyMe(-reciprocal);
+        return reciprocal;
     }
 
-    public function coefficientFor (clv /*c.AbstractVariable*/) 
+    /**
+     *  [Description]
+     *  @param clv - 
+     *  @return Constant
+     */
+    public function coefficientFor (clv :AbstractVariable) : Constant
     {
+        var constant = this.terms.get(clv);
+        return (constant == null)
+            ? new Constant(0)
+            : constant;
     }
 
+    /**
+     *  [Description]
+     *  @return Bool
+     */
     private function get_isConstant() : Bool
     {
-        return false;
+        return this.terms.size == 0;
     }
 
     public function toString() : String
@@ -216,50 +266,114 @@ class Expression
         return "";
     }
 
-    public function equals(other) : Bool
+    /**
+     *  [Description]
+     *  @param other - 
+     *  @return Bool
+     */
+    public function equals(other :Expression) : Bool
     {
-        return false;
+        if (other == this) {
+            return true;
+        }
+
+        return other.constant == this.constant &&
+            other.terms.equals(this.terms);
     }
 
+    /**
+     *  [Description]
+     *  @param e1 - 
+     *  @param e2 - 
+     *  @return Expression
+     */
     public function Plus(e1 :Expression, e2 :Expression) : Expression
     {
         return e1.plus(e2);
     }
 
+    /**
+     *  [Description]
+     *  @param e1 - 
+     *  @param e2 - 
+     *  @return Expression
+     */
     public function Minus(e1 :Expression, e2 :Expression) : Expression
     {
         return e1.minus(e2);
     }
 
+    /**
+     *  [Description]
+     *  @param e1 - 
+     *  @param e2 - 
+     *  @return Expression
+     */
     public function Times(e1 :Expression, e2 :Expression) : Expression
     {
         return e1.times(e2);
     }
 
+    /**
+     *  [Description]
+     *  @param e1 - 
+     *  @param e2 - 
+     *  @return Expression
+     */
     public function Divide(e1 :Expression, e2 :Expression) : Expression
     {
         return e1.divide(e2);
     }
 
-
+    /**
+     *  [Description]
+     *  @param solver - 
+     *  @return Expression
+     */
     public static function empty(?solver :SimplexSolver) : Expression
     {
-        return null;
+        var e = new Expression(new Value(1), new Constant(0));
+        e.solver = solver;
+        return e;
     }
 
-    public static function fromConstant(constant :Float, ?solver :SimplexSolver) : Expression
+    /**
+     *  [Description]
+     *  @param constant - 
+     *  @param solver - 
+     *  @return Expression
+     */
+    public static function fromConstant(constant :Constant, ?solver :SimplexSolver) : Expression
     {
-        return null;
+        var e = new Expression(constant);
+        e.solver = solver;
+        return e;
     }
 
+    /**
+     *  [Description]
+     *  @param value - 
+     *  @param solver - 
+     *  @return Expression
+     */
     public static function fromValue(value :Value, ?solver :SimplexSolver) : Expression
     {
-        return null;
+        var e = new Expression(value.abs(), new Constant(0));
+        e.solver = solver;
+        return e;
     }
 
-    public static function fromVariable(cvar :AbstractVariable, ?solver :SimplexSolver) : Expression
+    /**
+     *  [Description]
+     *  @param variable - 
+     *  @param solver - 
+     *  @return Expression
+     */
+    public static function fromVariable(variable :AbstractVariable, ?solver :SimplexSolver) : Expression
     {
-        return null;
+        var e = new Expression(variable, new Value(1), new Constant(0));
+        e.solver = solver;
+        return e;
     }
 
 }

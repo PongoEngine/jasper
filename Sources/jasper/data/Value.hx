@@ -10,4 +10,14 @@ abstract Value(Float) {
     inline public function new(flt:Float) {
         this = flt;
     }
+
+    public function toConstant() : Constant
+    {
+        return new Constant(this);
+    }
+
+    public function abs() : Value
+    {
+        return new Value(Math.abs(this));
+    }
 }
