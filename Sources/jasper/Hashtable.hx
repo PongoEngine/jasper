@@ -96,6 +96,22 @@ class Hashtable<K :Hashable,V> implements Stringable
 
 	/**
 	 *  [Description]
+	 */
+	public function escapingEach<T>(callback : K -> V -> EscapeContext<T>) : T
+	{
+		for(key in _map.keys()) {
+			var context :EscapeContext<T> = callback(key, _map.get(key));
+			switch context {
+				case BREAK: break;
+				case RETURN(val): return val;
+				case NO_OP:
+			}
+		}
+		return null;
+	}
+
+	/**
+	 *  [Description]
 	 *  @return Hashtable<K,V>
 	 */
 	public function clone() : Hashtable<K,V>
@@ -133,4 +149,11 @@ class Hashtable<K :Hashable,V> implements Stringable
 
 	private var _map :Map<K, V>;
 	private var _length :Int;
+}
+
+enum EscapeContext<T>
+{
+	BREAK;
+	RETURN(val :T);
+	NO_OP;
 }

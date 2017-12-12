@@ -32,12 +32,15 @@ import jasper.ClLinearExpression;
 
 class ClTableau implements Stringable
 {
-	public var columns :Hashtable<ClAbstractVariable, HashSet<ClAbstractVariable>>; //Hashtable of vars -> set of vars
-	public var rows :Hashtable<ClAbstractVariable, ClLinearExpression>; //Hashtable of vars -> expr
-	public var infeasibleRows :HashSet<ClAbstractVariable>; //Set of vars
-	public var externalRows :HashSet<ClAbstractVariable>; //Set of vars
-	public var externalParametricVars :HashSet<ClAbstractVariable>; //Set of vars
+	public var columns (default, null):Hashtable<ClAbstractVariable, HashSet<ClAbstractVariable>>; //Hashtable of vars -> set of vars
+	public var rows (default, null):Hashtable<ClAbstractVariable, ClLinearExpression>; //Hashtable of vars -> expr
+	public var infeasibleRows (default, null):HashSet<ClAbstractVariable>; //Set of vars
+	public var externalRows (default, null):HashSet<ClAbstractVariable>; //Set of vars
+	public var externalParametricVars (default, null):HashSet<ClAbstractVariable>; //Set of vars
 
+	/**
+	 *  [Description]
+	 */
 	public function new() : Void
 	{
 		this.columns = new Hashtable(); // values are sets
@@ -47,6 +50,11 @@ class ClTableau implements Stringable
 		this.externalParametricVars = new HashSet();
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param subject - 
+	 */
 	public function noteRemovedVariable(v :ClAbstractVariable, subject :ClAbstractVariable) : Void
 	{
 		if (subject != null) {
@@ -54,6 +62,11 @@ class ClTableau implements Stringable
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param subject - 
+	 */
 	public function noteAddedVariable(v :ClAbstractVariable, subject :ClAbstractVariable) : Void
 	{
 		if (subject != null) {
@@ -61,6 +74,10 @@ class ClTableau implements Stringable
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function getInternalInfo() : String
 	{
 		var retstr = "Tableau Information:\n";
@@ -75,6 +92,10 @@ class ClTableau implements Stringable
 		return retstr;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function toString() : String
 	{
 		var bstr = "Tableau:\n";
@@ -95,6 +116,11 @@ class ClTableau implements Stringable
 		return bstr;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param paramVar - 
+	 *  @param rowVar - 
+	 */
 	public function insertColVar(paramVar :ClAbstractVariable, rowVar :ClAbstractVariable) : Void
 	{
 		var rowset = this.columns.get(paramVar);
@@ -104,6 +130,11 @@ class ClTableau implements Stringable
 		rowset.add(rowVar);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param aVar - 
+	 *  @param expr - 
+	 */
 	public function addRow(aVar :ClAbstractVariable, expr :ClLinearExpression) : Void
 	{
 		var that=this;
@@ -121,6 +152,10 @@ class ClTableau implements Stringable
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @param aVar - 
+	 */
 	public function removeColumn(aVar :ClAbstractVariable) : Void
 	{
 		var that=this;
@@ -139,6 +174,11 @@ class ClTableau implements Stringable
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @param aVar - 
+	 *  @return ClLinearExpression
+	 */
 	public function removeRow(aVar :ClAbstractVariable) : ClLinearExpression 
 	{
 		var that=this;
@@ -161,6 +201,11 @@ class ClTableau implements Stringable
 		return expr;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param oldVar - 
+	 *  @param expr - 
+	 */
 	public function substituteOut(oldVar :ClAbstractVariable, expr :ClLinearExpression) : Void
 	{
 		var that=this;
@@ -181,11 +226,21 @@ class ClTableau implements Stringable
 		this.columns.remove(oldVar);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param subject - 
+	 *  @return Bool
+	 */
 	public function columnsHasKey(subject :ClAbstractVariable) : Bool
 	{
 		return (this.columns.get(subject) != null);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @return ClLinearExpression
+	 */
 	public function rowExpression(v :ClAbstractVariable) : ClLinearExpression
 	{
 		return this.rows.get(v);

@@ -33,6 +33,8 @@ import jasper.ClEditInfo;
 import jasper.ClLinearExpression;
 import jasper.constraint.ClConstraint;
 import jasper.constraint.ClEditConstraint;
+import jasper.constraint.ClStayConstraint;
+import jasper.constraint.linear.ClLinearInequality;
 import jasper.error.ExCLRequiredFailure;
 import jasper.error.ExCLConstraintNotFound;
 import jasper.error.ExCLInternalError;
@@ -57,6 +59,9 @@ class ClSimplexSolver extends ClTableau
 	public var fNeedsSolving :Bool;
 	public var stkCedcns :Array<Int>;
 
+	/**
+	 *  [Description]
+	 */
 	public function new() : Void
 	{
 		super();
@@ -64,7 +69,7 @@ class ClSimplexSolver extends ClTableau
 		this.stayPlusErrorVars = new Array();
 		this.errorVars = new Hashtable(); // cn -> Set of clv
 		this.markerVars = new Hashtable(); // cn -> Set of clv
-		// this.resolve_pair = new Array(0,0); 
+		this.resolvePair_ = [0,0]; 
 		this.objective = new ClObjectiveVariable();
 		this.editVarMap = new Hashtable(); // clv -> ClEditInfo
 		this.slackCounter = 0;
@@ -73,26 +78,41 @@ class ClSimplexSolver extends ClTableau
 		this.epsilon = 1e-8;
 		this.fOptimizeAutomatically = true;
 		this.fNeedsSolving = false;
-		this.rows = new Hashtable<ClAbstractVariable, ClLinearExpression>(); // clv -> expression
-		// this.rows.put(this.objective, new ClLinearExpression());
+		this.rows = new Hashtable(); // clv -> expression
+		this.rows.put(this.objective, ClLinearExpression.initializeFromConstant(0));
 		this.stkCedcns = new Array(); // Stack
 		this.stkCedcns.push(0);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param lower - 
+	 */
 	public function addLowerBound(v :ClAbstractVariable, lower :Float) 
 	{
-		// var cn = new ClLinearInequality(v, CL.GEQ, new ClLinearExpression(lower));
-		var cn = null;
+		var cn = new ClLinearInequality(v, CL.GEQ, ClLinearExpression.initializeFromConstant(lower));
 		return this.addConstraint(cn);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param upper - 
+	 */
 	public function addUpperBound(v :ClAbstractVariable, upper :Float) 
 	{
-		// var cn = new ClLinearInequality(v, CL.LEQ, new ClLinearExpression(upper));
-		var cn = null;
+		var cn = new ClLinearInequality(v, CL.LEQ, ClLinearExpression.initializeFromConstant(upper));
 		return this.addConstraint(cn);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param lower - 
+	 *  @param upper - 
+	 *  @return ClSimplexSolver
+	 */
 	public function addBounds(v :ClAbstractVariable, lower :Float, upper :Float) : ClSimplexSolver
 	{
 		this.addLowerBound(v, lower);
@@ -102,38 +122,14 @@ class ClSimplexSolver extends ClTableau
 
 	public function addConstraint(cn :ClConstraint) : ClSimplexSolver
 	{
-		// if (CL.fTraceOn) CL.fnenterprint("addConstraint: " + cn);
-		// var eplus_eminus = new Array(2);
-		// var prevEConstant = new Array(1); // so it can be output to
-		// var expr = this.newExpression(cn, /*output to*/ eplus_eminus, prevEConstant);
-		// prevEConstant = prevEConstant[0];
-		// var fAddedOkDirectly = false;
-		// fAddedOkDirectly = this.tryAddingDirectly(expr);
-		// if (!fAddedOkDirectly) {
-		// this.addWithArtificialVariable(expr);
-		// }
-		// this._fNeedsSolving = true;
-		// if (cn.isEditConstraint()) {
-		// var i = this._editVarMap.size();
-		// var clvEplus = /* ClSlackVariable */eplus_eminus[0];
-		// var clvEminus = /* ClSlackVariable */eplus_eminus[1];
-		// if (!clvEplus instanceof ClSlackVariable) {
-		// print("clvEplus not a slack variable = " + clvEplus);
-		// }
-		// if (!clvEminus instanceof ClSlackVariable) {
-		// print("clvEminus not a slack variable = " + clvEminus);
-		// }
-		// this._editVarMap.put(cn.variable(),
-		// new ClEditInfo(cn, clvEplus, clvEminus, prevEConstant, i));
-		// }
-		// if (this._fOptimizeAutomatically) {
-		// this.optimize(this._objective);
-		// this.setExternalVariables();
-		// }
-		// cn.addedTo(this);
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param cn - 
+	 *  @return Bool
+	 */
 	public function addConstraintNoException(cn :ClConstraint) : Bool
 	{
 		try {
@@ -145,20 +141,34 @@ class ClSimplexSolver extends ClTableau
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param strength - 
+	 */
 	public function addEditVar(v :ClVariable, strength :ClStrength)
 	{
 		var cnEdit = new ClEditConstraint(v, strength, 1.0);
 		return this.addConstraint(cnEdit);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @return ClSimplexSolver
+	 */
 	public function removeEditVar(v :ClVariable) : ClSimplexSolver
 	{
-		var cei = this.editVarMap.get(v);
+		var cei = /* ClEditInfo */this.editVarMap.get(v);
 		var cn = cei.constraint;
 		this.removeConstraint(cn);
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return ClSimplexSolver
+	 */
 	public function beginEdit() : ClSimplexSolver
 	{
 		Util.Assert(this.editVarMap.size() > 0, "_editVarMap.size() > 0");
@@ -168,9 +178,13 @@ class ClSimplexSolver extends ClTableau
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return ClSimplexSolver
+	 */
 	public function endEdit() : ClSimplexSolver
 	{
-		Util.Assert(this.editVarMap.size() > 0, "editVarMap.size() > 0");
+		Util.Assert(this.editVarMap.size() > 0, "_editVarMap.size() > 0");
 		this.resolve();
 		this.stkCedcns.pop();
 		var n = this.stkCedcns[this.stkCedcns.length - 1]; // top
@@ -178,11 +192,19 @@ class ClSimplexSolver extends ClTableau
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 */
 	public function removeAllEditVars() 
 	{
 		return this.removeEditVarsTo(0);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param n - 
+	 *  @return ClSimplexSolver
+	 */
 	public function removeEditVarsTo(n :Int) : ClSimplexSolver
 	{
 		try {
@@ -192,7 +214,7 @@ class ClSimplexSolver extends ClTableau
 					that.removeEditVar(v);
 				}
 			});
-			Util.Assert(this.editVarMap.size() == n, "_editVarMap.size() == n");
+			Util.Assert(this.editVarMap.size() == n, "editVarMap.size() == n");
 			return this;
 		}
 		catch (e :ExCLConstraintNotFound){
@@ -200,37 +222,44 @@ class ClSimplexSolver extends ClTableau
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @param listOfPoints - 
+	 *  @return ClSimplexSolver
+	 */
 	public function addPointStays(listOfPoints :Array<Int>) : ClSimplexSolver
 	{
 		var weight = 1.0;
 		var multiplier = 2.0;
 		for (i in 0...listOfPoints.length) {
-			// this.addPointStay(/* ClPoint */listOfPoints[i], weight);
+			this.addPointStay(listOfPoints[i], weight);
 			weight *= multiplier;
 		}
 		return this;
 	}
 
-	public function addPointStay(a1, a2, a3) : ClSimplexSolver
+	public function addPointStay(a1, a2, ?a3) : ClSimplexSolver
 	{
-		// if (a1 instanceof ClPoint) {
-		// 	var clp = a1, weight = a2;
-		// 	this.addStay(clp.X(), ClStrength.weak, weight || 1.0);
-		// 	this.addStay(clp.Y(), ClStrength.weak, weight || 1.0);
-		// } else { // 
-		// 	var vx = a1, vy = a2, weight = a3;
-		// 	this.addStay(vx, ClStrength.weak, weight || 1.0);
-		// 	this.addStay(vy, ClStrength.weak, weight || 1.0);
-		// }
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param strength - 
+	 *  @param weight - 
+	 */
 	public function addStay(v :ClVariable, strength :ClStrength, weight :Float) 
 	{
-		// var cn = new ClStayConstraint(v, strength || ClStrength.weak, weight || 1.0);
-		// return this.addConstraint(cn);
+		var cn = new ClStayConstraint(v, strength, weight);
+		return this.addConstraint(cn);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param cn - 
+	 *  @return ClSimplexSolver
+	 */
 	public function removeConstraint(cn :ClConstraint) : ClSimplexSolver
 	{
 		this.removeConstraintInternal(cn);
@@ -243,23 +272,34 @@ class ClSimplexSolver extends ClTableau
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 */
 	public function reset() 
 	{
-		throw new ExCLInternalError("reset not implemented");
+    	throw new ExCLInternalError("reset not implemented");
 	}
 
+	/**
+	 *  [Description]
+	 *  @param newEditConstants - 
+	 */
 	public function resolveArray(newEditConstants :Array<Float>) 
 	{
 		var that = this;
 		this.editVarMap.each(function(v, cei) {
 			var i = cei.index;
-			if (i < newEditConstants.length) {
+			if (i < newEditConstants.length) 
 				that.suggestValue(v, newEditConstants[i]);
-			}
-		});
+			});
 		this.resolve();
 	}
 
+	/**
+	 *  [Description]
+	 *  @param x - 
+	 *  @param y - 
+	 */
 	public function resolvePair(x :Float, y :Float) : Void
 	{
 		this.resolvePair_[0] = x;
@@ -267,6 +307,9 @@ class ClSimplexSolver extends ClTableau
 		this.resolveArray(this.resolvePair_);
 	}
 
+	/**
+	 *  [Description]
+	 */
 	public function resolve() : Void
 	{
 		this.dualOptimize();
@@ -275,6 +318,12 @@ class ClSimplexSolver extends ClTableau
 		this.resetStayConstants();
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param x - 
+	 *  @return ClSimplexSolver
+	 */
 	public function suggestValue(v :ClVariable, x :Float) : ClSimplexSolver
 	{
 		var cei = this.editVarMap.get(v);
@@ -287,21 +336,33 @@ class ClSimplexSolver extends ClTableau
 		var delta = x - cei.prevEditConstant;
 		cei.prevEditConstant = x;
 		this.deltaEditConstant(delta, clvEditPlus, clvEditMinus);
-
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param f - 
+	 *  @return ClSimplexSolver
+	 */
 	public function setAutosolve(f :Bool) : ClSimplexSolver
 	{
 		this.fOptimizeAutomatically = f;
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function fIsAutosolving() : Bool
 	{
 		return this.fOptimizeAutomatically;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return ClSimplexSolver
+	 */
 	public function solve() : ClSimplexSolver
 	{
 		if (this.fNeedsSolving) {
@@ -311,6 +372,12 @@ class ClSimplexSolver extends ClTableau
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param n - 
+	 *  @return ClSimplexSolver
+	 */
 	public function setEditedValue(v :ClVariable, n :Float) : ClSimplexSolver
 	{
 		if (!this.fContainsVariable(v)) {
@@ -318,31 +385,39 @@ class ClSimplexSolver extends ClTableau
 			return this;
 		}
 		if (!Util.approx(n, v.value)) {
-			// this.addEditVar(v);
+			this.addEditVar(v, ClStrength.STRONG);
 			this.beginEdit();
-
 			try {
 				this.suggestValue(v, n);
 			}
 			catch (e :ExCLError){
 				throw new ExCLInternalError("Error in setEditedValue");
 			}
-
 			this.endEdit();
 		}
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @return Bool
+	 */
 	public function fContainsVariable(v :ClVariable) : Bool
 	{
 		return this.columnsHasKey(v) || (this.rowExpression(v) != null);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @return ClSimplexSolver
+	 */
 	public function addVar(v :ClVariable) : ClSimplexSolver
 	{
 		if (!this.fContainsVariable(v)) {
 			try {
-				// this.addStay(v);
+				this.addStay(v, ClStrength.WEAK, 1.0);
 			}
 			catch (e :ExCLRequiredFailure){
 				throw new ExCLInternalError("Error in addVar -- required failure is impossible");
@@ -351,6 +426,10 @@ class ClSimplexSolver extends ClTableau
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	override public function getInternalInfo() : String
 	{
 		var retstr = super.getInternalInfo();
@@ -364,6 +443,10 @@ class ClSimplexSolver extends ClTableau
 		return retstr;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function getDebugInfo() : String
 	{
 		var bstr = this.toString();
@@ -372,6 +455,10 @@ class ClSimplexSolver extends ClTableau
 		return bstr;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	override public function toString() : String
 	{
 		var bstr = super.toString();
@@ -385,6 +472,9 @@ class ClSimplexSolver extends ClTableau
 		return bstr;
 	}
 
+	/**
+	 *  [Description]
+	 */
 	public function getConstraintMap() {
 		return this.markerVars;
 	}
@@ -393,6 +483,11 @@ class ClSimplexSolver extends ClTableau
 	{
 	}
 
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @return Bool
+	 */
 	public function tryAddingDirectly(expr :ClLinearExpression) : Bool
 	{
 		var subject = this.chooseSubject(expr);
@@ -429,6 +524,11 @@ class ClSimplexSolver extends ClTableau
 	{
 	}
 
+	/**
+	 *  [Description]
+	 *  @param entryVar - 
+	 *  @param exitVar - 
+	 */
 	public function pivot(entryVar :ClAbstractVariable, exitVar :ClAbstractVariable) : Void 
 	{
 		var pexpr = this.removeRow(exitVar);
@@ -437,20 +537,50 @@ class ClSimplexSolver extends ClTableau
 		this.addRow(entryVar, pexpr);
 	}
 
+	/**
+	 *  [Description]
+	 */
 	public function resetStayConstants() : Void 
 	{
+		for (i in 0...stayPlusErrorVars.length) {
+			var expr = this.rowExpression(/* ClAbstractVariable */this.stayPlusErrorVars[i]);
+			if (expr == null) expr = this.rowExpression(/* ClAbstractVariable */this.stayMinusErrorVars[i]);
+			if (expr != null) expr.constant = 0.0;
+		}
 	}
 
+	/**
+	 *  [Description]
+	 */
 	public function setExternalVariables() : Void
 	{
+		var that=this;
+		this.externalParametricVars.each(function(v) {
+			if (that.rowExpression(v) != null) {
+				// print("Error: variable" + v + " in _externalParametricVars is basic");
+			} else {
+				v.changeValue(0.0);
+			}
+		});
 
+		this.externalRows.each(function(v) {
+			var expr = that.rowExpression(v);
+			v.changeValue(expr.constant);
+		});
+		this.fNeedsSolving = false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param cn - 
+	 *  @param aVar - 
+	 */
 	public function insertErrorVar(cn :ClConstraint, aVar :ClAbstractVariable) : Void
 	{
-		var cnset = this.errorVars.get(aVar);
-		if (cnset == null) 
-		this.errorVars.put(cn, cnset = new HashSet());
+		var cnset = /* Set */this.errorVars.get(aVar);
+		if (cnset == null) {
+			this.errorVars.put(cn,cnset = new HashSet());
+		}
 		cnset.add(aVar);
 	}
 }

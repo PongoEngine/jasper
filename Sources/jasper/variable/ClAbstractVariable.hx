@@ -84,5 +84,10 @@ class ClAbstractVariable implements Hashable implements Stringable
 		return "ABSTRACT[" + this.hashcode + "]";
 	}
 
+	public function changeValue(value :Float) : Void
+	{
+		throw "err";
+	}
+
 	public static var iVariableNumber :Int = 1;
 }

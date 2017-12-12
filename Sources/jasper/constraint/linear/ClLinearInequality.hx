@@ -26,7 +26,7 @@ package jasper.constraint.linear;
 
 class ClLinearInequality extends ClLinearConstraint
 {
-	public function new(a1, a2, a3, a4, a5) : Void
+	public function new(a1, a2, a3, ?a4, ?a5) : Void
 	{
 		super(null,null,null);
 

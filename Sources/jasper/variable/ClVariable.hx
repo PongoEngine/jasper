@@ -83,4 +83,14 @@ class ClVariable extends ClAbstractVariable
 	{
 		return "[" + this.hashcode + ":" + this.value + "]";
 	}
+
+	/**
+	 *  [Description]
+	 *  @param value - 
+	 *  @return Float
+	 */
+	override public function changeValue(value :Float) : Void
+	{
+		this.value = value;
+	}
 }
