@@ -30,23 +30,23 @@ import jasper.Stringable;
 
 class ClEditInfo implements Stringable
 {
-	public var cn (default, null):ClConstraint;
+	public var constraint (default, null):ClConstraint;
 	public var clvEditPlus (default, null):ClSlackVariable;
 	public var clvEditMinus (default, null):ClSlackVariable;
 	public var prevEditConstant :Float;
-	public var i (default, null):Int;
+	public var index (default, null):Int;
 
 	public function new(cn_ :ClConstraint, eplus_ :ClSlackVariable, eminus_ :ClSlackVariable, prevEditConstant_ :Float, i_ :Int) : Void
 	{
-		this.cn = cn_;
+		this.constraint = cn_;
 		this.clvEditPlus = eplus_;
 		this.clvEditMinus = eminus_;
 		this.prevEditConstant = prevEditConstant_;
-		this.i = i_;
+		this.index = i_;
 	}
 
 	public function toString() : String
 	{
-		return "<cn="+this.cn+",ep="+this.clvEditPlus+",em="+this.clvEditMinus+",pec="+this.prevEditConstant+",i="+i+">";
+		return "<cn="+this.constraint+",ep="+this.clvEditPlus+",em="+this.clvEditMinus+",pec="+this.prevEditConstant+",i="+index+">";
 	}
 }

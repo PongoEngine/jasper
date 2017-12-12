@@ -54,6 +54,10 @@ class HashSet<T :(Hashable,Stringable)> implements Stringable
 		return 0;
 	}
 
+	public function clear() : Void
+	{
+	}
+
 	public function each(fn : T -> Void) : Void
 	{
 		for(key in _map.keys()) {
