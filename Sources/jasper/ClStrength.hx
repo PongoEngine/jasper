@@ -24,7 +24,9 @@
 
 package jasper;
 
-class ClStrength
+import jasper.Stringable;
+
+class ClStrength implements Stringable
 {
     public var name :String;
     public var symbolicWeight :ClSymbolicWeight;
@@ -74,21 +76,8 @@ class ClStrength
         return new ClStrength(name, symbolicWeight);
     }
 
-
     public static var REQUIRED = new ClStrength("<Required>", new ClSymbolicWeight(1000, 1000, 1000));
     public static var STRONG = new ClStrength("strong", new ClSymbolicWeight(1, 0, 0));
     public static var MEDIUM = new ClStrength("medium", new ClSymbolicWeight(0, 1, 0));
     public static var WEAK = new ClStrength("weak", new ClSymbolicWeight(0, 0, 1));
 }
-
-
-
-
-
-
-
-
-
-
-
-

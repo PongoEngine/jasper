@@ -24,7 +24,9 @@
 
 package jasper;
 
-class ClSymbolicWeight
+import jasper.Stringable;
+
+class ClSymbolicWeight implements Stringable
 {
     public var _w1 :Float;
     public var _w2 :Float;
