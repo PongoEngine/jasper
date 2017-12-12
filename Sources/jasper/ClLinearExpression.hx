@@ -27,10 +27,10 @@ package jasper;
 import jasper.variable.ClAbstractVariable;
 import jasper.variable.ClVariable;
 import jasper.Hashtable;
-import jasper.Hashable;
 import jasper.error.ExCLNonlinearExpression;
 import jasper.error.ExCLInternalError;
 import jasper.Stringable;
+import jasper.solver.ClTableau;
 
 using jasper.Util;
 
@@ -144,7 +144,7 @@ class ClLinearExpression implements Stringable
 		return expr.minusExpression(this);
 	}
 
-	public function addExpression(expr :ClLinearExpression, n :Float, ?subject, ?solver) : ClLinearExpression
+	public function addExpression(expr :ClLinearExpression, n :Float, ?subject :ClAbstractVariable, ?solver :ClTableau) : ClLinearExpression
 	{
 		this.incrementConstant(n * expr.constant);
 		var that = this;
@@ -156,7 +156,7 @@ class ClLinearExpression implements Stringable
 		return this;
 	}
 
-	public function addVariable(v :ClAbstractVariable, c :Float, ?subject, ?solver) : ClLinearExpression
+	public function addVariable(v :ClAbstractVariable, c :Float, ?subject :ClAbstractVariable, ?solver :ClTableau) : ClLinearExpression
 	{
 		var coeff = this.terms.get(v);
 
@@ -164,7 +164,7 @@ class ClLinearExpression implements Stringable
 			var new_coefficient = coeff + c;
 			if (new_coefficient.approx(0.0)) {
 				if (solver != null) {
-					// solver.noteRemovedVariable(v, subject);
+					solver.noteRemovedVariable(v, subject);
 				}
 				this.terms.remove(v);
 			} 
@@ -176,7 +176,7 @@ class ClLinearExpression implements Stringable
 			if (!c.approx(0.0)) {
 				this.terms.put(v, c);
 				if (solver != null) {
-					// solver.noteAddedVariable(v, subject);
+					solver.noteAddedVariable(v, subject);
 				}
 			}
 		}
@@ -206,7 +206,7 @@ class ClLinearExpression implements Stringable
 		return val;
 	}
 
-	public function substituteOut(outvar :ClAbstractVariable, expr :ClLinearExpression, subject :ClAbstractVariable, solver /*ClTableau*/) : Void
+	public function substituteOut(outvar :ClAbstractVariable, expr :ClLinearExpression, subject :ClAbstractVariable, solver :ClTableau) : Void
 	{
 		var that = this;
 		var multiplier = this.terms.remove(outvar);

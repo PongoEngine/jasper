@@ -31,31 +31,54 @@ class ClAbstractVariable implements Hashable implements Stringable
 {
 	public var hashcode (default, null) :Int;
 
+	/**
+	 *  [Description]
+	 */
 	public function new() : Void
 	{
 		this.hashcode = ClAbstractVariable.iVariableNumber++;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isDummy() :Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isExternal() :Bool
 	{
 		throw "abstract isExternal";
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isPivotable() :Bool
 	{
 		throw "abstract isPivotable";
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isRestricted() :Bool
 	{
 		throw "abstract isRestricted";
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function toString() : String
 	{
 		return "ABSTRACT[" + this.hashcode + "]";

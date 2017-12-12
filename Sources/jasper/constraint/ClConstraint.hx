@@ -28,6 +28,7 @@ import jasper.Hashable;
 import jasper.ClStrength;
 import jasper.error.ExCLTooDifficult;
 import jasper.Stringable;
+import jasper.solver.ClSimplexSolver;
 
 class ClConstraint implements Hashable implements Stringable
 {
@@ -83,12 +84,12 @@ class ClConstraint implements Hashable implements Stringable
 		}
 	}
 
-	public function addedTo(solver /*ClSimplexSolver*/) : Void
+	public function addedTo(solver :ClSimplexSolver) : Void
 	{
 		++this.timesAdded;
 	}
 
-	public function removedFrom(solver /*ClSimplexSolver*/) : Void
+	public function removedFrom(solver :ClSimplexSolver) : Void
 	{
 		--this.timesAdded;
 	}

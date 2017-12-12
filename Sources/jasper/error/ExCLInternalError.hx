@@ -26,12 +26,21 @@ package jasper.error;
 
 class ExCLInternalError extends ExCLError
 {
+
+    /**
+     *  [Description]
+     *  @param desc - 
+     */
     public function new(desc :String) : Void
     {
     	super();
     	this._desc = desc;
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     override public function description() : String
     {
         return "(ExCLInternalError) " + _desc;

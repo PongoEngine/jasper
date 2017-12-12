@@ -26,11 +26,18 @@ package jasper.error;
 
 class ExCLConstraintNotFound extends ExCLError
 {
+    /**
+     *  [Description]
+     */
     public function new() : Void
     {
     	super();
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     override public function description() : String
     {
         return "(ExCLConstraintNotFound) Tried to remove a constraint never added to the tableu";

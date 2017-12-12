@@ -26,31 +26,54 @@ package jasper.variable;
 
 class ClDummyVariable extends ClAbstractVariable
 {
+	/**
+	 *  [Description]
+	 */
 	public function new() : Void
 	{
 		super();
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isDummy() :Bool
 	{
 		return true;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isExternal() :Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isPivotable() :Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isRestricted() :Bool
 	{
 		return true;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	override public function toString() : String
 	{
 		return "[" + this.hashcode + ":dummy]";

@@ -28,15 +28,26 @@ import jasper.Stringable;
 
 class ExCLError implements Stringable
 {
+    /**
+     *  [Description]
+     */
     public function new() : Void
     {
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     public function description() : String
     {
         return "(ExCLError) An error has occured in CL";
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     public function toString() : String
     {
         return this.description();

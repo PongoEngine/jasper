@@ -29,33 +29,64 @@ import jasper.Stringable;
 
 class Hashtable<K :Hashable,V> implements Stringable
 {
+	/**
+	 *  [Description]
+	 */
 	public function new() : Void
 	{
 		_map = new Map<K, V>();
+		_length = 0;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param key - 
+	 *  @return V
+	 */
 	public function get(key :K) : V
 	{
 		return _map.get(key);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param key - 
+	 *  @param value - 
+	 */
 	public function put(key :K, value :V) : Void
 	{
+		if(!_map.exists(key)) ++_length;
+		
 		return _map.set(key, value);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param key - 
+	 *  @return V
+	 */
 	public function remove(key :K) : V
 	{
+		if(_map.exists(key)) --_length;
+
 		var val = _map.get(key);
 		_map.remove(key);
 		return val;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Int
+	 */
 	public function size() : Int
 	{
-		return 0;
+		return _length;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param fn - 
+	 */
 	public function each(fn : K -> V -> Void) : Void
 	{
 		for(key in _map.keys()) {
@@ -63,6 +94,10 @@ class Hashtable<K :Hashable,V> implements Stringable
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Hashtable<K,V>
+	 */
 	public function clone() : Hashtable<K,V>
 	{
 		var clone = new Hashtable<K,V>();
@@ -74,6 +109,10 @@ class Hashtable<K :Hashable,V> implements Stringable
 		return clone;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function toString() : String
 	{
 		var answer = "";
@@ -93,4 +132,5 @@ class Hashtable<K :Hashable,V> implements Stringable
 	}
 
 	private var _map :Map<K, V>;
+	private var _length :Int;
 }

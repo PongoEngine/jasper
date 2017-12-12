@@ -24,11 +24,16 @@
 
 package jasper;
 
-import jasper.Hashable;
 import jasper.error.ExCLInternalError;
 
 class Util
 {
+	/**
+	 *  [Description]
+	 *  @param a - 
+	 *  @param b - 
+	 *  @return Bool
+	 */
 	public static function approx(a :Float, b :Float) :Bool
 	{
 		var epsilon = 1.0e-8;
@@ -44,6 +49,11 @@ class Util
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @param f - 
+	 *  @param description - 
+	 */
 	public static function Assert(f :Bool, description :String) : Void
 	{
 		if (!f) {

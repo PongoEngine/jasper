@@ -29,35 +29,69 @@ import jasper.Stringable;
 
 class HashSet<T :(Hashable,Stringable)> implements Stringable
 {
+	/**
+	 *  [Description]
+	 */
 	public function new() : Void
 	{
 		_map = new Map<T, T>();
+		_length = 0;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param key - 
+	 *  @return T
+	 */
 	public function get(key :T) : T
 	{
 		return _map.get(key);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param value - 
+	 */
 	public function add(value :T) : Void
 	{
+		if(!_map.exists(value)) ++_length;
+
 		return _map.set(value, value);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param value - 
+	 *  @return Bool
+	 */
 	public function remove(value :T) : Bool
 	{
+		if(_map.exists(value)) --_length;
+
 		return _map.remove(value);
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Int
+	 */
 	public function size() : Int
 	{
-		return 0;
+		return _length;
 	}
 
+	/**
+	 *  [Description]
+	 */
 	public function clear() : Void
 	{
+		_map = new Map<T,T>();
 	}
 
+	/**
+	 *  [Description]
+	 *  @param fn - 
+	 */
 	public function each(fn : T -> Void) : Void
 	{
 		for(key in _map.keys()) {
@@ -65,6 +99,10 @@ class HashSet<T :(Hashable,Stringable)> implements Stringable
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function toString() :String
 	{
 		var answer = size() + " {";
@@ -85,4 +123,5 @@ class HashSet<T :(Hashable,Stringable)> implements Stringable
 	}  
 
 	private var _map :Map<T, T>;
+	private var _length :Int;
 }

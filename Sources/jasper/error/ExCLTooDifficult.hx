@@ -26,11 +26,18 @@ package jasper.error;
 
 class ExCLTooDifficult extends ExCLError
 {
+    /**
+     *  [Description]
+     */
     public function new() : Void
     {
     	super();
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     override public function description() : String
     {
         return "(ExCLTooDifficult) The constraints are too difficult to solve";

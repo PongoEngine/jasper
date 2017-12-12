@@ -26,11 +26,19 @@ package jasper.error;
 
 class ExCLNonlinearExpression extends ExCLError
 {
+
+    /**
+     *  [Description]
+     */
     public function new() : Void
     {
     	super();
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     override public function description() : String
     {
         return "(ExCLNonlinearExpression) The resulting expression would be nonlinear";

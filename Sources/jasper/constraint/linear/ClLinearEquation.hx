@@ -29,22 +29,8 @@ class ClLinearEquation extends ClLinearConstraint
 	public function new(a1, a2, a3, a4) : Void
 	{
 		super(null,null,null);
-	}
 
-	override public function toString() : String 
-	{
-		return super.toString() + " = 0 )";
-	}
-}
-
-	
-
-
-// var ClLinearEquation = new Class({
-//   Extends: ClLinearConstraint,
-
-//   initialize: function(a1, a2, a3, a4) {
-//     if (a1 instanceof ClLinearExpression && !a2 || a2 instanceof ClStrength) {
+		//     if (a1 instanceof ClLinearExpression && !a2 || a2 instanceof ClStrength) {
 //       this.parent(a1, a2, a3);
 //     } else if ((a1 instanceof ClAbstractVariable) &&
 //                (a2 instanceof ClLinearExpression)) {
@@ -81,7 +67,12 @@ class ClLinearEquation extends ClLinearConstraint
 //       throw "Bad initializer to ClLinearEquation";
 //     }
 //     CL.Assert(this._strength instanceof ClStrength, "_strength not set");
-//   },
 
 
-// });
+	}
+
+	override public function toString() : String 
+	{
+		return super.toString() + " = 0 )";
+	}
+}

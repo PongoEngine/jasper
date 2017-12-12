@@ -32,18 +32,32 @@ class ClPoint implements Stringable
     public var x :ClVariable;
     public var y :ClVariable;
 
+    /**
+     *  [Description]
+     *  @param x - 
+     *  @param y - 
+     */
     public function new(x :ClVariable, y :ClVariable) : Void
     {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     *  [Description]
+     *  @param x - 
+     *  @param y - 
+     */
     public function setXY(x :ClVariable, y :ClVariable) : Void
     {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     public function toString() : String
     {
         return "(" + this.x + ", " + this.y + ")";

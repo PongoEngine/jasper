@@ -22,9 +22,9 @@
 // FILE: EDU.Washington.grad.gjb.cassowary
 // package EDU.Washington.grad.gjb.cassowary;
 
-package jasper;
+package jasper.solver;
 
-import jasper.ClTableau;
+import jasper.solver.ClTableau;
 
 import jasper.variable.ClAbstractVariable;
 import jasper.variable.ClObjectiveVariable;
@@ -51,7 +51,7 @@ class ClSimplexSolver extends ClTableau
 	public var slackCounter :Float;
 	public var artificialCounter :Float;
 	public var dummyCounter :Float;
-	public var resolve_pair :Array<Float>;
+	public var resolvePair_ :Array<Float>;
 	public var epsilon :Float;
 	public var fOptimizeAutomatically :Bool;
 	public var fNeedsSolving :Bool;
@@ -262,9 +262,9 @@ class ClSimplexSolver extends ClTableau
 
 	public function resolvePair(x :Float, y :Float) : Void
 	{
-		this.resolve_pair[0] = x;
-		this.resolve_pair[1] = y;
-		this.resolveArray(this.resolve_pair);
+		this.resolvePair_[0] = x;
+		this.resolvePair_[1] = y;
+		this.resolveArray(this.resolvePair_);
 	}
 
 	public function resolve() : Void

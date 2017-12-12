@@ -29,27 +29,8 @@ class ClLinearInequality extends ClLinearConstraint
 	public function new(a1, a2, a3, a4, a5) : Void
 	{
 		super(null,null,null);
-	}
 
-	override public function isInequality() : Bool
-	{
-		return true;
-	}
-
-	override public function toString() : String 
-	{
-		return super.toString() + " >= 0 )";
-	}
-}
-
-	
-
-
-// var ClLinearInequality = new Class({
-//   Extends: ClLinearConstraint,
-
-//   initialize: function(a1, a2, a3, a4, a5) {
-//     if (a1 instanceof ClLinearExpression &&
+		//     if (a1 instanceof ClLinearExpression &&
 //         a3 instanceof ClAbstractVariable) {
 //       var cle = a1, op = a2, clv = a3, strength = a4, weight = a5;
 //       this.parent(cle.clone(), strength, weight);
@@ -73,4 +54,15 @@ class ClLinearInequality extends ClLinearConstraint
 //     } else {
 //       throw new ExCLInternalError("Invalid operator in ClLinearInequality constructor");
 //     }
-//   },
+	}
+
+	override public function isInequality() : Bool
+	{
+		return true;
+	}
+
+	override public function toString() : String 
+	{
+		return super.toString() + " >= 0 )";
+	}
+}

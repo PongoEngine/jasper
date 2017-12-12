@@ -28,16 +28,30 @@ import jasper.variable.ClVariable;
 
 class ClEditConstraint extends ClEditOrStayConstraint
 {
+	/**
+	 *  [Description]
+	 *  @param clv - 
+	 *  @param strength - 
+	 *  @param weight - 
+	 */
 	public function new(clv :ClVariable, strength :ClStrength, weight :Float) : Void
 	{
 		super(clv, strength, weight);
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isEditConstraint() : Bool
 	{
 		return true;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	override public function toString() : String
 	{
 		return "edit " + super.toString();

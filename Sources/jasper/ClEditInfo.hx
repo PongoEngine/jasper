@@ -36,6 +36,14 @@ class ClEditInfo implements Stringable
 	public var prevEditConstant :Float;
 	public var index (default, null):Int;
 
+	/**
+	 *  [Description]
+	 *  @param cn_ - 
+	 *  @param eplus_ - 
+	 *  @param eminus_ - 
+	 *  @param prevEditConstant_ - 
+	 *  @param i_ - 
+	 */
 	public function new(cn_ :ClConstraint, eplus_ :ClSlackVariable, eminus_ :ClSlackVariable, prevEditConstant_ :Float, i_ :Int) : Void
 	{
 		this.constraint = cn_;
@@ -45,6 +53,10 @@ class ClEditInfo implements Stringable
 		this.index = i_;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function toString() : String
 	{
 		return "<cn="+this.constraint+",ep="+this.clvEditPlus+",em="+this.clvEditMinus+",pec="+this.prevEditConstant+",i="+index+">";

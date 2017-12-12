@@ -26,11 +26,18 @@ package jasper.error;
 
 class ExCLRequiredFailure extends ExCLError
 {
+    /**
+     *  [Description]
+     */
     public function new() : Void
     {
     	super();
     }
 
+    /**
+     *  [Description]
+     *  @return String
+     */
     override public function description() : String
     {
         return "(ExCLRequiredFailure) A required constraint cannot be satisfied";

@@ -29,32 +29,56 @@ class ClVariable extends ClAbstractVariable
 	public var value :Float;
 	public var attachedObject :Dynamic;
 
+	/**
+	 *  [Description]
+	 *  @param value - 
+	 */
 	public function new(value :Float) : Void
 	{
 		super();
 		this.value = value;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isDummy() :Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isExternal() :Bool
 	{
 		return true;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isPivotable() :Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	override public inline function isRestricted() :Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	override public function toString() : String
 	{
 		return "[" + this.hashcode + ":" + this.value + "]";

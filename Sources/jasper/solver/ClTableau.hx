@@ -22,7 +22,7 @@
 // FILE: EDU.Washington.grad.gjb.cassowary
 // package EDU.Washington.grad.gjb.cassowary;
 
-package jasper;
+package jasper.solver;
 
 import jasper.Hashtable;
 import jasper.Stringable;
