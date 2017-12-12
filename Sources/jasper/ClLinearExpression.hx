@@ -206,16 +206,16 @@ class ClLinearExpression implements Stringable
 							case TInst(a,b): 
 								(a.toString() == "jasper.ClLinearExpression")
 									? macro $self.__divideExpression__($float_or_expression)
-									: throw "times class err";
+									: throw "divide class err";
 							case _:
-								throw "times class err";
+								throw "divide class err";
 						}
 					}
 					case CInt(val): macro $self.__divideNumber__($float_or_expression);
 					case CFloat(val): macro $self.__divideNumber__($float_or_expression);
-					case _: throw "times class err";
+					case _: throw "divide class err";
 				}
-			case _: throw "times class err";
+			case _: throw "divide class err";
 		}
 	}
 
