@@ -39,7 +39,12 @@ class ClConstraint implements Hashable implements Stringable
 	public var timesAdded (default, null):Int;
 	public var attachedObject :Dynamic;
 
-    public function new(strength :ClStrength, weight :Null<Float>) : Void
+    /**
+     *  [Description]
+     *  @param strength - 
+     *  @param weight - 
+     */
+    public function new(strength :ClStrength, weight :Float) : Void
     {
     	this.hashcode = ClConstraint.iConstraintNumber++;
 
@@ -49,31 +54,55 @@ class ClConstraint implements Hashable implements Stringable
     	this.attachedObject = null;
     }
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isEditConstraint() : Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isInequality() : Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isRequired() : Bool
 	{
 		return this.strength.isRequired();
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public function isStayConstraint() : Bool
 	{
 		return false;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return ClLinearExpression
+	 */
 	public function expression_() : ClLinearExpression
 	{
 		throw "err";
 	}
 
+	/**
+	 *  [Description]
+	 *  @param strength - 
+	 */
 	public function changeStrength(strength :ClStrength) : Void
 	{
 		if (this.timesAdded == 0) {
@@ -84,16 +113,28 @@ class ClConstraint implements Hashable implements Stringable
 		}
 	}
 
+	/**
+	 *  [Description]
+	 *  @param solver - 
+	 */
 	public function addedTo(solver :ClSimplexSolver) : Void
 	{
 		++this.timesAdded;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param solver - 
+	 */
 	public function removedFrom(solver :ClSimplexSolver) : Void
 	{
 		--this.timesAdded;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function toString() : String
 	{
 		return this.strength + ' {' + this.weight + '} (' + this.expression_() +')';

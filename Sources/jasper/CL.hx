@@ -83,7 +83,7 @@ class CL
 
     public static function Divide(e1 :ClLinearExpression, e2 :ClLinearExpression) : ClLinearExpression
     {
-        return e1.divideExpression(e2);
+        return e1.divide(e2);
     }
 
     public static inline var GEQ :Int = 1;

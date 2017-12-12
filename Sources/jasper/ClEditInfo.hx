@@ -38,19 +38,19 @@ class ClEditInfo implements Stringable
 
 	/**
 	 *  [Description]
-	 *  @param cn_ - 
-	 *  @param eplus_ - 
-	 *  @param eminus_ - 
-	 *  @param prevEditConstant_ - 
-	 *  @param i_ - 
+	 *  @param constraint - 
+	 *  @param clvEditPlus - 
+	 *  @param clvEditMinus - 
+	 *  @param prevEditConstant - 
+	 *  @param index - 
 	 */
-	public function new(cn_ :ClConstraint, eplus_ :ClSlackVariable, eminus_ :ClSlackVariable, prevEditConstant_ :Float, i_ :Int) : Void
+	public function new(constraint :ClConstraint, clvEditPlus :ClSlackVariable, clvEditMinus :ClSlackVariable, prevEditConstant :Float, index :Int) : Void
 	{
-		this.constraint = cn_;
-		this.clvEditPlus = eplus_;
-		this.clvEditMinus = eminus_;
-		this.prevEditConstant = prevEditConstant_;
-		this.index = i_;
+		this.constraint = constraint;
+		this.clvEditPlus = clvEditPlus;
+		this.clvEditMinus = clvEditMinus;
+		this.prevEditConstant = prevEditConstant;
+		this.index = index;
 	}
 
 	/**

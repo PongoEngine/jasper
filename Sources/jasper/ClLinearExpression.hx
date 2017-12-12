@@ -32,6 +32,9 @@ import jasper.error.ExCLInternalError;
 import jasper.Stringable;
 import jasper.solver.ClTableau;
 
+import haxe.macro.Expr;
+import haxe.macro.Context;
+
 using jasper.Util;
 
 class ClLinearExpression implements Stringable
@@ -44,106 +47,209 @@ class ClLinearExpression implements Stringable
 		this.constant = constant;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param constant - 
+	 *  @return ClLinearExpression
+	 */
+	public static function initializeFromConstant(constant :Float) : ClLinearExpression
+	{
+		var expr = new ClLinearExpression(constant);
+		expr.terms = new Hashtable<ClAbstractVariable, Float>();
+		return expr;
+	}
+
+	/**
+	 *  [Description]
+	 *  @param clv - 
+	 *  @param value - 
+	 *  @param constant - 
+	 *  @return ClLinearExpression
+	 */
 	public static function initializeFromVariable(clv :ClAbstractVariable, value :Float, constant :Float) : ClLinearExpression
 	{
 		var expr = new ClLinearExpression(constant);
-
 		expr.terms = new Hashtable<ClAbstractVariable, Float>();
 		expr.terms.put(clv, value);
 		return expr;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param constant - 
+	 *  @param terms - 
+	 *  @return ClLinearExpression
+	 */
 	public static function initializeFromHash(constant :Float, terms :Hashtable<ClAbstractVariable, Float>) : ClLinearExpression
 	{
 		var expr = new ClLinearExpression(constant);
-
 		expr.terms = terms.clone();
 		return expr;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param x - 
+	 *  @return ClLinearExpression
+	 */
 	public function multiplyMe(x :Float) : ClLinearExpression
 	{
 		var that = this;
 		this.constant *= x;
-		this.terms.each(function(clv :ClAbstractVariable, coeff :Float) {
+		this.terms.each(function(clv, coeff) {
 			that.terms.put(clv, coeff * x);
 		});
-
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return ClLinearExpression
+	 */
 	public function clone() : ClLinearExpression
 	{
 		return ClLinearExpression.initializeFromHash(this.constant, this.terms);
 	}
 
-	public function timesConstant(constant :Float) : ClLinearExpression
+	/**
+	 *  [Description]
+	 *  @param self - 
+	 *  @param constant_or_expression - 
+	 *  @return Expr
+	 */
+	macro public function times(self:Expr, constant_or_expression :Expr) : Expr
 	{
-		return (this.clone()).multiplyMe(constant);
-	}
-
-	public function timesExpression(expr :ClLinearExpression) : ClLinearExpression
-	{
-		if (this.isConstant()) {
-			return expr.timesConstant(this.constant);
-		} 
-		else if (expr.isConstant()) {
-			return this.timesConstant(expr.constant);
-		} 
-		else {
-			throw new ExCLNonlinearExpression();
+		return switch(constant_or_expression.expr) {
+			case EConst(const):
+				switch const {
+					case CIdent(s): {
+						switch Context.typeof(macro $constant_or_expression)
+						{
+							case TInst(a,b): 
+								(a.toString() == "jasper.ClLinearExpression")
+									? macro $self.__timesExpression__($constant_or_expression)
+									: throw "times class err";
+							case _:
+								throw "times class err";
+						}
+					}
+					case CInt(val): macro $self.__timesConstant__($constant_or_expression);
+					case CFloat(val): macro $self.__timesConstant__($constant_or_expression);
+					case _: throw "times class err";
+				}
+			case _: throw "times class err";
 		}
 	}
 
-	public function plusExpression(expr :ClLinearExpression) : ClLinearExpression
+	/**
+	 *  [Description]
+	 *  @param self - 
+	 *  @param variable_or_expression - 
+	 *  @return Expr
+	 */
+	macro public function plus(self:Expr, variable_or_expression :Expr) : Expr
 	{
-		return this.clone().addExpression(expr, 1.0);
-	}
-
-	public function plusVariable(clv :ClVariable) : ClLinearExpression
-	{
-		return this.clone().addVariable(clv, 1.0);
-	}
-
-	public function minusExpression(expr :ClLinearExpression) : ClLinearExpression
-	{
-		return this.clone().addExpression(expr, -1.0);
-	}
-
-	public function minusVariable(clv :ClVariable) : ClLinearExpression
-	{
-		return this.clone().addVariable(clv, -1.0);
-	}
-
-	public function divideNumber(x :Float) : ClLinearExpression
-	{
-		if (x.approx(0.0)) {
-			throw new ExCLNonlinearExpression();
+		return switch Context.typeof(macro $variable_or_expression) {
+			case TInst(a,b): 
+				if (a.toString() == "jasper.ClLinearExpression") {
+					macro $self.__plusExpression__($variable_or_expression);
+				}
+				else if (a.toString() == "jasper.ClVariable") {
+					macro $self.__plusVariable__($variable_or_expression);
+				}
+				else {
+					throw "plus class err";
+				}
+			case _:
+				throw "plus class err";
 		}
-		return this.timesConstant(1.0 / x);
 	}
 
-	public function divideExpression(expr :ClLinearExpression) : ClLinearExpression
+	/**
+	 *  [Description]
+	 *  @param self - 
+	 *  @param variable_or_expression - 
+	 *  @return Expr
+	 */
+	macro public function minus(self:Expr, variable_or_expression :Expr) : Expr
 	{
-		if (!expr.isConstant()) {
-			throw new ExCLNonlinearExpression();
+		return switch Context.typeof(macro $variable_or_expression) {
+			case TInst(a,b): 
+				if (a.toString() == "jasper.ClLinearExpression") {
+					macro $self.__minusExpression__($variable_or_expression);
+				}
+				else if (a.toString() == "jasper.ClVariable") {
+					macro $self.__minusVariable__($variable_or_expression);
+				}
+				else {
+					throw "minus class err";
+				}
+			case _:
+				throw "minus class err";
 		}
-		return this.timesConstant(1.0 / expr.constant);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param self - 
+	 *  @param float_or_expression - 
+	 *  @return Expr
+	 */
+	macro public function divide(self:Expr, float_or_expression :Expr) : Expr
+	{
+		return switch(float_or_expression.expr) {
+			case EConst(const):
+				switch const {
+					case CIdent(s): {
+						switch Context.typeof(macro $float_or_expression)
+						{
+							case TInst(a,b): 
+								(a.toString() == "jasper.ClLinearExpression")
+									? macro $self.__divideExpression__($float_or_expression)
+									: throw "times class err";
+							case _:
+								throw "times class err";
+						}
+					}
+					case CInt(val): macro $self.__divideNumber__($float_or_expression);
+					case CFloat(val): macro $self.__divideNumber__($float_or_expression);
+					case _: throw "times class err";
+				}
+			case _: throw "times class err";
+		}
+	}
+
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @return ClLinearExpression
+	 */
 	public function divFrom(expr :ClLinearExpression) : ClLinearExpression
 	{
 		if (!this.isConstant() || this.constant.approx(0.0)) {
 			throw new ExCLNonlinearExpression();
 		}
-		return expr.divideNumber(this.constant);
+		return expr.__divideNumber__(this.constant);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @return ClLinearExpression
+	 */
 	public function subtractFrom(expr :ClLinearExpression) : ClLinearExpression
 	{
-		return expr.minusExpression(this);
+		return expr.__minusExpression__(this);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @param n - 
+	 *  @param subject - 
+	 *  @param solver - 
+	 *  @return ClLinearExpression
+	 */
 	public function addExpression(expr :ClLinearExpression, n :Float, ?subject :ClAbstractVariable, ?solver :ClTableau) : ClLinearExpression
 	{
 		this.incrementConstant(n * expr.constant);
@@ -156,6 +262,14 @@ class ClLinearExpression implements Stringable
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param c - 
+	 *  @param subject - 
+	 *  @param solver - 
+	 *  @return ClLinearExpression
+	 */
 	public function addVariable(v :ClAbstractVariable, c :Float, ?subject :ClAbstractVariable, ?solver :ClTableau) : ClLinearExpression
 	{
 		var coeff = this.terms.get(v);
@@ -184,12 +298,22 @@ class ClLinearExpression implements Stringable
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param v - 
+	 *  @param c - 
+	 *  @return ClLinearExpression
+	 */
 	public function setVariable(v :ClAbstractVariable, c :Float) : ClLinearExpression
 	{
 		this.terms.put(v, c);
 		return this;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return ClAbstractVariable
+	 */
 	public function anyPivotableVariable() : ClAbstractVariable
 	{
 		if (this.isConstant()) {
@@ -206,6 +330,13 @@ class ClLinearExpression implements Stringable
 		return val;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param outvar - 
+	 *  @param expr - 
+	 *  @param subject - 
+	 *  @param solver - 
+	 */
 	public function substituteOut(outvar :ClAbstractVariable, expr :ClLinearExpression, subject :ClAbstractVariable, solver :ClTableau) : Void
 	{
 		var that = this;
@@ -231,11 +362,21 @@ class ClLinearExpression implements Stringable
 		});
 	}
 
+	/**
+	 *  [Description]
+	 *  @param oldSubject - 
+	 *  @param newSubject - 
+	 */
 	public function changeSubject(oldSubject :ClAbstractVariable, newSubject :ClAbstractVariable) : Void
 	{
 		this.terms.put(oldSubject, this.newSubject(newSubject));
 	}
 
+	/**
+	 *  [Description]
+	 *  @param subject - 
+	 *  @return Float
+	 */
 	public function newSubject(subject :ClAbstractVariable) : Float
 	{
 		var reciprocal = 1.0 / this.terms.remove(subject);
@@ -243,6 +384,11 @@ class ClLinearExpression implements Stringable
 		return reciprocal;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param clv - 
+	 *  @return Float
+	 */
 	public function coefficientFor(clv :ClAbstractVariable) : Float
 	{
 		var val = this.terms.get(clv);
@@ -251,16 +397,28 @@ class ClLinearExpression implements Stringable
 			: val;
 	}
 
+	/**
+	 *  [Description]
+	 *  @param c - 
+	 */
 	public inline function incrementConstant(c :Float) : Void
 	{
 		this.constant += c;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return Bool
+	 */
 	public inline function isConstant() : Bool
 	{
 		return this.terms.size() == 0;
 	}
 
+	/**
+	 *  [Description]
+	 *  @return String
+	 */
 	public function toString() : String
 	{
 		var bstr = ''; // answer
@@ -287,24 +445,146 @@ class ClLinearExpression implements Stringable
 		return bstr;
 	}
 	
+	/**
+	 *  [Description]
+	 *  @param e1 - 
+	 *  @param e2 - 
+	 *  @return ClLinearExpression
+	 */
 	public function Plus(e1 :ClLinearExpression, e2 :ClLinearExpression) : ClLinearExpression
 	{
-		return e1.plusExpression(e2);
+		return e1.__plusExpression__(e2);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param e1 - 
+	 *  @param e2 - 
+	 *  @return ClLinearExpression
+	 */
 	public function Minus(e1 :ClLinearExpression, e2 :ClLinearExpression) : ClLinearExpression
 	{
-		return e1.minusExpression(e2);
+		return e1.__minusExpression__(e2);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param e1 - 
+	 *  @param e2 - 
+	 *  @return ClLinearExpression
+	 */
 	public function Times(e1 :ClLinearExpression, e2 :ClLinearExpression) : ClLinearExpression
 	{
-		return e1.timesExpression(e2);
+		return e1.__timesExpression__(e2);
 	}
 
+	/**
+	 *  [Description]
+	 *  @param e1 - 
+	 *  @param e2 - 
+	 *  @return ClLinearExpression
+	 */
 	public function Divide(e1 :ClLinearExpression, e2 :ClLinearExpression) : ClLinearExpression
 	{
-		return e1.divideExpression(e2);
+		return e1.__divideExpression__(e2);
+	}
+
+	//---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
+
+	/**
+	 *  [Description]
+	 *  @param constant - 
+	 *  @return ClLinearExpression
+	 */
+	public function __timesConstant__(constant :Float) : ClLinearExpression
+	{
+		return this.clone().multiplyMe(constant);
+	}
+
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @return ClLinearExpression
+	 */
+	public function __timesExpression__(expr :ClLinearExpression) : ClLinearExpression
+	{
+		if (this.isConstant()) {
+			return expr.__timesConstant__(this.constant);
+		} 
+		else if (expr.isConstant()) {
+			return this.__timesConstant__(expr.constant);
+		} 
+		else {
+			throw new ExCLNonlinearExpression();
+		}
+	}
+
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @return ClLinearExpression
+	 */
+	public function __plusExpression__(expr :ClLinearExpression) : ClLinearExpression
+	{
+		return this.clone().addExpression(expr, 1.0);
+	}
+
+	/**
+	 *  [Description]
+	 *  @param clv - 
+	 *  @return ClLinearExpression
+	 */
+	public function __plusVariable__(clv :ClVariable) : ClLinearExpression
+	{
+		return this.clone().addVariable(clv, 1.0);
+	}
+
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @return ClLinearExpression
+	 */
+	public function __minusExpression__(expr :ClLinearExpression) : ClLinearExpression
+	{
+		return this.clone().addExpression(expr, -1.0);
+	}
+
+	/**
+	 *  [Description]
+	 *  @param clv - 
+	 *  @return ClLinearExpression
+	 */
+	public function __minusVariable__(clv :ClVariable) : ClLinearExpression
+	{
+		return this.clone().addVariable(clv, -1.0);
+	}
+
+	/**
+	 *  [Description]
+	 *  @param x - 
+	 *  @return ClLinearExpression
+	 */
+	public function __divideNumber__(x :Float) : ClLinearExpression
+	{
+		if (x.approx(0.0)) {
+			throw new ExCLNonlinearExpression();
+		}
+		return this.__timesConstant__(1.0 / x);
+	}
+
+	/**
+	 *  [Description]
+	 *  @param expr - 
+	 *  @return ClLinearExpression
+	 */
+	public function __divideExpression__(expr :ClLinearExpression) : ClLinearExpression
+	{
+		if (!expr.isConstant()) {
+			throw new ExCLNonlinearExpression();
+		}
+		return this.__timesConstant__(1.0 / expr.constant);
 	}
 }
 
