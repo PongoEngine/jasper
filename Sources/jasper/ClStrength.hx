@@ -28,56 +28,52 @@ import jasper.Stringable;
 
 class ClStrength implements Stringable
 {
-    public var name :String;
-    public var symbolicWeight :ClSymbolicWeight;
+    private var _name :String;
+    private var _symbolicWeight :ClSymbolicWeight;
 
-    /**
-     *  [Description]
-     *  @param name - 
-     *  @param symbolicWeight - 
-     */
-    public function new(name :String, symbolicWeight :ClSymbolicWeight) : Void
+    public function new(name :String, symbolicWeight /*:ClSymbolicWeight*/:Dynamic, ?w2 :Float, ?w3 :Float) : Void
     {
-        this.name = name;
-        this.symbolicWeight = symbolicWeight;
+        this._name = name;
+        if (Std.is(symbolicWeight, ClSymbolicWeight)) {
+            this._symbolicWeight = symbolicWeight;
+        }
+        else {
+            this._symbolicWeight = new ClSymbolicWeight(symbolicWeight, w2, w3);
+        }
     }
 
-    /**
-     *  [Description]
-     *  @return Bool
-     */
     public function isRequired() : Bool
     {
-        return (this == ClStrength.REQUIRED);
+        return (this == ClStrength.required);
     }
 
-    /**
-     *  [Description]
-     *  @return String
-     */
     public function toString() : String
     {
-        return this.name + (!this.isRequired()
-            ? (":" + this.symbolicWeight) 
-            : "");
+        return this._name + (!this.isRequired()? (":" + this.symbolicWeight()) : "");
     }
 
-    /**
-     *  [Description]
-     *  @param name - 
-     *  @param w1 - 
-     *  @param w2 - 
-     *  @param w3 - 
-     *  @return ClStrength
-     */
-    public static function fromWeights(name :String, w1 :Float, w2 :Float, w3 :Float) : ClStrength
+    public function symbolicWeight() : ClSymbolicWeight
     {
-        var symbolicWeight :ClSymbolicWeight = new ClSymbolicWeight(w1, w2, w3);
-        return new ClStrength(name, symbolicWeight);
+        return this._symbolicWeight;
     }
 
-    public static var REQUIRED = new ClStrength("<Required>", new ClSymbolicWeight(1000, 1000, 1000));
-    public static var STRONG = new ClStrength("strong", new ClSymbolicWeight(1, 0, 0));
-    public static var MEDIUM = new ClStrength("medium", new ClSymbolicWeight(0, 1, 0));
-    public static var WEAK = new ClStrength("weak", new ClSymbolicWeight(0, 0, 1));
+    public function name() : String
+    {
+        return this._name;
+    }
+
+    public function set_name(name :String) : Void 
+    {
+        this._name = name;
+    }
+
+    public function set_symbolicWeight(symbolicWeight :ClSymbolicWeight) : Void
+    {
+        this._symbolicWeight = symbolicWeight;
+    }
+
+    public static var required = new ClStrength("<Required>", new ClSymbolicWeight(1000, 1000, 1000));
+    public static var strong = new ClStrength("strong", new ClSymbolicWeight(1, 0, 0));
+    public static var medium = new ClStrength("medium", new ClSymbolicWeight(0, 1, 0));
+    public static var weak = new ClStrength("weak", new ClSymbolicWeight(0, 0, 1));
 }

@@ -41,6 +41,6 @@ class ClEditOrStayConstraint extends ClConstraint
 	{
 		super(strength, weight);
 		this.variable = clv;
-		this.expression = ClLinearExpression.initializeFromVariable(this.variable, -1.0, this.variable.value);
+		this.expression = ClLinearExpression.initializeFromVariable(this.variable, -1.0, this.variable.value_);
 	}
 }

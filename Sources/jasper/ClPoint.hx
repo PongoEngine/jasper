@@ -29,35 +29,61 @@ import jasper.Stringable;
 
 class ClPoint implements Stringable
 {
-    public var x :ClVariable;
-    public var y :ClVariable;
+    private var x :ClVariable;
+    private var y :ClVariable;
 
-    /**
-     *  [Description]
-     *  @param x - 
-     *  @param y - 
-     */
-    public function new(x :ClVariable, y :ClVariable) : Void
+    public function new(x :Dynamic, y :Dynamic, ?suffix :String) : Void
     {
-        this.x = x;
-        this.y = y;
+        if (Std.is(x, ClVariable)) {
+            this.x = x;
+        } 
+        else {
+            if (suffix != null) {
+                this.x = new ClVariable("x"+suffix, x);
+            } else {
+                this.x = new ClVariable(x);
+            }
+        }
+
+        if (Std.is(y, ClVariable)) {
+            this.y = y;
+        } else {
+            if (suffix != null) {
+                this.y = new ClVariable("y"+suffix, y);
+            } else {
+                this.y = new ClVariable(y);
+            }
+        }
     }
 
-    /**
-     *  [Description]
-     *  @param x - 
-     *  @param y - 
-     */
-    public function setXY(x :ClVariable, y :ClVariable) : Void
+    public function SetXY(x, y) : Void
     {
-        this.x = x;
-        this.y = y;
+        if (Std.is(x, ClVariable)) {
+            this.x = x;
+        } else {
+            this.x.set_value(x);
+        }
+        if (Std.is(y, ClVariable)) {
+            this.y = y;
+        } else {
+            this.y.set_value(y);
+        }
     }
 
-    /**
-     *  [Description]
-     *  @return String
-     */
+    public function X() :ClVariable { return this.x; }
+
+    public function Y() :ClVariable { return this.y; }
+
+    public function Xvalue() : Dynamic
+    {
+        return this.x.value();
+    }
+
+    public function Yvalue() : Dynamic
+    {
+        return this.y.value();
+    }
+
     public function toString() : String
     {
         return "(" + this.x + ", " + this.y + ")";

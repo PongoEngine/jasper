@@ -381,11 +381,11 @@ class ClSimplexSolver extends ClTableau
 	public function setEditedValue(v :ClVariable, n :Float) : ClSimplexSolver
 	{
 		if (!this.fContainsVariable(v)) {
-			v.value = n;
+			v.value_ = n;
 			return this;
 		}
-		if (!Util.approx(n, v.value)) {
-			this.addEditVar(v, ClStrength.STRONG);
+		if (!Util.approx(n, v.value_)) {
+			this.addEditVar(v, ClStrength.strong);
 			this.beginEdit();
 			try {
 				this.suggestValue(v, n);
@@ -417,7 +417,7 @@ class ClSimplexSolver extends ClTableau
 	{
 		if (!this.fContainsVariable(v)) {
 			try {
-				this.addStay(v, ClStrength.WEAK, 1.0);
+				this.addStay(v, ClStrength.weak, 1.0);
 			}
 			catch (e :ExCLRequiredFailure){
 				throw new ExCLInternalError("Error in addVar -- required failure is impossible");

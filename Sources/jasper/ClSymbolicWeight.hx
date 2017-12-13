@@ -28,169 +28,113 @@ import jasper.Stringable;
 
 class ClSymbolicWeight implements Stringable
 {
-    public var _w1 :Float;
-    public var _w2 :Float;
-    public var _w3 :Float;
+    private var _values :Array<Float>;
 
-    /**
-     *  [Description]
-     *  @param w1 - 
-     *  @param w2 - 
-     *  @param w3 - 
-     */
     public inline function new(w1 :Float, w2 :Float, w3 :Float) : Void
     {
-        this._w1 = w1;
-        this._w2 = w2;
-        this._w3 = w3;
+        this._values = [w1, w2, w3];
     }
 
-    /**
-     *  [Description]
-     *  @param n - 
-     *  @return ClSymbolicWeight
-     */
-    @:extern public inline function times(n :Float) : ClSymbolicWeight
+    public function times(n :Float) : ClSymbolicWeight
     {
-        return new ClSymbolicWeight(_w1*n, _w2*n, _w3*n);
+        return new ClSymbolicWeight(this._values[0]*n,
+            this._values[1]*n,
+            this._values[2]*n);
     }
 
-    /**
-     *  [Description]
-     *  @param n - 
-     *  @return ClSymbolicWeight
-     */
-    @:extern public inline function divideBy(n :Float) : ClSymbolicWeight
+    public function divideBy(n : Float) : ClSymbolicWeight
     {
-        return new ClSymbolicWeight(_w1/n, _w2/n, _w3/n);
+        return new ClSymbolicWeight(this._values[0]/n,
+            this._values[1]/n,
+            this._values[2]/n);
     }
 
-    /**
-     *  [Description]
-     *  @param c - 
-     *  @return ClSymbolicWeight
-     */
-    @:extern public inline function add(c :ClSymbolicWeight) : ClSymbolicWeight
+    public function add(c :ClSymbolicWeight) : ClSymbolicWeight 
     {
-        return new ClSymbolicWeight(_w1+c._w1, _w2+c._w2, _w3+c._w3);
+        return new ClSymbolicWeight(this._values[0]+c._values[0],
+            this._values[1]+c._values[1],
+            this._values[2]+c._values[2]);
     }
 
-    /**
-     *  [Description]
-     *  @param c - 
-     *  @return ClSymbolicWeight
-     */
-    @:extern public inline function subtract(c :ClSymbolicWeight) : ClSymbolicWeight
+    public function subtract(c :ClSymbolicWeight) : ClSymbolicWeight
     {
-        return new ClSymbolicWeight(_w1-c._w1, _w2-c._w2, _w3-c._w3);
+        return new ClSymbolicWeight(this._values[0]-c._values[0],
+            this._values[1]-c._values[1],
+            this._values[2]-c._values[2]);
     }
 
-    /**
-     *  [Description]
-     *  @param c - 
-     *  @return Bool
-     */
-    @:extern public inline function lessThan(c :ClSymbolicWeight) : Bool
+    public function lessThan(c :ClSymbolicWeight) : Bool
     {
-        if(this._w1 < c._w1) return true;
-        if(this._w1 > c._w1) return false;
-
-        if(this._w2 < c._w2) return true;
-        if(this._w2 > c._w2) return false;
-
-        if(this._w3 < c._w3) return true;
-        if(this._w3 > c._w3) return false;
-
-        return  false; // equal
+        for (i in 0...this._values.length) {
+            if (this._values[i] < c._values[i]) {
+                return true;
+            } else if (this._values[i] > c._values[i]) {
+                return false;
+            }
+        }
+        return false; // equal
     }
 
-    /**
-     *  [Description]
-     *  @param c - 
-     *  @return Bool
-     */
-    @:extern public inline function lessThanOrEqual(c :ClSymbolicWeight) : Bool
+    public function lessThanOrEqual(c :ClSymbolicWeight) : Bool
     {
-        if(this._w1 < c._w1) return true;
-        if(this._w1 > c._w1) return false;
-
-        if(this._w2 < c._w2) return true;
-        if(this._w2 > c._w2) return false;
-
-        if(this._w3 < c._w3) return true;
-        if(this._w3 > c._w3) return false;
-
-        return  true; // equal
+        for (i in 0...this._values.length) {
+            if (this._values[i] < c._values[i]) {
+                return true;
+            } else if (this._values[i] > c._values[i]) {
+                return false;
+            }
+        }
+        return true; // equal
     }
 
-    /**
-     *  [Description]
-     *  @param c - 
-     *  @return Bool
-     */
-    @:extern public inline function equal(c :ClSymbolicWeight) : Bool
+    public function equal(c :ClSymbolicWeight) : Bool
     {
-        return (this._w1 == c._w1) && (this._w2 == c._w2) && (this._w3 == c._w3);
+        for (i in 0...this._values.length) {
+            if (this._values[i] != c._values[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    /**
-     *  [Description]
-     *  @param c - 
-     *  @return Bool
-     */
-    @:extern public inline function greaterThan(c :ClSymbolicWeight) : Bool
+    public function greaterThan(c :ClSymbolicWeight) : Bool
     {
         return !this.lessThanOrEqual(c);
     }
 
-    /**
-     *  [Description]
-     *  @param c - 
-     *  @return Bool
-     */
-    @:extern public inline function greaterThanOrEqual(c :ClSymbolicWeight) : Bool
+    public function greaterThanOrEqual(c :ClSymbolicWeight) : Bool
     {
         return !this.lessThan(c);
     }
 
-    /**
-     *  [Description]
-     *  @return Bool
-     */
-    @:extern public inline function isNegative() : Bool
+    public function isNegative() : Bool
     {
-        return this.lessThan(new ClSymbolicWeight(0,0,0));
+        return this.lessThan(ClSymbolicWeight.clsZero);
     }
 
-    /**
-     *  [Description]
-     *  @return Float
-     */
-    @:extern public inline function toDouble() : Float
+    public function toDouble() : Float
     {
-        var sum  :Float = 0;
-        var factor :Int = 1;
+        var sum :Float =  0;
+        var factor = 1;
         var multiplier = 1000;
 
-        sum += this._w1 * factor;
-        factor *= multiplier;
-        sum += this._w2 * factor;
-        factor *= multiplier;
-        sum += this._w3 * factor;
-        factor *= multiplier;
-
+        var i = this._values.length - 1;
+        while (i >= 0) {
+            sum += this._values[i] * factor;
+            factor *= multiplier;
+            --i;
+        }
         return sum;
     }
 
-    /**
-     *  [Description]
-     *  @return String
-     */
-    @:extern public inline function toString() : String
+    public function toString() : String
     {
-        return '[' + this._w1 + ','
-            + this._w2 + ','
-            + this._w3 + ']';
-    }    
+        return '[' + this._values[0] + ','
+            + this._values[1] + ','
+            + this._values[2] + ']';
+    }
+  
+    public function cLevels() : Int { return 3; }
 
+    public static var clsZero = new ClSymbolicWeight(0, 0, 0);
 }

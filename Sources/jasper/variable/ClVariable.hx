@@ -26,18 +26,26 @@ package jasper.variable;
 
 class ClVariable extends ClAbstractVariable
 {
-	public var value :Float;
+	public var value_ :Float;
 	public var attachedObject :Dynamic;
 
 	/**
 	 *  [Description]
 	 *  @param value - 
 	 */
-	public function new(value :Float) : Void
+	public function new(value :Dynamic, ?a :Dynamic) : Void
 	{
 		super();
-		this.value = value;
+		this.value_ = value;
 	}
+
+	public function value() : Dynamic
+	{
+		return null;
+	}
+
+	public function set_value(x :Dynamic) : Void
+	{}
 
 	/**
 	 *  [Description]
@@ -81,7 +89,7 @@ class ClVariable extends ClAbstractVariable
 	 */
 	override public function toString() : String
 	{
-		return "[" + this.hashcode + ":" + this.value + "]";
+		return "[" + this.hashcode + ":" + this.value_ + "]";
 	}
 
 	/**
@@ -91,6 +99,6 @@ class ClVariable extends ClAbstractVariable
 	 */
 	override public function changeValue(value :Float) : Void
 	{
-		this.value = value;
+		this.value_ = value;
 	}
 }
