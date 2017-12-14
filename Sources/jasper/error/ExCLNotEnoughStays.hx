@@ -26,18 +26,12 @@ package jasper.error;
 
 class ExCLNotEnoughStays extends ExCLError
 {
-    /**
-     *  [Description]
-     */
+
     public function new() : Void
     {
     	super();
     }
 
-    /**
-     *  [Description]
-     *  @return String
-     */
     override public function description() : String
     {
         return "(ExCLNotEnoughStays) There are not enough stays to give specific values to every variable";
