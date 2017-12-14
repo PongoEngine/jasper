@@ -32,7 +32,7 @@ import jasper.solver.ClSimplexSolver;
 
 class ClConstraint implements Hashable implements Stringable
 {
-    public var hashcode (default, null) :Int;
+    public var hash_code (default, null) :Int;
 
 	public var strength :ClStrength;
 	public var weight :Float;
@@ -46,7 +46,7 @@ class ClConstraint implements Hashable implements Stringable
      */
     public function new(strength :ClStrength, weight :Float) : Void
     {
-    	this.hashcode = ClConstraint.iConstraintNumber++;
+    	this.hash_code = ClConstraint.iConstraintNumber++;
 
     	this.strength = strength;
     	this.weight = weight;

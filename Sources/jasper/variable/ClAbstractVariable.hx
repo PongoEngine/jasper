@@ -29,64 +29,60 @@ import jasper.Stringable;
 
 class ClAbstractVariable implements Hashable implements Stringable
 {
-	public var hashcode (default, null) :Int;
+	public var hash_code (default, null) :Int;
 
-	/**
-	 *  [Description]
-	 */
-	public function new() : Void
+	private var _name :String;
+
+	public function new(?a1 :Dynamic, ?a2 :Dynamic) : Void
 	{
-		this.hashcode = ClAbstractVariable.iVariableNumber++;
+		this.hash_code = ClAbstractVariable.iVariableNumber++;
+		if (Std.is(a1, String) || (a1 == null)) {
+			this._name = (a1 != null)
+				? a1
+				: "v" + this.hash_code;
+		} else {
+			var varnumber = a1, prefix = a2;
+			this._name = prefix + varnumber;
+		}
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	public function isDummy() :Bool
+	public function hashCode() : Int
 	{
+		return this.hash_code;
+	}
+
+	public function name() : String
+	{
+		return this._name;
+	}
+
+	public function setName(name :String) : Void
+	{
+		this._name = name;
+	}
+
+	public function isDummy() {
 		return false;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	public function isExternal() :Bool
+	public function isExternal() : Bool
 	{
 		throw "abstract isExternal";
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	public function isPivotable() :Bool
+	public function isPivotable() : Bool
 	{
 		throw "abstract isPivotable";
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	public function isRestricted() :Bool
+	public function isRestricted() : Bool
 	{
 		throw "abstract isRestricted";
 	}
 
-	/**
-	 *  [Description]
-	 *  @return String
-	 */
 	public function toString() : String
 	{
-		return "ABSTRACT[" + this.hashcode + "]";
-	}
-
-	public function changeValue(value :Float) : Void
-	{
-		throw "err";
+		return "ABSTRACT[" + this._name + "]";
 	}
 
 	public static var iVariableNumber :Int = 1;

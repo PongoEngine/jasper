@@ -30,35 +30,62 @@ import jasper.Stringable;
 
 class ClEditInfo implements Stringable
 {
-	public var constraint (default, null):ClConstraint;
-	public var clvEditPlus (default, null):ClSlackVariable;
-	public var clvEditMinus (default, null):ClSlackVariable;
-	public var prevEditConstant :Float;
-	public var index (default, null):Int;
+	private var cn :ClConstraint;
+	private var clvEditPlus :ClSlackVariable;
+	private var clvEditMinus :ClSlackVariable;
+	private var prevEditConstant :Float;
+	private var i :Int;
 
-	/**
-	 *  [Description]
-	 *  @param constraint - 
-	 *  @param clvEditPlus - 
-	 *  @param clvEditMinus - 
-	 *  @param prevEditConstant - 
-	 *  @param index - 
-	 */
-	public function new(constraint :ClConstraint, clvEditPlus :ClSlackVariable, clvEditMinus :ClSlackVariable, prevEditConstant :Float, index :Int) : Void
+
+	public function new(cn_ :ClConstraint, eplus_ :ClSlackVariable, eminus_ :ClSlackVariable, prevEditConstant_ :Float, i_ :Int) : Void
 	{
-		this.constraint = constraint;
-		this.clvEditPlus = clvEditPlus;
-		this.clvEditMinus = clvEditMinus;
-		this.prevEditConstant = prevEditConstant;
-		this.index = index;
+		this.cn = cn_;
+		this.clvEditPlus = eplus_;
+		this.clvEditMinus = eminus_;
+		this.prevEditConstant = prevEditConstant_;
+		this.i = i_;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return String
-	 */
+	public function Index() : Int
+	{
+		return this.i;
+	}
+
+	public function Constraint() : ClConstraint
+	{
+		return this.cn;
+	}
+
+	public function ClvEditPlus() : ClSlackVariable
+	{
+		return this.clvEditPlus;
+	}
+
+	public function ClvEditMinus() : ClSlackVariable
+	{
+		return this.clvEditMinus;
+	}
+
+	public function PrevEditConstant() : Float
+	{
+		return this.prevEditConstant;
+	}
+
+	public function SetPrevEditConstant(prevEditConstant_ :Float) : Void
+	{
+		this.prevEditConstant = prevEditConstant_;
+	}
+
 	public function toString() : String
 	{
-		return "<cn="+this.constraint+",ep="+this.clvEditPlus+",em="+this.clvEditMinus+",pec="+this.prevEditConstant+",i="+index+">";
+		return "<cn="+this.cn+",ep="+this.clvEditPlus+",em="+this.clvEditMinus+",pec="+this.prevEditConstant+",i="+i+">";
 	}
 }
+
+
+
+
+
+
+
+// });

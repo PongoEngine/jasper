@@ -26,5 +26,5 @@ package jasper;
 
 interface Hashable
 {
-	var hashcode (default, null) :Int;
+	var hash_code (default, null) :Int;
 }

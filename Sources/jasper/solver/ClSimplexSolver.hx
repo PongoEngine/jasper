@@ -65,23 +65,6 @@ class ClSimplexSolver extends ClTableau
 	public function new() : Void
 	{
 		super();
-		this.stayMinusErrorVars = new Array();
-		this.stayPlusErrorVars = new Array();
-		this.errorVars = new Hashtable(); // cn -> Set of clv
-		this.markerVars = new Hashtable(); // cn -> Set of clv
-		this.resolvePair_ = [0,0]; 
-		this.objective = new ClObjectiveVariable();
-		this.editVarMap = new Hashtable(); // clv -> ClEditInfo
-		this.slackCounter = 0;
-		this.artificialCounter = 0;
-		this.dummyCounter = 0;
-		this.epsilon = 1e-8;
-		this.fOptimizeAutomatically = true;
-		this.fNeedsSolving = false;
-		this.rows = new Hashtable(); // clv -> expression
-		this.rows.put(this.objective, ClLinearExpression.initializeFromConstant(0));
-		this.stkCedcns = new Array(); // Stack
-		this.stkCedcns.push(0);
 	}
 
 	/**
@@ -160,7 +143,7 @@ class ClSimplexSolver extends ClTableau
 	public function removeEditVar(v :ClVariable) : ClSimplexSolver
 	{
 		var cei = /* ClEditInfo */this.editVarMap.get(v);
-		var cn = cei.constraint;
+		var cn = cei.Constraint();
 		this.removeConstraint(cn);
 		return this;
 	}
@@ -210,7 +193,7 @@ class ClSimplexSolver extends ClTableau
 		try {
 			var that = this;
 			this.editVarMap.each(function(v, cei) {
-				if (cei.index >= n) {
+				if (cei.Index() >= n) {
 					that.removeEditVar(v);
 				}
 			});
@@ -288,7 +271,7 @@ class ClSimplexSolver extends ClTableau
 	{
 		var that = this;
 		this.editVarMap.each(function(v, cei) {
-			var i = cei.index;
+			var i = cei.Index();
 			if (i < newEditConstants.length) 
 				that.suggestValue(v, newEditConstants[i]);
 			});
@@ -330,11 +313,11 @@ class ClSimplexSolver extends ClTableau
 		if (cei == null) {
 			throw new ExCLError();
 		}
-		var i = cei.index;
-		var clvEditPlus = cei.clvEditPlus;
-		var clvEditMinus = cei.clvEditMinus;
-		var delta = x - cei.prevEditConstant;
-		cei.prevEditConstant = x;
+		var i = cei.Index();
+		var clvEditPlus = cei.ClvEditPlus();
+		var clvEditMinus = cei.ClvEditMinus();
+		var delta = x - cei.PrevEditConstant();
+		cei.SetPrevEditConstant(x);
 		this.deltaEditConstant(delta, clvEditPlus, clvEditMinus);
 		return this;
 	}
@@ -380,21 +363,6 @@ class ClSimplexSolver extends ClTableau
 	 */
 	public function setEditedValue(v :ClVariable, n :Float) : ClSimplexSolver
 	{
-		if (!this.fContainsVariable(v)) {
-			v.value_ = n;
-			return this;
-		}
-		if (!Util.approx(n, v.value_)) {
-			this.addEditVar(v, ClStrength.strong);
-			this.beginEdit();
-			try {
-				this.suggestValue(v, n);
-			}
-			catch (e :ExCLError){
-				throw new ExCLInternalError("Error in setEditedValue");
-			}
-			this.endEdit();
-		}
 		return this;
 	}
 
@@ -554,20 +522,6 @@ class ClSimplexSolver extends ClTableau
 	 */
 	public function setExternalVariables() : Void
 	{
-		var that=this;
-		this.externalParametricVars.each(function(v) {
-			if (that.rowExpression(v) != null) {
-				// print("Error: variable" + v + " in _externalParametricVars is basic");
-			} else {
-				v.changeValue(0.0);
-			}
-		});
-
-		this.externalRows.each(function(v) {
-			var expr = that.rowExpression(v);
-			v.changeValue(expr.constant);
-		});
-		this.fNeedsSolving = false;
 	}
 
 	/**

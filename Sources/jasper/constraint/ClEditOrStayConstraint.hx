@@ -31,16 +31,8 @@ class ClEditOrStayConstraint extends ClConstraint
 	public var variable :ClVariable;
 	public var expression (default, null) :ClLinearExpression;
 
-	/**
-	 *  [Description]
-	 *  @param clv - 
-	 *  @param strength - 
-	 *  @param weight - 
-	 */
 	public function new(clv :ClVariable, strength :ClStrength, weight :Float) : Void
 	{
 		super(strength, weight);
-		this.variable = clv;
-		this.expression = ClLinearExpression.initializeFromVariable(this.variable, -1.0, this.variable.value_);
 	}
 }

@@ -26,79 +26,72 @@ package jasper.variable;
 
 class ClVariable extends ClAbstractVariable
 {
-	public var value_ :Float;
-	public var attachedObject :Dynamic;
+	private var _value :Dynamic;
+	private var _attachedObject :Dynamic;
 
-	/**
-	 *  [Description]
-	 *  @param value - 
-	 */
-	public function new(value :Dynamic, ?a :Dynamic) : Void
+	public function new(name_or_val :Dynamic, ?value :Dynamic) : Void
 	{
 		super();
-		this.value_ = value;
+
+		this._name = "";
+		this._value = 0.0;
+		if (Std.is(name_or_val, String)) {
+			super(name_or_val);
+			this._value = (value != null) ? value : 0.0;
+		} else if (Std.is(name_or_val, Float)) {
+			super();
+			this._value = name_or_val;
+		} else {
+			super();
+		}
 	}
 
-	public function value() : Dynamic
-	{
-		return null;
-	}
-
-	public function set_value(x :Dynamic) : Void
-	{}
-
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	override public inline function isDummy() :Bool
+	override public function isDummy() : Bool 
 	{
 		return false;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	override public inline function isExternal() :Bool
+	override public function isExternal() : Bool 
 	{
 		return true;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	override public inline function isPivotable() :Bool
+	override public function isPivotable() : Bool 
 	{
 		return false;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	override public inline function isRestricted() :Bool
+	override public function isRestricted() : Bool 
 	{
 		return false;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return String
-	 */
 	override public function toString() : String
 	{
-		return "[" + this.hashcode + ":" + this.value_ + "]";
+		return "[" + this.name() + ":" + this._value + "]";
 	}
 
-	/**
-	 *  [Description]
-	 *  @param value - 
-	 *  @return Float
-	 */
-	override public function changeValue(value :Float) : Void
+	public function value() : Dynamic
 	{
-		this.value_ = value;
+		return this._value;
+	}
+
+	public function set_value(value: Dynamic) : Void
+	{
+		this._value = value;
+	}
+
+	public function change_value(value) {
+		this._value = value;
+	}
+
+	public function setAttachedObject(o : Dynamic) : Void
+	{
+		this._attachedObject = o;
+	}
+
+	public function getAttachedObject() : Dynamic
+	{
+		return this._attachedObject;
 	}
 }
