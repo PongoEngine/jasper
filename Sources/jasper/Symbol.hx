@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,26 +19,36 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.error;
+import haxe.ds.Option;
 
-import jasper.Stringable;
-
-class ExCLError implements Stringable
+/**
+ * Created by alex on 30/01/15.
+ */
+class Symbol 
 {
-    public function new() : Void
+    private var type :Type_;
+
+    public function new(type_ :Option<Type_>) : Void
     {
+        this.type = switch type_ {
+            case Some(val): val;
+            case None: INVALID;
+        }
     }
 
-    public function description() : String
+    public function getType() : Type_
     {
-        return "(ExCLError) An error has occured in CL";
+        return type;
     }
 
-    public function toString() : String
-    {
-        return this.description();
-    }
+}
+
+enum Type_ {
+    INVALID;
+    EXTERNAL;
+    SLACK;
+    ERROR;
+    DUMMY;
 }

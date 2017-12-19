@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,40 +19,13 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.variable;
-
-class ClDummyVariable extends ClAbstractVariable
-{
-	public function new(name_or_val, prefix) : Void
-	{
-		super(name_or_val, prefix);
-	}
-
-	override public function isDummy() : Bool 
-	{
-		return true;
-	}
-
-	override public function isExternal() : Bool 
-	{
-		return false;
-	}
-
-	override public function isPivotable() : Bool 
-	{
-		return false;
-	}
-
-	override public function isRestricted() : Bool 
-	{
-		return true;
-	}
-
-	override public function toString() : String
-	{
-		return "[" + this.name() + ":dummy]";
-	}
+/**
+ * Created by yongsun on 1/13/16.
+ */
+class UnknownEditVariableException {
+    public function new() : Void
+    {
+    }
 }

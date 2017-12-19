@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,20 +19,29 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.error;
-
-class ExCLConstraintNotFound extends ExCLError
+/**
+ * Created by alex on 30/01/15.
+ */
+class Term 
 {
-    public function new() : Void
+    public var variable :Variable;
+    public var coefficient :Float;
+
+    public function new(variable :Variable, ?coefficient :Float = 1.0) : Void
     {
-    	super();
+        this.variable = variable;
+        this.coefficient = coefficient;
     }
 
-    override public function description() : String
+    public function getValue() : Float
     {
-        return "(ExCLConstraintNotFound) Tried to remove a constraint never added to the tableu";
+        return coefficient * variable.getValue();
+    }
+
+    public function toString() : String
+    {
+        return "variable: (" + variable + ") coefficient: "  + coefficient;
     }
 }

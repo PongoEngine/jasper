@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,21 +19,15 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.error;
-
-class ExCLTooDifficult extends ExCLError
+/**
+ * Created by yongsun on 1/13/16.
+ */
+class UnknownConstraintException extends KiwiException 
 {
-
-    public function new() : Void
+    public function new(constraint :Constraint) : Void
     {
-    	super();
-    }
-
-    override public function description() : String
-    {
-        return "(ExCLTooDifficult) The constraints are too difficult to solve";
+        super(constraint.toString());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,21 +19,17 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.error;
-
-class ExCLRequiredFailure extends ExCLError
+/**
+ * Created by alex on 30/01/16.
+ */
+class KiwiException
 {
+    private var message :String;
 
-    public function new() : Void
+    public function new(message :String) 
     {
-    	super();
-    }
-
-    override public function description() : String
-    {
-        return "(ExCLRequiredFailure) A required constraint cannot be satisfied";
+        this.message = message;
     }
 }

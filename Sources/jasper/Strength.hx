@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,24 +19,38 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.error;
+/**
+ * Created by alex on 30/01/15.
+ */
+class Strength {
 
-class ExCLInternalError extends ExCLError
-{
+    public static var REQUIRED :Float = create(1000.0, 1000.0, 1000.0);
 
-    public function new(desc :String) : Void
+    public static var STRONG :Float = create(1.0, 0.0, 0.0);
+
+    public static var MEDIUM :Float = create(0.0, 1.0, 0.0);
+
+    public static var WEAK :Float = create(0.0, 0.0, 1.0);
+
+
+    public static function create_w(a :Float, b :Float, c :Float, w :Float) : Float
     {
-    	super();
-    	this.description_ = desc;
+        var result = 0.0;
+        result += Math.max(0.0, Math.min(1000.0, a * w)) * 1000000.0;
+        result += Math.max(0.0, Math.min(1000.0, b * w)) * 1000.0;
+        result += Math.max(0.0, Math.min(1000.0, c * w));
+        return result;
     }
 
-    override public function description() : String
+    public static function create(a :Float, b :Float, c :Float) : Float
     {
-        return "(ExCLInternalError) " + description_;
+        return create_w(a, b, c, 1.0);
     }
 
-    private var description_ :String;
+    public static function clip(value :Float) : Float
+    {
+        return Math.max(0.0, Math.min(REQUIRED, value));
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,12 +19,14 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
-
 package jasper;
 
-interface Hashable
+/**
+ * Created by alex on 31/01/15.
+ */
+enum RelationalOperator 
 {
-	var hash_code (default, null) :Int;
+    OP_LE;
+    OP_GE;
+    OP_EQ;
 }

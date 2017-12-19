@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,31 +19,5 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.constraint.linear;
-
-import jasper.ClLinearExpression;
-import jasper.constraint.ClConstraint;
-
-class ClLinearConstraint extends ClConstraint
-{
-	private var _expression :ClLinearExpression;
-
-	public function new(cle :ClLinearExpression, strength :ClStrength, weight :Float) : Void
-	{
-		super(strength, weight);
-		this._expression = cle;
-	}
-
-	override public function expression() : ClLinearExpression
-	{
-		return this._expression;
-	}
-
-	public function setExpression(expr :ClLinearExpression) : Void
-	{
-		this._expression = expr;
-	}
-}

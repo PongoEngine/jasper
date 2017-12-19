@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jeremy Meltingtallow
+ * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,29 +19,15 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// FILE: EDU.Washington.grad.gjb.cassowary
-// package EDU.Washington.grad.gjb.cassowary;
+package jasper;
 
-package jasper.constraint;
-
-import jasper.variable.ClVariable;
-
-class ClEditConstraint extends ClEditOrStayConstraint
+/**
+ * Created by alex on 30/01/15.
+ */
+class RequiredFailureException extends KiwiException 
 {
-
-	public function new(clv :ClVariable, strength :ClStrength, weight :Float) : Void
-	{
-		super(clv, strength, weight);
-	}
-
-
-	override public function isEditConstraint() : Bool
-	{
-		return true;
-	}
-
-	override public function toString() : String
-	{
-		return "edit" + super.toString();
-	}
+    public function new() : Void
+    {
+        super("RequiredFailureException");
+    }
 }
