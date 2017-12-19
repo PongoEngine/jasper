@@ -19,16 +19,18 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
-
+package jasper.exception;
 
 /**
- * Created by yongsun on 1/13/16.
+ * Created by alex on 30/01/15.
  */
-class DuplicateEditVariableException extends KiwiException 
+class UnsatisfiableConstraintException extends KiwiException 
 {
-    public function new() : Void
+    private var constraint :Constraint;
+
+    public function new(constraint :Constraint) : Void
     {
-        super("DuplicateEditVariableException");
+        super(constraint.toString());
+        this.constraint = constraint;
     }
 }

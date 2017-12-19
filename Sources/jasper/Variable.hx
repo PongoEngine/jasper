@@ -24,33 +24,15 @@ package jasper;
 /**
  * Created by alex on 30/01/15.
  */
-class Variable {
+class Variable 
+{
+    public var name (default, null):String;
 
-    private var name :String;
-
-    private var value :Float;
+    public var value :Value;
 
     public function new(name :String) : Void
     {
         this.name = name;
-    }
-
-    // public Variable(double value) {
-    // }
-    
-    public function getValue() : Float
-    {
-        return value;
-    }
-
-    public function setValue(value : Float) : Void
-    {
-        this.value = value;
-    }
-
-    public function getName() : String
-    {
-        return name;
     }
 
     public function toString() : String

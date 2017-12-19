@@ -19,16 +19,14 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.exception;
 
 /**
- * Created by alex on 30/01/15.
+ * Created by yongsun on 1/13/16.
  */
-public class DuplicateConstraintException extends KiwiException {
-
-    private Constraint constraint;
-
-    public DuplicateConstraintException(Constraint constraint) {
-        this.constraint = constraint;
+class UnknownEditVariableException 
+{
+    public function new() : Void
+    {
     }
 }

@@ -21,3 +21,21 @@
 
 package jasper;
 
+abstract Value(Float) 
+{
+
+    inline public function new(value:Float) : Void
+    {
+        this = value;
+    }
+
+    @:commutative @:op(A * B) public static function timesFloat(a: Value, b:Float) : Value
+    {
+        return new Value(a.toFloat()*b);
+    }
+
+    public function toFloat() : Float
+    {
+        return this;
+    }
+}

@@ -19,15 +19,17 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.exception;
 
 /**
- * Created by alex on 30/01/15.
+ * Created by alex on 30/01/16.
  */
-class RequiredFailureException extends KiwiException 
+class KiwiException
 {
-    public function new() : Void
+    private var message :String;
+
+    public function new(message :String) 
     {
-        super("RequiredFailureException");
+        this.message = message;
     }
 }

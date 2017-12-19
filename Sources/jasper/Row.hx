@@ -26,14 +26,14 @@ package jasper;
  */
 class Row {
 
-    public var constant :Float;
+    public var constant :Constant;
     public var cells = new Map<Symbol, Float>();
 
     public function new(params :RowParams) : Void
     {
         switch params {
             case None:
-                this.constant = 0;
+                this.constant = new Constant(0);
             case Const(constant):
                 this.constant = constant;
             case Row(other):
@@ -44,7 +44,8 @@ class Row {
 
     public function add(value :Float) :Float
     {
-        return this.constant += value;
+        this.constant += value
+        return this.constant.toFloat();
     }
     
     public function insert(params :InsertParams) : Void
@@ -173,6 +174,6 @@ enum InsertParams
 enum RowParams
 {
     None;
-    Const(flt :Float);
+    Const(const :Constant);
     Row(row :Row);
 }

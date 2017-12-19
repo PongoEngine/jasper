@@ -28,13 +28,13 @@ class Expression {
 
     private var terms :Array<Term>;
 
-    private var constant :Float;
+    public var constant :Constant;
 
     public function new(params :ExpressionParams) : Void
     {
         switch params {
             case None:
-                this.constant = 0;
+                this.constant = new Constant(0);
                 this.terms = [];
 
             case Const(constant):
@@ -46,7 +46,7 @@ class Expression {
                 this.terms = [term];
 
             case Term(term):
-                this.constant = 0.0;
+                this.constant = new Constant(0.0);
                 this.terms = [term];
 
             case TermsConst(terms, constant):
@@ -54,19 +54,9 @@ class Expression {
                 this.terms = terms;
 
             case Terms(terms):
-                this.constant = 0.0;
+                this.constant = new Constant(0.0);
                 this.terms = terms;
         }
-    }
-
-    public function getConstant() : Float
-    {
-        return constant;
-    }
-
-    public function setConstant(constant :Float) : Void 
-    {
-        this.constant = constant;
     }
 
     public function getTerms() : Array<Term>
@@ -79,14 +69,14 @@ class Expression {
         this.terms = terms;
     }
 
-    public function getValue() : Float
+    public function getValue() : Value
     {
         var result = this.constant;
 
         for (term in terms) {
             result += term.getValue();
         }
-        return result;
+        return result.toValue();
     }
 
     public function isConstant() : Bool
@@ -115,9 +105,9 @@ class Expression {
 enum ExpressionParams
 {
     None;
-    Const(constant :Float);
-    TermConst(term :Term, constant :Float);
+    Const(constant :Constant);
+    TermConst(term :Term, constant :Constant);
     Term(term :Term);
-    TermsConst(terms :Array<Term>, constant :Float);
+    TermsConst(terms :Array<Term>, constant :Constant);
     Terms(terms :Array<Term>);
 }

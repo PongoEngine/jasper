@@ -25,8 +25,8 @@ enum ConstraintParams
 {
     None;
     ExprRelop(expr :Expression, op :RelationalOperator);
-    ExprRelopStrength(expr :Expression, op :RelationalOperator, strength :Float);
-    ConstraintStrength(other :Constraint, strength :Float);
+    ExprRelopStrength(expr :Expression, op :RelationalOperator, strength :Strength);
+    ConstraintStrength(other :Constraint, strength :Strength);
 }
 
 /**
@@ -35,7 +35,7 @@ enum ConstraintParams
 class Constraint {
 
     private var expression :Expression;
-    private var strength :Float;
+    private var strength :Strength;
     private var op :RelationalOperator;
 
     public function new(params :ConstraintParams) : Void
@@ -76,10 +76,10 @@ class Constraint {
             reducedTerms.push(new Term(variable, vars.get(variable)));
         }
 
-        return new Expression(TermsConst(reducedTerms, expr.getConstant()));
+        return new Expression(TermsConst(reducedTerms, expr.constant));
     }
 
-    public function setStrength(strength :Float) : Constraint
+    public function setStrength(strength :Strength) : Constraint
     {
         this.strength = strength;
         return this;

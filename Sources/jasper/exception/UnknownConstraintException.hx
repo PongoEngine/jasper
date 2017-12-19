@@ -19,18 +19,15 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.exception;
 
 /**
- * Created by alex on 30/01/15.
+ * Created by yongsun on 1/13/16.
  */
-class UnsatisfiableConstraintException extends KiwiException 
+class UnknownConstraintException extends KiwiException 
 {
-    private var constraint :Constraint;
-
     public function new(constraint :Constraint) : Void
     {
         super(constraint.toString());
-        this.constraint = constraint;
     }
 }

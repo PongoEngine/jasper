@@ -21,3 +21,42 @@
 
 package jasper;
 
+abstract Constant(Float) 
+{
+    
+    inline public function new(const:Float) : Void
+    {
+        this = const;
+    }
+
+    @:op(A - B) static function subtract( a:Constant, b:Constant ) : Constant;
+    @:op(A + B) static function add( a:Constant, b:Constant ) : Constant;
+    @:op(A * B) static function times( a:Constant, b:Constant ) : Constant;
+    @:op(A / B) static function divide( a:Constant, b:Constant ) : Constant;
+    @:op(-A) static function negate(a:Constant) : Constant;
+
+    @:op(A + B) static inline function addFloat(a:Constant, b:Float) : Constant
+    {
+        return new Constant(a.toFloat() + b);
+    }
+
+    @:commutative @:op(A + B) static inline function addValue(a:Constant, b:Value) : Constant
+    {
+        return new Constant(a.toFloat() + b.toFloat());
+    }
+
+    @:commutative @:op(A * B) static inline function timesFloat(a:Constant, b:Float) : Constant
+    {
+        return new Constant(a.toFloat() * b);
+    }
+
+    public inline function toValue() : Value
+    {
+        return new Value(this);
+    }
+
+    public inline function toFloat() : Float
+    {
+        return this;
+    }
+}

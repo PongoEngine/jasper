@@ -19,13 +19,15 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.exception;
 
 /**
- * Created by yongsun on 1/13/16.
+ * Created by alex on 30/01/15.
  */
-class UnknownEditVariableException {
+class RequiredFailureException extends KiwiException 
+{
     public function new() : Void
     {
+        super("RequiredFailureException");
     }
 }

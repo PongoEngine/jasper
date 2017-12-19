@@ -35,9 +35,9 @@ class Term
         this.coefficient = coefficient;
     }
 
-    public function getValue() : Float
+    public function getValue() : Value
     {
-        return coefficient * variable.getValue();
+        return coefficient * variable.value;
     }
 
     public function toString() : String

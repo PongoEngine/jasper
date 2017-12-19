@@ -19,17 +19,16 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.exception;
 
 /**
- * Created by alex on 30/01/16.
+ * Created by alex on 30/01/15.
  */
-class KiwiException
-{
-    private var message :String;
+public class DuplicateConstraintException extends KiwiException {
 
-    public function new(message :String) 
-    {
-        this.message = message;
+    private Constraint constraint;
+
+    public DuplicateConstraintException(Constraint constraint) {
+        this.constraint = constraint;
     }
 }

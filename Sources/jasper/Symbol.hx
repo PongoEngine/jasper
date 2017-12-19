@@ -28,24 +28,24 @@ import haxe.ds.Option;
  */
 class Symbol 
 {
-    private var type :Type_;
+    private var type :SymbolType;
 
-    public function new(type_ :Option<Type_>) : Void
+    public function new(symbolType :Option<SymbolType>) : Void
     {
-        this.type = switch type_ {
+        this.type = switch symbolType {
             case Some(val): val;
             case None: INVALID;
         }
     }
 
-    public function getType() : Type_
+    public function getType() : SymbolType
     {
         return type;
     }
 
 }
 
-enum Type_ {
+enum SymbolType {
     INVALID;
     EXTERNAL;
     SLACK;

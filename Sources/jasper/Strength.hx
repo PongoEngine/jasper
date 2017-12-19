@@ -24,33 +24,44 @@ package jasper;
 /**
  * Created by alex on 30/01/15.
  */
-class Strength {
+abstract Strength(Float)
+{
 
-    public static var REQUIRED :Float = create(1000.0, 1000.0, 1000.0);
+    inline public function new(strength:Float) : Void
+    {
+        this = strength;
+    }
 
-    public static var STRONG :Float = create(1.0, 0.0, 0.0);
+    public function toFloat() : Float
+    {
+        return this;
+    }
 
-    public static var MEDIUM :Float = create(0.0, 1.0, 0.0);
+    public static var REQUIRED :Strength = create(1000.0, 1000.0, 1000.0);
 
-    public static var WEAK :Float = create(0.0, 0.0, 1.0);
+    public static var STRONG :Strength = create(1.0, 0.0, 0.0);
+
+    public static var MEDIUM :Strength = create(0.0, 1.0, 0.0);
+
+    public static var WEAK :Strength = create(0.0, 0.0, 1.0);
 
 
-    public static function create_w(a :Float, b :Float, c :Float, w :Float) : Float
+    public static function create_w(a :Float, b :Float, c :Float, w :Float) : Strength
     {
         var result = 0.0;
         result += Math.max(0.0, Math.min(1000.0, a * w)) * 1000000.0;
         result += Math.max(0.0, Math.min(1000.0, b * w)) * 1000.0;
         result += Math.max(0.0, Math.min(1000.0, c * w));
-        return result;
+        return new Strength(result);
     }
 
-    public static function create(a :Float, b :Float, c :Float) : Float
+    public static function create(a :Float, b :Float, c :Float) : Strength
     {
         return create_w(a, b, c, 1.0);
     }
 
     public static function clip(value :Float) : Float
     {
-        return Math.max(0.0, Math.min(REQUIRED, value));
+        return Math.max(0.0, Math.min(REQUIRED.toFloat(), value));
     }
 }
