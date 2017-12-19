@@ -34,111 +34,102 @@ class ClConstraint implements Hashable implements Stringable
 {
     public var hash_code (default, null) :Int;
 
-	public var strength :ClStrength;
-	public var weight :Float;
-	public var timesAdded (default, null):Int;
-	public var attachedObject :Dynamic;
+	private var _strength :ClStrength;
+	private var _weight :Float;
+	private var _attachedObject :Dynamic;
+	private var _times_added :Int;
 
-    /**
-     *  [Description]
-     *  @param strength - 
-     *  @param weight - 
-     */
-    public function new(strength :ClStrength, weight :Float) : Void
-    {
-    	this.hash_code = ClConstraint.iConstraintNumber++;
 
-    	this.strength = strength;
-    	this.weight = weight;
-    	this.timesAdded = 0;
-    	this.attachedObject = null;
-    }
+	public function new(strength :ClStrength, weight :Float) : Void
+	{
+		this.hash_code = ClConstraint.iConstraintNumber++;
+		this._strength = (strength != null) ? strength : ClStrength.required;
+		this._weight = (weight != null) ? weight : 1.0;
+		this._times_added = 0;
+	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
+	public function hashCode() : Int
+	{
+		return this.hash_code;
+	}
+
 	public function isEditConstraint() : Bool
 	{
 		return false;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
 	public function isInequality() : Bool
 	{
 		return false;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
 	public function isRequired() : Bool
 	{
-		return this.strength.isRequired();
+		return this._strength.isRequired();
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
 	public function isStayConstraint() : Bool
 	{
 		return false;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return ClLinearExpression
-	 */
-	public function expression_() : ClLinearExpression
+	public function strength() : ClStrength
 	{
-		throw "err";
+		return this._strength;
 	}
 
-	/**
-	 *  [Description]
-	 *  @param strength - 
-	 */
+	public function weight() : Float
+	{
+		return this._weight;
+	}
+
+	public function toString() : String
+	{
+		// this is abstract -- it intentionally leaves the parens unbalanced for
+		// the subclasses to complete (e.g., with ' = 0', etc.
+		return this._strength + ' {' + this._weight + '} (' + this.expression() +')';
+	}
+
+	public function expression() : ClLinearExpression {throw "expression() called ClConstraint";}
+
+	public function setAttachedObject(o :Dynamic) : Void
+	{
+		this._attachedObject = o;
+	}
+
+	public function getAttachedObject() : Dynamic
+	{
+		return this._attachedObject;
+	}
+
 	public function changeStrength(strength :ClStrength) : Void
 	{
-		if (this.timesAdded == 0) {
-			this.strength = strength;
-		} 
-		else {
+		if (this._times_added == 0) {
+			this.setStrength(strength);
+		} else {
 			throw new ExCLTooDifficult();
 		}
 	}
 
-	/**
-	 *  [Description]
-	 *  @param solver - 
-	 */
 	public function addedTo(solver :ClSimplexSolver) : Void
 	{
-		++this.timesAdded;
+		++this._times_added;
 	}
 
-	/**
-	 *  [Description]
-	 *  @param solver - 
-	 */
 	public function removedFrom(solver :ClSimplexSolver) : Void
 	{
-		--this.timesAdded;
+		--this._times_added;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return String
-	 */
-	public function toString() : String
+	public function setStrength(strength :ClStrength) : Void
 	{
-		return this.strength + ' {' + this.weight + '} (' + this.expression_() +')';
+		this._strength = strength;
 	}
 
-    public static var iConstraintNumber :Int = 1;
+	public function setWeight(weight :Float) : Void
+	{
+		this._weight = weight;
+	}
+
+	public static var iConstraintNumber : Int = 1;
 }

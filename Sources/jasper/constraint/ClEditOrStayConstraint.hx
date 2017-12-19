@@ -24,15 +24,32 @@
 
 package jasper.constraint;
 
+import jasper.ClLinearExpression;
 import jasper.variable.ClVariable;
 
 class ClEditOrStayConstraint extends ClConstraint
 {
-	public var variable :ClVariable;
-	public var expression (default, null) :ClLinearExpression;
+	private var _variable :ClVariable;
+	private var _expression :ClLinearExpression;
 
 	public function new(clv :ClVariable, strength :ClStrength, weight :Float) : Void
 	{
 		super(strength, weight);
+		this._variable = clv;
+		this._expression = new ClLinearExpression(this._variable, -1.0, this._variable.value());
+	}
+
+	public function variable() : ClVariable
+	{
+		return this._variable;
+	}
+
+	override public function expression() : ClLinearExpression
+	{
+		return this._expression;
+	}
+
+	public function setVariable(v :ClVariable) {
+		this._variable = v;
 	}
 }

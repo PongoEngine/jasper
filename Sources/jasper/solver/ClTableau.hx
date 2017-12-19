@@ -137,19 +137,7 @@ class ClTableau implements Stringable
 	 */
 	public function addRow(aVar :ClAbstractVariable, expr :ClLinearExpression) : Void
 	{
-		var that=this;
-		this.rows.put(aVar, expr);
 
-		expr.terms.each(function(clv, coeff) {
-			that.insertColVar(clv, aVar);
-			if (clv.isExternal()) {
-				that.externalParametricVars.add(clv);
-			}
-		});
-
-		if (aVar.isExternal()) {
-			this.externalRows.add(aVar);
-		}
 	}
 
 	/**
@@ -158,20 +146,7 @@ class ClTableau implements Stringable
 	 */
 	public function removeColumn(aVar :ClAbstractVariable) : Void
 	{
-		var that=this;
 
-		var rows = this.columns.remove(aVar);
-		if (rows != null) {
-			rows.each(function(clv) {
-				var expr = that.rows.get(clv);
-				expr.terms.remove(aVar);
-			});
-		}
-
-		if (aVar.isExternal()) {
-			this.externalRows.remove(aVar);
-			this.externalParametricVars.remove(aVar);
-		}
 	}
 
 	/**
@@ -181,24 +156,7 @@ class ClTableau implements Stringable
 	 */
 	public function removeRow(aVar :ClAbstractVariable) : ClLinearExpression 
 	{
-		var that=this;
-		var expr = this.rows.get(aVar);
-		Util.Assert(expr != null, "expr is null in removeRow ClTableau.hx");
-
-		expr.terms.each(function(clv, coeff) {
-			var varset = that.columns.get(clv);
-			if (varset != null) {
-				varset.remove(aVar);
-			}
-		});
-
-		this.infeasibleRows.remove(aVar);
-		if (aVar.isExternal()) {
-			this.externalRows.remove(aVar);
-		}
-		this.rows.remove(aVar);
-
-		return expr;
+		return null;
 	}
 
 	/**
@@ -208,22 +166,7 @@ class ClTableau implements Stringable
 	 */
 	public function substituteOut(oldVar :ClAbstractVariable, expr :ClLinearExpression) : Void
 	{
-		var that=this;
-		var varset = this.columns.get(oldVar);
 
-		varset.each(function(v) {
-			var row = that.rows.get(v);
-			row.substituteOut(oldVar, expr, v, that);
-			if (v.isRestricted() && row.constant < 0.0) {
-				that.infeasibleRows.add(v);
-			}
-		});
-
-		if (oldVar.isExternal()) {
-			this.externalRows.add(oldVar);
-			this.externalParametricVars.remove(oldVar);
-		}
-		this.columns.remove(oldVar);
 	}
 
 	/**

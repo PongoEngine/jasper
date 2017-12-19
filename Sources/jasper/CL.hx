@@ -25,6 +25,7 @@
 package jasper;
 
 import jasper.ClLinearExpression;
+import jasper.error.ExCLInternalError;
 
 class CL
 {
@@ -84,6 +85,28 @@ class CL
     public static function Divide(e1 :ClLinearExpression, e2 :ClLinearExpression) : ClLinearExpression
     {
         return e1.divide(e2);
+    }
+
+    public static function Assert(f :Bool, description :String) : Void
+    {
+        if (!f) {
+            throw new ExCLInternalError("Assertion failed:" + description);
+        }
+    }
+
+    public static function approx(a :Float, b :Float) :Bool
+    {
+        var epsilon = 1.0e-8;
+
+        if (a == 0.0) {
+            return (Math.abs(b) < epsilon);
+        } 
+        else if (b == 0.0) {
+            return (Math.abs(a) < epsilon);
+        } 
+        else {
+            return (Math.abs(a - b) < Math.abs(a) * epsilon);
+        }
     }
 
     public static inline var GEQ :Int = 1;

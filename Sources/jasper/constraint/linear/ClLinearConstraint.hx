@@ -24,15 +24,26 @@
 
 package jasper.constraint.linear;
 
+import jasper.ClLinearExpression;
 import jasper.constraint.ClConstraint;
 
 class ClLinearConstraint extends ClConstraint
 {
-	public var expression :ClLinearExpression;
+	private var _expression :ClLinearExpression;
 
 	public function new(cle :ClLinearExpression, strength :ClStrength, weight :Float) : Void
 	{
 		super(strength, weight);
-    	this.expression = cle;
+		this._expression = cle;
+	}
+
+	override public function expression() : ClLinearExpression
+	{
+		return this._expression;
+	}
+
+	public function setExpression(expr :ClLinearExpression) : Void
+	{
+		this._expression = expr;
 	}
 }

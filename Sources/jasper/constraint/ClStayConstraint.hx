@@ -28,30 +28,18 @@ import jasper.variable.ClVariable;
 
 class ClStayConstraint extends ClEditOrStayConstraint
 {
-	/**
-	 *  [Description]
-	 *  @param clv - 
-	 *  @param strength - 
-	 *  @param weight - 
-	 */
+
 	public function new(clv :ClVariable, strength :ClStrength, weight :Float) : Void
 	{
-		super(clv, strength, weight);
+		var str = (strength != null) ? strength : ClStrength.weak;
+		super(clv, str, weight);
 	}
 
-	/**
-	 *  [Description]
-	 *  @return Bool
-	 */
-	override public inline function isStayConstraint() : Bool
+	override public function isStayConstraint() : Bool
 	{
 		return true;
 	}
 
-	/**
-	 *  [Description]
-	 *  @return String
-	 */
 	override public function toString() : String
 	{
 		return "stay " + super.toString();

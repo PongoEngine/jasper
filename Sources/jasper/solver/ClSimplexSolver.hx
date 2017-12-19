@@ -39,7 +39,6 @@ import jasper.error.ExCLRequiredFailure;
 import jasper.error.ExCLConstraintNotFound;
 import jasper.error.ExCLInternalError;
 import jasper.error.ExCLError;
-import jasper.Util;
 import jasper.Hashable;
 
 class ClSimplexSolver extends ClTableau
@@ -74,8 +73,7 @@ class ClSimplexSolver extends ClTableau
 	 */
 	public function addLowerBound(v :ClAbstractVariable, lower :Float) 
 	{
-		var cn = new ClLinearInequality(v, CL.GEQ, ClLinearExpression.initializeFromConstant(lower));
-		return this.addConstraint(cn);
+		return null;
 	}
 
 	/**
@@ -85,8 +83,7 @@ class ClSimplexSolver extends ClTableau
 	 */
 	public function addUpperBound(v :ClAbstractVariable, upper :Float) 
 	{
-		var cn = new ClLinearInequality(v, CL.LEQ, ClLinearExpression.initializeFromConstant(upper));
-		return this.addConstraint(cn);
+		return null;
 	}
 
 	/**
@@ -154,7 +151,7 @@ class ClSimplexSolver extends ClTableau
 	 */
 	public function beginEdit() : ClSimplexSolver
 	{
-		Util.Assert(this.editVarMap.size() > 0, "_editVarMap.size() > 0");
+		CL.Assert(this.editVarMap.size() > 0, "_editVarMap.size() > 0");
 		this.infeasibleRows.clear();
 		this.resetStayConstants();
 		this.stkCedcns.push(this.editVarMap.size());
@@ -167,7 +164,7 @@ class ClSimplexSolver extends ClTableau
 	 */
 	public function endEdit() : ClSimplexSolver
 	{
-		Util.Assert(this.editVarMap.size() > 0, "_editVarMap.size() > 0");
+		CL.Assert(this.editVarMap.size() > 0, "_editVarMap.size() > 0");
 		this.resolve();
 		this.stkCedcns.pop();
 		var n = this.stkCedcns[this.stkCedcns.length - 1]; // top
@@ -197,7 +194,7 @@ class ClSimplexSolver extends ClTableau
 					that.removeEditVar(v);
 				}
 			});
-			Util.Assert(this.editVarMap.size() == n, "editVarMap.size() == n");
+			CL.Assert(this.editVarMap.size() == n, "editVarMap.size() == n");
 			return this;
 		}
 		catch (e :ExCLConstraintNotFound){
@@ -510,11 +507,7 @@ class ClSimplexSolver extends ClTableau
 	 */
 	public function resetStayConstants() : Void 
 	{
-		for (i in 0...stayPlusErrorVars.length) {
-			var expr = this.rowExpression(/* ClAbstractVariable */this.stayPlusErrorVars[i]);
-			if (expr == null) expr = this.rowExpression(/* ClAbstractVariable */this.stayMinusErrorVars[i]);
-			if (expr != null) expr.constant = 0.0;
-		}
+
 	}
 
 	/**
