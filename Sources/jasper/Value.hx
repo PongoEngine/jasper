@@ -44,67 +44,6 @@ abstract Value(Float) to Float from Float
     @:op(A / B) public static function divide(a :Value, b :Value) : Value;
     @:op(-A) public static function negate(a :Value) : Value;
 
-	/**
-	 *  [Description]
-	 *  @param coefficient - 
-	 *  @param expression - 
-	 *  @return Expression
-	 */
-	@:op(A * B) public static function multiplyExpression(coefficient :Value, expression :Expression) : Expression
-    {
-        return expression * coefficient;
-    }
-
-    /**
-     *  [Description]
-     *  @param coefficient - 
-     *  @param term - 
-     *  @return Term
-     */
-    @:op(A * B) public static function multiplyTerm(coefficient :Value, term :Term) : Term
-    {
-        return term * coefficient;
-    }
-
-    /**
-     *  [Description]
-     *  @param coefficient - 
-     *  @param variable - 
-     *  @return Term
-     */
-    @:op(A * B) public static function multiplyVariable(coefficient :Value, variable :Variable) : Term
-    {
-        return variable * coefficient;
-    }
-
-    // @:op(A + B) public static function addExpression(constant :Value, expression :Expression) : Expression
-    // {
-    //     // return add(expression, constant);
-    //     return null;
-    // }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     *  @param term - 
-     *  @return Expression
-     */
-    @:op(A + B) public static function addTerm(constant :Value, term :Term) : Expression
-    {
-        return term + constant;
-    }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     *  @param variable - 
-     *  @return Expression
-     */
-    @:op(A + B) public static function addVariable(constant :Value, variable :Variable) : Expression
-    {
-        return variable + constant;
-    }
-
     /**
      *  [Description]
      *  @param constant - 
@@ -136,39 +75,6 @@ abstract Value(Float) to Float from Float
     @:op(A - B) public static function subtractVariable(constant :Value, variable :Variable) : Expression
     {
         return (-variable) + constant;
-    }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     *  @param expression - 
-     *  @return Constraint
-     */
-    @:op(A == B) public static function equalsExpression(constant :Value, expression :Expression) : Constraint
-    {
-        return expression == constant;
-    }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     *  @param term - 
-     *  @return Constraint
-     */
-    @:op(A == B) public static function equalsTerm(constant :Value, term :Term) : Constraint
-    {
-        return term == constant;
-    }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     *  @param variable - 
-     *  @return Constraint
-     */
-    @:op(A == B) public static function equalsVariable(constant :Value, variable :Variable) : Constraint
-    {
-        return variable == constant;
     }
 
     /**
@@ -235,4 +141,12 @@ abstract Value(Float) to Float from Float
     // {
     //     return modifyStrength(strength, constraint);
     // }
+}
+
+class ValueHelper
+{
+    public static inline function toValue(flt :Float) : Value
+    {
+        return new Value(flt);
+    }
 }

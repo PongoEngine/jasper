@@ -47,9 +47,8 @@ abstract Expression(Expression_) to Expression_
      *  @param coefficient - 
      *  @return Expression
      */
-    @:op(A * B) public static function multiplyCoefficient(expression :Expression, coefficient :Value) : Expression
+    @:op(A * B) @:commutative public static function multiplyCoefficient(expression :Expression, coefficient :Value) : Expression
     {
-
         var terms = new List<Term>();
 
         for (term in expression.getTerms()) {
@@ -140,7 +139,7 @@ abstract Expression(Expression_) to Expression_
      *  @param second - 
      *  @return Expression
      */
-    @:op(A + B) public static function addTerm(first :Expression, second :Term) : Expression
+    @:op(A + B) @:commutative public static function addTerm(first :Expression, second :Term) : Expression
     {
         //TODO do we need to copy term objects?
         var terms = new List<Term>();
@@ -159,7 +158,7 @@ abstract Expression(Expression_) to Expression_
      *  @param variable - 
      *  @return Expression
      */
-    @:op(A + B) public static function addVariable(expression :Expression, variable :Variable) : Expression
+    @:op(A + B) @:commutative public static function addVariable(expression :Expression, variable :Variable) : Expression
     {
     	return expression + Term.fromVariable(variable);
     }
@@ -170,7 +169,7 @@ abstract Expression(Expression_) to Expression_
      *  @param constant - 
      *  @return Expression
      */
-    @:op(A + B) public static function addConstant(expression :Expression, constant :Value) : Expression
+    @:op(A + B) @:commutative public static function addConstant(expression :Expression, constant :Value) : Expression
     {
         return new Expression(expression.getTerms(), expression.getConstant() + constant);
     }
@@ -236,7 +235,7 @@ abstract Expression(Expression_) to Expression_
      *  @param term - 
      *  @return Constraint
      */
-    @:op(A == B) public static function equalsTerm(expression :Expression, term :Term) : Constraint
+    @:op(A == B) @:commutative public static function equalsTerm(expression :Expression, term :Term) : Constraint
     {
     	return expression == Expression.fromTerm(term);
     }
@@ -247,7 +246,7 @@ abstract Expression(Expression_) to Expression_
      *  @param variable - 
      *  @return Constraint
      */
-    @:op(A == B) public static function equalsVariable(expression :Expression, variable :Variable) : Constraint
+    @:op(A == B) @:commutative public static function equalsVariable(expression :Expression, variable :Variable) : Constraint
     {
     	return expression == Term.fromVariable(variable);
     }
@@ -258,7 +257,7 @@ abstract Expression(Expression_) to Expression_
      *  @param constant - 
      *  @return Constraint
      */
-    @:op(A == B) public static function equalsConstant(expression :Expression, constant :Value) : Constraint
+    @:op(A == B) @:commutative public static function equalsConstant(expression :Expression, constant :Value) : Constraint
     {
     	return expression == Expression.fromConstant(constant);
     }
