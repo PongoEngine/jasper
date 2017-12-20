@@ -19,7 +19,7 @@ class Tests
         var solver = new Solver();
         var x = new Variable("x");
 
-        solver.addConstraint((2.toValue() + x) == 20.toValue());
+        solver.addConstraint((2 + x) == 20);
         solver.updateVariables();
 
         Assert.lessThanDelta(x.getValue(), 18, EPSILON, "simpleNew() PASSED");
@@ -32,22 +32,21 @@ class Tests
         var y = new Variable("y");
 
         solver.addConstraint(x == 20);
-
-        solver.addConstraint(((x + 2) == (y + 10)));
-
+        solver.addConstraint(x + 2 == y + 10);
         solver.updateVariables();
 
-        Assert.lessThanDelta(y.getValue(), 12, EPSILON, "simple0() PASSED 1/2");
-        Assert.lessThanDelta(x.getValue(), 20, EPSILON, "simple0() PASSED 2/2");
+        Assert.lessThanDelta(x.getValue(), 20, EPSILON, "simple0() PASSED 1/2");
+        Assert.lessThanDelta(y.getValue(), 12, EPSILON, "simple0() PASSED 2/2");
     }
 
     public static function simple1() : Void
     {
+        var solver = new Solver();
         var x = new Variable("x");
         var y = new Variable("y");
-        var solver = new Solver();
         solver.addConstraint(x == y);
         solver.updateVariables();
+
         Assert.lessThanDelta(x.getValue(), y.getValue(), EPSILON, "simple1() PASSED");
     }
 
