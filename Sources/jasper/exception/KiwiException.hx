@@ -26,10 +26,14 @@ package jasper.exception;
  */
 class KiwiException
 {
-    private var message :String;
-
-    public function new(message :String) 
+    /**
+     *  [Description]
+     *  @param message - 
+     */
+    public function new(message :String) : Void
     {
-        this.message = message;
+    	_message = message;
     }
+
+    private var _message :String;
 }

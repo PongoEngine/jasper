@@ -24,11 +24,17 @@ package jasper.exception;
 /**
  * Created by alex on 30/01/15.
  */
-public class DuplicateConstraintException extends KiwiException {
+class DuplicateConstraintException extends KiwiException {
 
-    private Constraint constraint;
+    private var constraint :Constraint;
 
-    public DuplicateConstraintException(Constraint constraint) {
+    /**
+     *  [Description]
+     *  @param constraint - 
+     */
+    public function new(constraint :Constraint) : Void
+    {
+    	super(constraint.toString());
         this.constraint = constraint;
     }
 }

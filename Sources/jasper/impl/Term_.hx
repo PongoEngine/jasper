@@ -19,59 +19,88 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.impl;
 
 /**
  * Created by alex on 30/01/15.
  */
-class Strength 
+class Term_
 {
-    public static var REQUIRED :Float = create(1000.0, 1000.0, 1000.0);
-    public static var STRONG :Float = create(1.0, 0.0, 0.0);
-    public static var MEDIUM :Float = create(0.0, 1.0, 0.0);
-    public static var WEAK :Float = create(0.0, 0.0, 1.0);
-
     /**
      *  [Description]
-     *  @param a - 
-     *  @param b - 
-     *  @param c - 
-     *  @param w - 
-     *  @return Float
+     *  @param variable - 
+     *  @param coefficient - 
      */
-    public static function create_w(a :Float, b :Float, c :Float, w :Float) : Float
+    public function new(variable :Variable, coefficient :Float) : Void
     {
-        var result = 0.0;
-        result += Math.max(0.0, Math.min(1000.0, a * w)) * 1000000.0;
-        result += Math.max(0.0, Math.min(1000.0, b * w)) * 1000.0;
-        result += Math.max(0.0, Math.min(1000.0, c * w));
-        return result;
+        _variable = variable;
+        _coefficient = coefficient;
     }
 
     /**
      *  [Description]
-     *  @param a - 
-     *  @param b - 
-     *  @param c - 
-     *  @return Float
+     *  @param variable - 
+     *  @return Term
      */
-    public static function create(a :Float, b :Float, c :Float) : Float
+    public static inline function fromVariable(variable :Variable) : Term
     {
-        return create_w(a, b, c, 1.0);
+        return new Term(variable, 1.0);
     }
 
     /**
      *  [Description]
-     *  @param value - 
+     *  @return Variable
+     */
+    public function getVariable() : Variable
+    {
+        return _variable;
+    }
+
+    /**
+     *  [Description]
+     *  @param variable - 
+     */
+    public function setVariable(variable :Variable) : Void
+    {
+        _variable = variable;
+    }
+
+    /**
+     *  [Description]
      *  @return Float
      */
-    public static function clip(value :Float) :Float
+    public function getCoefficient() : Float
     {
-        var min = 0.0;
-        var max = REQUIRED;
-
-        return if(value < min) min
-            else if (value > max) max
-            else value;
+        return _coefficient;
     }
+
+    /**
+     *  [Description]
+     *  @param coefficient - 
+     */
+    public function setCoefficient(coefficient : Float) : Void
+    {
+        _coefficient = coefficient;
+    }
+
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getValue() : Float
+    {
+        return _coefficient * _variable.getValue();
+    }
+
+    /**
+     *  [Description]
+     *  @return String
+     */
+    public function toString() : String
+    {
+        return "variable: (" + _variable + ") coefficient: "  + _coefficient;
+    }
+
+    private var _variable :Variable;
+    private var _coefficient :Float;
 }

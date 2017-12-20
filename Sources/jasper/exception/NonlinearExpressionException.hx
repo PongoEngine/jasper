@@ -26,8 +26,11 @@ package jasper.exception;
  */
 class NonlinearExpressionException extends KiwiException 
 {
-    public function new() : Void
-    {
-        super("NonlinearExpressionException");
-    }
+	/**
+	 *  [Description]
+	 */
+	public function new() : Void
+	{
+		super("NonlinearExpressionException");
+	}
 }

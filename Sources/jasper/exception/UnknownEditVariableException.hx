@@ -24,9 +24,12 @@ package jasper.exception;
 /**
  * Created by yongsun on 1/13/16.
  */
-class UnknownEditVariableException 
+class UnknownEditVariableException
 {
-    public function new() : Void
-    {
-    }
+	/**
+	 *  [Description]
+	 */
+	public function new() : Void
+	{
+	}
 }

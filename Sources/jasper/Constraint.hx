@@ -21,73 +21,146 @@
 
 package jasper;
 
-enum ConstraintParams
-{
-    None;
-    ExprRelop(expr :Expression, op :RelationalOperator);
-    ExprRelopStrength(expr :Expression, op :RelationalOperator, strength :Strength);
-    ConstraintStrength(other :Constraint, strength :Strength);
-}
-
 /**
  * Created by alex on 30/01/15.
  */
-class Constraint {
-
-    private var expression :Expression;
-    private var strength :Strength;
-    private var op :RelationalOperator;
-
-    public function new(params :ConstraintParams) : Void
+class Constraint 
+{
+    /**
+     *  [Description]
+     *  @param expr - 
+     *  @param op - 
+     *  @param strength - 
+     */
+    public function new(expr :Expression, op :RelationalOperator, strength :Float) : Void
     {
-        switch params {
-            case None:
-            case ExprRelop(expr, op):
-                this.expression = expr;
-                this.op = op;
-                this.strength = Strength.REQUIRED;
-                
-            case ExprRelopStrength(expr, op, strength):
-                this.expression = expr;
-                this.op = op;
-                this.strength = strength;
-
-            case ConstraintStrength(other, strength):
-                this.expression = other.expression;
-                this.op = other.op;
-                this.strength = strength;
-        }
+        _expression = reduce(expr);
+        _op = op;
+        _strength = Strength.clip(strength);
     }
 
-    private static function reduce(expr :Expression) : Expression
+    /**
+     *  [Description]
+     *  @return Constraint
+     */
+    public static inline function fromNull() : Constraint
     {
-        var vars :Map<Variable, Float> = new Map();
+        return new Constraint(null,null,null);
+    }
+
+    /**
+     *  [Description]
+     *  @param expr - 
+     *  @param op - 
+     *  @return Constraint
+     */
+    public static inline function fromExpression(expr :Expression, op :RelationalOperator) : Constraint
+    {
+        return new Constraint(expr, op, Strength.REQUIRED);
+    }
+
+    /**
+     *  [Description]
+     *  @param other - 
+     *  @param strength - 
+     *  @return Constraint
+     */
+    public static inline function fromConstraint(other :Constraint, strength :Float) : Constraint
+    {
+        return new Constraint(other._expression, other._op, strength);
+    }
+
+    /**
+     *  [Description]
+     *  @param expr - 
+     *  @return Expression
+     */
+    private static inline function reduce(expr :Expression) :Expression
+    {
+        var vars = new Map<Variable, Float>();
         for(term in expr.getTerms()){
-            var value = vars.get(term.variable);
+            var value = vars.get(term.getVariable());
             if(value == null){
                 value = 0.0;
             }
-            value += term.coefficient;
-            vars.set(term.variable, value);
+            value += term.getCoefficient();
+            vars.set(term.getVariable(), value);
         }
 
-        var reducedTerms = new Array<Term>();
+        var reducedTerms = new List<Term>();
         for(variable in vars.keys()){
-            reducedTerms.push(new Term(variable, vars.get(variable)));
+            reducedTerms.add(new Term(variable, vars.get(variable)));
         }
 
-        return new Expression(TermsConst(reducedTerms, expr.constant));
+        return new Expression(reducedTerms, expr.getConstant());
     }
 
-    public function setStrength(strength :Strength) : Constraint
+    /**
+     *  [Description]
+     *  @return Expression
+     */
+    public function getExpression() : Expression
     {
-        this.strength = strength;
+        return _expression;
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     */
+    public function setExpression(expression :Expression) : Void
+    {
+        _expression = expression;
+    }
+
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getStrength() : Float
+    {
+        return _strength;
+    }
+
+    /**
+     *  [Description]
+     *  @param strength - 
+     *  @return Constraint
+     */
+    public function setStrength(strength : Float) : Constraint
+    {
+        _strength = strength;
         return this;
     }
 
-    public function toString() : String
+    /**
+     *  [Description]
+     *  @return RelationalOperator
+     */
+    public function getOp() : RelationalOperator
     {
-        return "expression: (" + expression + ") strength: " + strength + " operator: " + op;
+        return _op;
     }
 
+    /**
+     *  [Description]
+     *  @param op - 
+     */
+    public function setOp(op :RelationalOperator) : Void
+    {
+        _op = op;
+    }
+
+    /**
+     *  [Description]
+     *  @return String
+     */
+    public function toString() : String
+    {
+        return "expression: (" + _expression + ") strength: " + _strength + " operator: " + _op;
+    }
+
+    private var _expression :Expression;
+    private var _strength :Float;
+    private var _op :RelationalOperator;
 }

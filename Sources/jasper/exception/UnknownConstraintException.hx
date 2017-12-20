@@ -26,8 +26,15 @@ package jasper.exception;
  */
 class UnknownConstraintException extends KiwiException 
 {
+    private var constraint :Constraint;
+
+    /**
+     *  [Description]
+     *  @param constraint - 
+     */
     public function new(constraint :Constraint) : Void
     {
-        super(constraint.toString());
+    	super(constraint.toString());
+    	this.constraint = constraint;
     }
 }

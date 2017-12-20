@@ -21,93 +21,333 @@
 
 package jasper;
 
+import jasper.impl.Expression_;
+import jasper.exception.NonlinearExpressionException;
+
 /**
  * Created by alex on 30/01/15.
  */
-class Expression {
-
-    private var terms :Array<Term>;
-
-    public var constant :Constant;
-
-    public function new(params :ExpressionParams) : Void
-    {
-        switch params {
-            case None:
-                this.constant = new Constant(0);
-                this.terms = [];
-
-            case Const(constant):
-                this.constant = constant;
-                this.terms = [];
-
-            case TermConst(term, constant):
-                this.constant = constant;
-                this.terms = [term];
-
-            case Term(term):
-                this.constant = new Constant(0.0);
-                this.terms = [term];
-
-            case TermsConst(terms, constant):
-                this.constant = constant;
-                this.terms = terms;
-
-            case Terms(terms):
-                this.constant = new Constant(0.0);
-                this.terms = terms;
-        }
-    }
-
-    public function getTerms() : Array<Term>
-    {
-        return terms;
-    }
-
-    public function setTerms(terms :Array<Term>) : Void
-    {
-        this.terms = terms;
-    }
-
-    public function getValue() : Value
-    {
-        var result = this.constant;
-
-        for (term in terms) {
-            result += term.getValue();
-        }
-        return result.toValue();
-    }
-
-    public function isConstant() : Bool
-    {
-        return terms.length == 0;
-    }
-
-    public function toString() : String
-    {
-        var sb = "isConstant: " + isConstant() + " constant: " + constant;
-
-        if (!isConstant()) {
-            sb += " terms: [";
-            for (term in terms) {
-                sb += "(";
-                sb += term;
-                sb += ")";
-            }
-            sb += "] ";
-        }
-        return sb;
-    }
-
-}
-
-enum ExpressionParams
+@:forward
+@:forwardStatics
+abstract Expression(Expression_) to Expression_
 {
-    None;
-    Const(constant :Constant);
-    TermConst(term :Term, constant :Constant);
-    Term(term :Term);
-    TermsConst(terms :Array<Term>, constant :Constant);
-    Terms(terms :Array<Term>);
+    /**
+     *  [Description]
+     *  @param terms - 
+     *  @param constant - 
+     */
+    public inline function new(terms :List<Term>, constant :Float) : Void
+    {
+        this = new Expression_(terms, constant);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param coefficient - 
+     *  @return Expression
+     */
+    @:op(A * B) public static function multiplyCoefficient(expression :Expression, coefficient :Value) : Expression
+    {
+
+        var terms = new List<Term>();
+
+        for (term in expression.getTerms()) {
+            terms.add(term * coefficient);
+        }
+
+        return new Expression(terms, expression.getConstant() * coefficient.toFloat());
+    }
+
+    /**
+     *  [Description]
+     *  @param expression1 - 
+     *  @param expression2 - 
+     *  @return Expression
+     */
+    @:op(A * B) public static function multiplyExpression(expression1 :Expression, expression2 :Expression) : Expression 
+    {
+        if (expression1.isConstant()) {
+            return (new Value(expression1.getConstant()) * expression2);
+        } else if (expression2.isConstant()) {
+            return (new Value(expression2.getConstant()) * expression1);
+        } else {
+            throw new NonlinearExpressionException();
+        }
+    }
+    
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param denominator - 
+     *  @return Expression
+     */
+    @:op(A / B) public static function divideDeniminator(expression :Expression, denominator :Value) : Expression
+    {
+    	return expression * (new Value(1.0) / denominator);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression1 - 
+     *  @param expression2 - 
+     *  @return Expression
+     */
+    @:op(A / B) public static function divideExpression(expression1 :Expression, expression2 :Expression) : Expression
+    {
+        if (expression2.isConstant()) {
+            return expression1 / new Value(expression2.getConstant());
+        } else {
+            throw new NonlinearExpressionException();
+        }
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @return Expression
+     */
+    @:op(-A) public static function negate(expression :Expression) : Expression
+    {
+    	return expression * new Value(-1.0);
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addExpression(first :Expression, second :Expression) : Expression
+    {
+        //TODO do we need to copy term objects?
+        var terms = new List<Term>();
+
+        for(t in first.getTerms()) {
+        	terms.add(t);
+        }
+
+        for(t in second.getTerms()) {
+        	terms.add(t);
+        }
+
+        return new Expression(terms, first.getConstant() + second.getConstant());
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addTerm(first :Expression, second :Term) : Expression
+    {
+        //TODO do we need to copy term objects?
+        var terms = new List<Term>();
+
+        for(t in first.getTerms()) {
+        	terms.add(t);
+        }
+        terms.add(second);
+
+        return new Expression(terms, first.getConstant());
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param variable - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addVariable(expression :Expression, variable :Variable) : Expression
+    {
+    	return expression + Term.fromVariable(variable);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param constant - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addConstant(expression :Expression, constant :Value) : Expression
+    {
+        return new Expression(expression.getTerms(), expression.getConstant() + constant);
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractExpression(first :Expression, second :Expression) : Expression
+    {
+    	return first + (-second);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param term - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractTerm(expression :Expression, term :Term) : Expression
+    {
+    	return expression + (-term);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param variable - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractVariable(expression :Expression, variable :Variable) : Expression
+    {
+    	return expression + (-variable);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param constant - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractConstant(expression :Expression, constant :Value) : Expression
+    {
+    	return expression + (-constant);
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsExpression(first :Expression, second :Expression) : Constraint
+    {
+        return Constraint.fromExpression(first - second, RelationalOperator.OP_EQ);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param term - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsTerm(expression :Expression, term :Term) : Constraint
+    {
+    	return expression == Expression.fromTerm(term);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param variable - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsVariable(expression :Expression, variable :Variable) : Constraint
+    {
+    	return expression == Term.fromVariable(variable);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param constant - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsConstant(expression :Expression, constant :Value) : Constraint
+    {
+    	return expression == Expression.fromConstant(constant);
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToExpression(first :Expression, second :Expression) : Constraint
+    {
+        return Constraint.fromExpression(first - second, RelationalOperator.OP_LE);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param term - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToTerm(expression :Expression, term :Term) : Constraint
+    {
+    	return expression <= Expression.fromTerm(term);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param variable - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToVariable(expression :Expression, variable :Variable) : Constraint
+    {
+    	return expression <= Term.fromVariable(variable);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param constant - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToConstant(expression :Expression, constant :Value) : Constraint
+    {
+    	return expression <= Expression.fromConstant(constant);
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToExpression(first :Expression, second :Expression) : Constraint
+    {
+        return Constraint.fromExpression(first - second, RelationalOperator.OP_GE);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param term - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToTerm(expression :Expression, term :Term) : Constraint
+    {
+    	return expression >= Expression.fromTerm(term);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param variable - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToVariable(expression :Expression, variable :Variable) : Constraint
+    {
+    	return expression >= Term.fromVariable(variable);
+    }
+
+    /**
+     *  [Description]
+     *  @param expression - 
+     *  @param constant - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToConstant(expression :Expression, constant :Value) : Constraint
+    {
+    	return expression >= Expression.fromConstant(constant);
+    }
 }

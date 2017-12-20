@@ -19,44 +19,58 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.impl;
 
-abstract Constant(Float) 
+/**
+ * Created by alex on 30/01/15.
+ */
+class Variable_
 {
+    /**
+     *  [Description]
+     *  @param name - 
+     */
+    public function new(name :String) : Void
+    {
+        _name = name;
+    }
     
-    inline public function new(const:Float) : Void
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getValue() : Float
     {
-        this = const;
+        return _value;
     }
 
-    @:op(A - B) static function subtract( a:Constant, b:Constant ) : Constant;
-    @:op(A + B) static function add( a:Constant, b:Constant ) : Constant;
-    @:op(A * B) static function times( a:Constant, b:Constant ) : Constant;
-    @:op(A / B) static function divide( a:Constant, b:Constant ) : Constant;
-    @:op(-A) static function negate(a:Constant) : Constant;
-
-    @:op(A + B) static inline function addFloat(a:Constant, b:Float) : Constant
+    /**
+     *  [Description]
+     *  @param value - 
+     */
+    public function setValue(value :Float) : Void
     {
-        return new Constant(a.toFloat() + b);
+        _value = value;
     }
 
-    @:commutative @:op(A + B) static inline function addValue(a:Constant, b:Value) : Constant
+    /**
+     *  [Description]
+     *  @return String
+     */
+    public function getName() : String
     {
-        return new Constant(a.toFloat() + b.toFloat());
+        return _name;
     }
 
-    @:commutative @:op(A * B) static inline function timesFloat(a:Constant, b:Float) : Constant
+    /**
+     *  [Description]
+     *  @return String
+     */
+    public function toString() : String
     {
-        return new Constant(a.toFloat() * b);
+        return "name: " + _name + " value: " + _value;
     }
 
-    public inline function toValue() : Value
-    {
-        return new Value(this);
-    }
-
-    public inline function toFloat() : Float
-    {
-        return this;
-    }
+    private var _name :String;
+    private var _value :Float = 0.0;
 }

@@ -26,10 +26,17 @@ package jasper;
  */
 class Util 
 {
-    private static inline var EPS :Float = 1.0e-8;
+    private static inline var EPS = 1.0e-8;
 
+    /**
+     *  [Description]
+     *  @param value - 
+     *  @return Bool
+     */
     public static function nearZero(value :Float) : Bool
     {
-        return value < 0.0 ? -value < EPS : value < EPS;
+        return (value < 0.0) ? (-value < EPS) : (value < EPS);
     }
+
+    public static inline var FLOAT_MAX = 1.79769313486231e+308;
 }

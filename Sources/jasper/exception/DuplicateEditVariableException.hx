@@ -21,14 +21,16 @@
 
 package jasper.exception;
 
-
 /**
  * Created by yongsun on 1/13/16.
  */
 class DuplicateEditVariableException extends KiwiException 
 {
-    public function new() : Void
-    {
-        super("DuplicateEditVariableException");
-    }
+	/**
+	 *  [Description]
+	 */
+	public function new() : Void
+	{
+		super("DuplicateEditVariableException");
+	}
 }

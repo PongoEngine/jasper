@@ -27,7 +27,11 @@ package jasper.exception;
 class UnsatisfiableConstraintException extends KiwiException 
 {
     private var constraint :Constraint;
-
+    
+    /**
+     *  [Description]
+     *  @param constraint - 
+     */
     public function new(constraint :Constraint) : Void
     {
         super(constraint.toString());

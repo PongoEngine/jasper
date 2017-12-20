@@ -21,27 +21,277 @@
 
 package jasper;
 
+import jasper.impl.Term_;
+
 /**
  * Created by alex on 30/01/15.
  */
-class Term 
+@:forward
+@:forwardStatics
+abstract Term(Term_) to Term_
 {
-    public var variable :Variable;
-    public var coefficient :Float;
-
-    public function new(variable :Variable, ?coefficient :Float = 1.0) : Void
+    /**
+     *  [Description]
+     *  @param variable - 
+     *  @param coefficient - 
+     */
+    public function new(variable :Variable, coefficient :Float) : Void
     {
-        this.variable = variable;
-        this.coefficient = coefficient;
+        this = new Term_(variable, coefficient);
     }
 
-    public function getValue() : Value
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param coefficient - 
+     *  @return Term
+     */
+    @:op(A * B) public static function multiply(term :Term, coefficient :Value) : Term
     {
-        return coefficient * variable.value;
+        return new Term(term.getVariable(), term.getCoefficient() * coefficient.toFloat());
     }
 
-    public function toString() : String
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param denominator - 
+     *  @return Term
+     */
+    @:op(A / B) public static function divide(term :Term, denominator :Value) : Term
     {
-        return "variable: (" + variable + ") coefficient: "  + coefficient;
+        return term * (new Value(1.0)/ denominator);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @return Term
+     */
+    @:op(-A)public static function negate(term :Term) : Term
+    {
+        return term * new Value(-1.0);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param expression - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addExpression(term :Term, expression :Expression) : Expression
+    {
+        return expression + term;
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addTerm(first :Term, second :Term) : Expression
+    {
+        var terms = new List<Term>();
+        terms.add(first);
+        terms.add(second);
+        return Expression.fromTerms(terms);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param variable - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addVariable(term :Term, variable :Variable) : Expression
+    {
+        return term + Term.fromVariable(variable);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param constant - 
+     *  @return Expression
+     */
+    @:op(A + B) public static function addConstant(term :Term, constant :Value) : Expression
+    {
+        return Expression.fromTermAndConstant(term, constant);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param expression - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractExpression(term :Term, expression :Expression) : Expression
+    {
+        return (-expression) + term;
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractTerm(first :Term, second :Term) : Expression
+    {
+        return first + (-second);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param variable - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractVariable(term :Term, variable :Variable) : Expression
+    {
+        return term + (-variable);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param constant - 
+     *  @return Expression
+     */
+    @:op(A - B) public static function subtractConstant(term :Term, constant :Value) : Expression
+    {
+        return term + (-constant);
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param expression - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsExpression(term :Term, expression :Expression) : Constraint
+    {
+        return expression == term;
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsTerm(first :Term, second :Term) : Constraint
+    {
+        return Expression.fromTerm(first) == second;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param variable - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsVariable(term :Term, variable :Variable) : Constraint
+    {
+        return Expression.fromTerm(term) == variable;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param constant - 
+     *  @return Constraint
+     */
+    @:op(A == B) public static function equalsConstant(term :Term, constant :Value) : Constraint
+    {
+        return Expression.fromTerm(term) == constant;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param expression - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToExpression(term :Term, expression :Expression) : Constraint
+    {
+        return Expression.fromTerm(term) <= expression;
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToTerm(first :Term, second :Term) : Constraint
+    {
+        return Expression.fromTerm(first) <= second;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param variable - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToVariable(term :Term, variable :Variable) : Constraint
+    {
+        return Expression.fromTerm(term) <= variable;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param constant - 
+     *  @return Constraint
+     */
+    @:op(A <= B) public static function lessThanOrEqualToConstant(term :Term, constant :Value) : Constraint
+    {
+        return Expression.fromTerm(term) <= constant;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param expression - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToExpression(term :Term, expression :Expression) : Constraint
+    {
+        return Expression.fromTerm(term) >= expression;
+    }
+
+    /**
+     *  [Description]
+     *  @param first - 
+     *  @param second - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToTerm(first :Term, second :Term) : Constraint
+    {
+        return Expression.fromTerm(first) >= second;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param variable - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToVariable(term :Term, variable :Variable) : Constraint
+    {
+        return Expression.fromTerm(term) >= variable;
+    }
+
+    /**
+     *  [Description]
+     *  @param term - 
+     *  @param constant - 
+     *  @return Constraint
+     */
+    @:op(A >= B) public static function greaterThanOrEqualToConstant(term :Term, constant :Value) : Constraint
+    {
+        return Expression.fromTerm(term) >= constant;
     }
 }

@@ -26,8 +26,12 @@ package jasper;
  */
 class InternalSolverError
 {
-    public function new(message :String) : Void
+    /**
+     *  [Description]
+     *  @param string - 
+     */
+    public function new(string :String) : Void
     {
-        throw message;
+    	throw string;
     }
 }

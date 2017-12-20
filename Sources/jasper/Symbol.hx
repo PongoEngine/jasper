@@ -21,31 +21,43 @@
 
 package jasper;
 
-import haxe.ds.Option;
-
 /**
  * Created by alex on 30/01/15.
  */
 class Symbol 
 {
-    private var type :SymbolType;
-
-    public function new(symbolType :Option<SymbolType>) : Void
+    /**
+     *  [Description]
+     *  @param type - 
+     */
+    public function new(type :SymbolType) : Void
     {
-        this.type = switch symbolType {
-            case Some(val): val;
-            case None: INVALID;
-        }
+        _type = type;
     }
 
-    public function getType() : SymbolType
+    /**
+     *  [Description]
+     *  @return Symbol
+     */
+    public static inline function invalidSymbol() : Symbol
     {
-        return type;
+        return new Symbol(SymbolType.INVALID);
     }
 
+    /**
+     *  [Description]
+     *  @return SymbolType
+     */
+    public function getType() :SymbolType
+    {
+        return _type;
+    }
+
+    private var _type :SymbolType;
 }
 
-enum SymbolType {
+enum SymbolType 
+{
     INVALID;
     EXTERNAL;
     SLACK;

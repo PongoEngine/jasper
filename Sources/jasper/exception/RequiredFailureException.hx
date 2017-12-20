@@ -26,8 +26,11 @@ package jasper.exception;
  */
 class RequiredFailureException extends KiwiException 
 {
-    public function new() : Void
-    {
-        super("RequiredFailureException");
-    }
+	/**
+	 *  [Description]
+	 */
+	public function new() : Void
+	{
+		super("RequiredFailureException");
+	}
 }
