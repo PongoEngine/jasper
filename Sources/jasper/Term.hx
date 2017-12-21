@@ -92,9 +92,9 @@ abstract Term(Term_) to Term_
      *  @param coefficient - 
      *  @return Term
      */
-    @:op(A * B) public static function multiply(term :Term, coefficient :Value) : Term
+    @:op(A * B) public static function multiply(term :Term, coefficient :Float) : Term
     {
-        return new Term(term.variable, term.coefficient * coefficient.toFloat());
+        return new Term(term.variable, term.coefficient * coefficient);
     }
 
     /**
@@ -105,7 +105,7 @@ abstract Term(Term_) to Term_
      */
     @:op(A / B) public static function divide(term :Term, denominator :Value) : Term
     {
-        return term * (new Value(1.0)/ denominator);
+        return term * (1.0/ denominator);
     }
 
     /**
@@ -115,7 +115,7 @@ abstract Term(Term_) to Term_
      */
     @:op(-A)public static function negate(term :Term) : Term
     {
-        return term * new Value(-1.0);
+        return term * -1.0;
     }
 
     /**

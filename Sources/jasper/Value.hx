@@ -24,24 +24,6 @@ package jasper;
 @:notNull
 abstract Value(Float) to Float from Float
 {
-    /**
-     *  [Description]
-     *  @param val - 
-     */
-    public inline function new(val :Float) : Void
-    {
-        this = val;
-    }
-
-    /**
-     *  [Description]
-     *  @return Float
-     */
-    public function toFloat() : Float
-    {
-        return this;
-    }
-
     @:op(A / B) public static function divide(a :Value, b :Value) : Value;
     @:op(-A) public static function negate(a :Value) : Value;
 
@@ -148,6 +130,6 @@ class ValueHelper
 {
     public static inline function toValue(flt :Float) : Value
     {
-        return new Value(flt);
+        return flt;
     }
 }

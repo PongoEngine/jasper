@@ -159,7 +159,7 @@ abstract Expression(Expression_) to Expression_
      *  @param coefficient - 
      *  @return Expression
      */
-    @:op(A * B) @:commutative public static function multiplyCoefficient(expression :Expression, coefficient :Value) : Expression
+    @:op(A * B) @:commutative public static function multiplyCoefficient(expression :Expression, coefficient :Float) : Expression
     {
         var terms = new List<Term>();
 
@@ -167,7 +167,7 @@ abstract Expression(Expression_) to Expression_
             terms.add(term * coefficient);
         }
 
-        return new Expression(terms, expression.constant * coefficient.toFloat());
+        return new Expression(terms, expression.constant * coefficient);
     }
 
     /**
@@ -179,9 +179,9 @@ abstract Expression(Expression_) to Expression_
     @:op(A * B) public static function multiplyExpression(expression1 :Expression, expression2 :Expression) : Expression 
     {
         if (expression1.isConstant()) {
-            return (new Value(expression1.constant) * expression2);
+            return (expression1.constant * expression2);
         } else if (expression2.isConstant()) {
-            return (new Value(expression2.constant) * expression1);
+            return (expression2.constant * expression1);
         } else {
             throw new NonlinearExpressionException();
         }
@@ -195,7 +195,7 @@ abstract Expression(Expression_) to Expression_
      */
     @:op(A / B) public static function divideDeniminator(expression :Expression, denominator :Value) : Expression
     {
-    	return expression * (new Value(1.0) / denominator);
+    	return expression * (1.0 / denominator);
     }
 
     /**
@@ -207,7 +207,7 @@ abstract Expression(Expression_) to Expression_
     @:op(A / B) public static function divideExpression(expression1 :Expression, expression2 :Expression) : Expression
     {
         if (expression2.isConstant()) {
-            return expression1 / new Value(expression2.constant);
+            return expression1 / expression2.constant;
         } else {
             throw new NonlinearExpressionException();
         }
@@ -220,7 +220,7 @@ abstract Expression(Expression_) to Expression_
      */
     @:op(-A) public static function negate(expression :Expression) : Expression
     {
-    	return expression * new Value(-1.0);
+    	return expression * -1.0;
     }
 
     /**

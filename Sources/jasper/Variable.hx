@@ -82,7 +82,7 @@ abstract Variable(Variable_) to Variable_
      */
     @:op(A / B) public static function divide(variable :Variable, denominator :Value) : Term
     {
-        return variable * (new Value(1.0) / denominator);
+        return variable * (1.0 / denominator);
     }
 
     /**
@@ -92,7 +92,7 @@ abstract Variable(Variable_) to Variable_
      */
     @:op(-A) public static function negate(variable :Variable) : Term
     {
-        return variable * new Value(-1.0);
+        return variable * -1.0;
     }
 
     /**
