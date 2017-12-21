@@ -420,9 +420,9 @@ jasper_Solver.prototype = {
 			var variable = key1;
 			var row = this.rows.h[this.vars.h[key1.__id__]];
 			if(row == null) {
-				variable.setValue(0);
+				variable.value = 0;
 			} else {
-				variable.setValue(row.constant);
+				variable.value = row.constant;
 			}
 		}
 	}
@@ -703,19 +703,13 @@ jasper__$Value_Value_$Impl_$.toFloat = function(this1) {
 	return this1;
 };
 var jasper_Variable_$ = function(name) {
-	this._value = 0.0;
-	this._name = name;
+	this.value = 0.0;
+	this.name = name;
 };
 jasper_Variable_$.__name__ = true;
 jasper_Variable_$.prototype = {
-	getValue: function() {
-		return this._value;
-	}
-	,setValue: function(value) {
-		this._value = value;
-	}
-	,toString: function() {
-		return "name: " + this._name + " value: " + this._value;
+	toString: function() {
+		return "name: " + this.name + " value: " + this.value;
 	}
 };
 var jasper__$Variable_Variable_$Impl_$ = {};
@@ -871,7 +865,7 @@ test_Tests.simpleNew = function() {
 	var x = this1;
 	solver.addConstraint(jasper__$Expression_Expression_$Impl_$.equalsConstant(jasper__$Variable_Variable_$Impl_$.addConstant(x,2),20));
 	solver.updateVariables();
-	test_Assert.lessThanDelta(x.getValue(),18,1.0e-8,"simpleNew() PASSED");
+	test_Assert.lessThanDelta(x.value,18,1.0e-8,"simpleNew() PASSED");
 };
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;

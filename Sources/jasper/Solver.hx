@@ -343,9 +343,9 @@ class Solver
          var row = this.rows.get(vars.get(key));
 
          if (row == null) {
-            variable.setValue(0);
+            variable.value = 0;
          } else {
-            variable.setValue(row.constant);
+            variable.value = row.constant;
          }
       }
    }

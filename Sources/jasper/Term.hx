@@ -54,7 +54,7 @@ class Term_
      */
     public function getValue() : Float
     {
-        return coefficient * variable.getValue();
+        return coefficient * variable.value;
     }
 
     /**
