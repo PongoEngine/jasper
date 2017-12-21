@@ -497,7 +497,7 @@ jasper_Solver.prototype = {
 	,addWithArtificialVariable: function(row) {
 		var this1 = 2;
 		var art = this1;
-		var this2 = this.rows;
+		var this11 = this.rows;
 		var clonedCells = new haxe_ds_IntMap();
 		var otherCells = row._cells;
 		var key = otherCells.keys();
@@ -506,7 +506,7 @@ jasper_Solver.prototype = {
 			clonedCells.h[key1] = otherCells.h[key1];
 		}
 		var value = new jasper_Row(row._constant,clonedCells);
-		this2.h[art] = value;
+		this11.h[art] = value;
 		var clonedCells1 = new haxe_ds_IntMap();
 		var otherCells1 = row._cells;
 		var key2 = otherCells1.keys();
