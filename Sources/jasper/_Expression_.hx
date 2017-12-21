@@ -43,15 +43,6 @@ class _Expression_
 
     /**
      *  [Description]
-     *  @return Expression
-     */
-    public static inline function empty() : Expression
-    {
-        return fromConstant(0);
-    }
-
-    /**
-     *  [Description]
      *  @param constant - 
      *  @return Expression
      */
@@ -99,7 +90,7 @@ class _Expression_
      */
     public function getValue() : Float
     {
-        var result = constant;
+        var result = this.constant;
 
         for (term in terms) {
             result += term.getValue();
