@@ -113,15 +113,6 @@ abstract Expression(jasper._Expression_)
 
     @:op(A*B) static function multiplyValue(expression :Expression, coefficient :Value) : Expression
     {
-        // std::vector<Term> terms;
-        // terms.reserve( expression.terms().size() );
-        // typedef std::vector<Term>::const_iterator iter_t;
-        // iter_t begin = expression.terms().begin();
-        // iter_t end = expression.terms().end();
-        // for( iter_t it = begin; it != end; ++it )
-        //     terms.push_back( ( *it ) * coefficient );
-        // return Expression( terms, expression.constant() * coefficient );
-
         var terms = new List<Term>();
 
         for (term in expression.terms) {
@@ -143,12 +134,6 @@ abstract Expression(jasper._Expression_)
 
     @:op(A+B) static function addExpression(first :Expression, second :Expression) : Expression
     {
-        // std::vector<Term> terms;
-        // terms.reserve( first.terms().size() + second.terms().size() );
-        // terms.insert( terms.begin(), first.terms().begin(), first.terms().end() );
-        // terms.insert( terms.end(), second.terms().begin(), second.terms().end() );
-        // return Expression( terms, first.constant() + second.constant() );
-
         var terms = new List<Term>();
 
         for(t in first.terms) terms.add(t);
@@ -159,12 +144,6 @@ abstract Expression(jasper._Expression_)
 
     @:op(A+B) static function addTerm(first :Expression, second :Term) : Expression
     {
-        // std::vector<Term> terms;
-        // terms.reserve( first.terms().size() + 1 );
-        // terms.insert( terms.begin(), first.terms().begin(), first.terms().end() );
-        // terms.push_back( second );
-        // return Expression( terms, first.constant() );
-
         var terms = new List<Term>();
         for(t in first.terms) terms.add(t);
         terms.add(second);
@@ -296,12 +275,6 @@ abstract Term(jasper._Term_)
 
     @:op(A+B) static function addTerm(first :Term, second :Term) : Expression
     {
-        // std::vector<Term> terms;
-        // terms.reserve( 2 );
-        // terms.push_back( first );
-        // terms.push_back( second );
-        // return Expression( terms );
-
         var terms = new List<Term>();
         terms.add(first);
         terms.add(second);

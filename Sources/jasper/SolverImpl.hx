@@ -180,6 +180,8 @@ class SolverImpl
 	*/
 	public function addEditVariable(variable :Variable, strength :Strength) : Void
 	{
+        throw "addEditVariable nor implemented";
+
         if(edits.exists(variable)) {
             throw new DuplicateEditVariable( variable );
         }
