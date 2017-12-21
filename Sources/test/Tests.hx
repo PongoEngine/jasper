@@ -1,13 +1,19 @@
 package test;
 
 import jasper.Solver;
-import jasper.symbolics.Variable;
-import jasper.symbolics.Value;
+import jasper.Symbolics.Variable;
+import jasper.Symbolics.Value;
+import jasper.Symbolics.Expression;
 import jasper.Strength;
-import jasper.symbolics.Expression;
 import jasper.Constraint;
 
-using jasper.symbolics.Value.ValueHelper;
+using jasper.Symbolics.Term;
+using jasper.Symbolics.Value;
+using jasper.Symbolics.Variable;
+using jasper.Symbolics.Expression;
+
+
+// using jasper.Symbolics.Value.ValueHelper;
 
 class Tests 
 {
@@ -19,7 +25,7 @@ class Tests
         var solver = new Solver();
         var x = new Variable("x");
 
-        solver.addConstraint((2 + x) == 20);
+        solver.addConstraint(cast(2, Value) + x == 20);
         solver.updateVariables();
 
         Assert.lessThanDelta(x.value, 18, EPSILON, "simpleNew() PASSED");
@@ -211,7 +217,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((100.toValue() <= x));
+        solver.addConstraint((cast(100, Value) <= x));
         solver.updateVariables();
         Assert.isTrue(100 <= x.value);
         solver.addConstraint((x == 110));
@@ -223,7 +229,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((100.toValue() <= x));
+        solver.addConstraint((cast(100, Value) <= x));
         solver.updateVariables();
         Assert.isTrue(x.value <= 100);
         solver.addConstraint((x == 10));
@@ -234,7 +240,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((100.toValue() >= x));
+        solver.addConstraint((cast(100, Value) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.value);
         solver.addConstraint((x == 90));
@@ -246,7 +252,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((100.toValue() >= x));
+        solver.addConstraint((cast(100, Value) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.value);
         solver.addConstraint((x == 110));

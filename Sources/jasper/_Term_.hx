@@ -21,8 +21,8 @@
 
 package jasper;
 
-import jasper.symbolics.Variable;
-import jasper.symbolics.Term;
+import jasper.Symbolics.Variable;
+import jasper.Symbolics.Term;
 
 class _Term_
 {

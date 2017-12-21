@@ -24,8 +24,6 @@ package jasper;
 /**
  * Created by alex on 30/01/15.
  */
-// @:notNull
-// abstract Symbol(SymbolType) to Int
 class Symbol
 {
     /**
@@ -46,11 +44,6 @@ class Symbol
         return new Symbol(SymbolType.INVALID);
     }
 
-    public static inline function nothing() : Symbol
-    {
-        return new Symbol(SymbolType.NOTHING);
-    }
-
     /**
      *  [Description]
      *  @return SymbolType
@@ -66,8 +59,6 @@ class Symbol
 @:enum
 abstract SymbolType(Int) to Int
 {
-    var NOTHING = -1;
-    
     var INVALID = 0;
     var EXTERNAL = 1;
     var SLACK = 2;

@@ -21,9 +21,9 @@
 
 package jasper;
 
-import jasper.symbolics.Expression;
-import jasper.symbolics.Variable;
-import jasper.symbolics.Term;
+import jasper.Symbolics.Expression;
+import jasper.Symbolics.Variable;
+import jasper.Symbolics.Term;
 
 /**
  * Created by alex on 30/01/15.

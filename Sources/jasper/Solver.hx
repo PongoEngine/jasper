@@ -27,9 +27,9 @@ import jasper.exception.UnknownConstraintException;
 import jasper.exception.UnknownEditVariableException;
 import jasper.exception.UnsatisfiableConstraintException;
 import jasper.exception.RequiredFailureException;
-import jasper.symbolics.Expression;
-import jasper.symbolics.Variable;
-import jasper.symbolics.Term;
+import jasper.Symbolics.Expression;
+import jasper.Symbolics.Variable;
+import jasper.Symbolics.Term;
 
 using Lambda;
 

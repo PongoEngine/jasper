@@ -21,8 +21,8 @@
 
 package jasper;
 
-import jasper.symbolics.Expression;
-import jasper.symbolics.Term;
+import jasper.Symbolics.Expression;
+import jasper.Symbolics.Term;
 
 class _Expression_
 {
