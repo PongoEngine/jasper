@@ -22,7 +22,7 @@
 package jasper;
 
 
-class Variable_
+class _Variable_
 {
     public var name (default, null):String;
     public var value :Float;

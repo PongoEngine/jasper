@@ -24,7 +24,7 @@ package jasper;
 import jasper.symbolics.Expression;
 import jasper.symbolics.Term;
 
-class Expression_
+class _Expression_
 {
 
     public var terms :List<Term>;

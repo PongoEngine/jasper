@@ -28,7 +28,7 @@ import jasper.symbolics.Value;
  */
 @:forward
 @:notNull
-abstract Variable(jasper.Variable_) to jasper.Variable_
+abstract Variable(jasper._Variable_) to jasper._Variable_
 {
     /**
      *  [Description]
@@ -36,7 +36,7 @@ abstract Variable(jasper.Variable_) to jasper.Variable_
      */
     public inline function new(name :String) : Void
     {
-        this = new jasper.Variable_(name);
+        this = new jasper._Variable_(name);
     }
 
     /**

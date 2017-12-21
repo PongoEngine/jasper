@@ -30,7 +30,7 @@ import jasper.symbolics.Value;
 @:forward
 @:forwardStatics
 @:notNull
-abstract Expression(jasper.Expression_) to jasper.Expression_
+abstract Expression(jasper._Expression_)
 {
     /**
      *  [Description]
@@ -39,7 +39,7 @@ abstract Expression(jasper.Expression_) to jasper.Expression_
      */
     public inline function new(terms :List<Term>, constant :Float) : Void
     {
-        this = new jasper.Expression_(terms, constant);
+        this = new jasper._Expression_(terms, constant);
     }
 
     /**

@@ -29,7 +29,7 @@ package jasper.symbolics;
 @:forward
 @:forwardStatics
 @:notNull
-abstract Term(Term_) to Term_
+abstract Term(_Term_)
 {
     /**
      *  [Description]
@@ -38,7 +38,7 @@ abstract Term(Term_) to Term_
      */
     public function new(variable :Variable, coefficient :Float) : Void
     {
-        this = new Term_(variable, coefficient);
+        this = new _Term_(variable, coefficient);
     }
 
     /**

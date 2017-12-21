@@ -24,7 +24,7 @@ package jasper;
 import jasper.symbolics.Variable;
 import jasper.symbolics.Term;
 
-class Term_
+class _Term_
 {
     public var variable :Variable;
     public var coefficient :Float;
