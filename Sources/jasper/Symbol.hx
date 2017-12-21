@@ -24,8 +24,9 @@ package jasper;
 /**
  * Created by alex on 30/01/15.
  */
-@:notNull
-abstract Symbol(SymbolType) to Int
+// @:notNull
+// abstract Symbol(SymbolType) to Int
+class Symbol
 {
     /**
      *  [Description]
@@ -33,7 +34,7 @@ abstract Symbol(SymbolType) to Int
      */
     public inline function new(type :SymbolType) : Void
     {
-        this = type;
+        _symbol = type;
     }
 
     /**
@@ -56,8 +57,10 @@ abstract Symbol(SymbolType) to Int
      */
     public inline function getType() :SymbolType
     {
-        return this;
+        return _symbol;
     }
+
+    private var _symbol :SymbolType;
 }
 
 @:enum

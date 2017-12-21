@@ -408,7 +408,7 @@ class Solver
             } else {
                var dummy = new Symbol(Symbol.SymbolType.DUMMY);
                tag.marker = dummy;
-               row.insertSymbolWithDefault(dummy);
+               row.insertSymbol(dummy, 1.0);
             }
          }
       }
