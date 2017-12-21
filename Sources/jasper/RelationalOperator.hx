@@ -31,3 +31,10 @@ abstract RelationalOperator(Int)
     var OP_GE = 1;
     var OP_EQ = 2;
 }
+
+// enum RelationalOperator
+// {
+//     OP_LE;
+//     OP_GE;
+//     OP_EQ;
+// }
