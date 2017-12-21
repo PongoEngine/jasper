@@ -23,9 +23,8 @@ package jasper;
 
 class Variable_
 {
-
     public var name (default, null):String;
-    public var value :Float = 0.0;
+    public var value :Float;
 
     /**
      *  [Description]
@@ -34,6 +33,7 @@ class Variable_
     public function new(name :String) : Void
     {
         this.name = name;
+        this.value = 0.0;
     }
 
     /**

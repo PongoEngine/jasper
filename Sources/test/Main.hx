@@ -8,5 +8,6 @@ class Main
     {
         trace("holla");
         Tests.simpleNew();
+        // Tests.simple0();
     }
 }
