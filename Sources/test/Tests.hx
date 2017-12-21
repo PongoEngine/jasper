@@ -1,6 +1,6 @@
 package test;
 
-import jasper.Solver;
+import jasper.SolverImpl;
 import jasper.Strength;
 import jasper.Constraint;
 
@@ -18,7 +18,7 @@ class Tests
 
     public static function simpleNew() : Void 
     {
-        var solver = new Solver();
+        var solver = new SolverImpl();
         var x = new Variable("x");
 
         solver.addConstraint(cast(2, Value) + x == 20);
@@ -29,7 +29,7 @@ class Tests
 
     public static function simple0() : Void 
     {
-        var solver = new Solver();
+        var solver = new SolverImpl();
         var x = new Variable("x");
         var y = new Variable("y");
 
@@ -43,7 +43,7 @@ class Tests
 
     public static function simple1() : Void
     {
-        var solver = new Solver();
+        var solver = new SolverImpl();
         var x = new Variable("x");
         var y = new Variable("y");
         solver.addConstraint(x == y);
@@ -56,7 +56,7 @@ class Tests
     {
         var x = new Variable("x");
         var y = new Variable("y");
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         solver.addConstraint(x <= y);
         solver.addConstraint((y == (x + 3.0)));
@@ -77,7 +77,7 @@ class Tests
     public static function addDelete1() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         solver.addConstraint((x <= 100).setStrength(Strength.WEAK));
 
@@ -126,7 +126,7 @@ class Tests
     {
         var x = new Variable("x");
         var y = new Variable("y");
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         solver.addConstraint((x == 100).setStrength(Strength.WEAK));
         solver.addConstraint((y == 120).setStrength(Strength.STRONG));
@@ -170,7 +170,7 @@ class Tests
     public static function inconsistent1() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         solver.addConstraint((x == 10.0));
         solver.addConstraint((x == 5.0));
@@ -181,7 +181,7 @@ class Tests
     public static function inconsistent2() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         solver.addConstraint((x >= 10.0));
         solver.addConstraint((x <= 5.0));
@@ -195,7 +195,7 @@ class Tests
         var x = new Variable("x");
         var y = new Variable("y");
         var z = new Variable("z");
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         solver.addConstraint((w >= 10.0));
         solver.addConstraint((x >= w));
@@ -212,7 +212,7 @@ class Tests
     public static function lessThanEqualTo_ConstantVariableTest() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((cast(100, Value) <= x));
         solver.updateVariables();
         Assert.isTrue(100 <= x.value);
@@ -224,7 +224,7 @@ class Tests
     public static function lessThanEqualToUnsatisfiable_ConstantVariableTest() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((cast(100, Value) <= x));
         solver.updateVariables();
         Assert.isTrue(x.value <= 100);
@@ -235,7 +235,7 @@ class Tests
     public static function greaterThanEqualTo_ConstantVariableTest() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((cast(100, Value) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.value);
@@ -247,7 +247,7 @@ class Tests
     public static function greaterThanEqualToUnsatisfiable_ConstantVariableTest() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((cast(100, Value) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.value);
@@ -260,7 +260,7 @@ class Tests
     public static function lessThanEqualTo_ExpressionVariableTest() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((Expression.fromConstant(100) <= x));
         solver.updateVariables();
         Assert.isTrue(100 <= x.value);
@@ -272,7 +272,7 @@ class Tests
     public static function lessThanEqualToUnsatisfiable_ExpressionVariableTest() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((Expression.fromConstant(100) <= x));
         solver.updateVariables();
         Assert.isTrue(x.value <= 100);
@@ -283,7 +283,7 @@ class Tests
     public static function greaterThanEqualTo_ExpressionVariableTest() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((Expression.fromConstant(100) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.value);
@@ -295,7 +295,7 @@ class Tests
     public static function greaterThanEqualToUnsatisfiable_ExpressionVariableTest() : Void
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((Expression.fromConstant(100) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.value);
@@ -308,7 +308,7 @@ class Tests
     public static function lessThanEqualTo_VariableConstantTest() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x <= 100));
         solver.updateVariables();
         Assert.isTrue(x.value <= 100);
@@ -320,7 +320,7 @@ class Tests
     public static function lessThanEqualToUnsatisfiable_VariableConstantTest() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x <= 100));
         solver.updateVariables();
         Assert.isTrue(x.value <= 100);
@@ -331,7 +331,7 @@ class Tests
     public static function greaterThanEqualTo_VariableConstantTest() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x >= 100));
         solver.updateVariables();
         Assert.isTrue(x.value >= 100);
@@ -343,7 +343,7 @@ class Tests
     public static function greaterThanEqualToUnsatisfiable_VariableConstantTest() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x >= 100));
         solver.updateVariables();
         Assert.isTrue(x.value >= 100);
@@ -356,7 +356,7 @@ class Tests
     public static function lessThanEqualTo_VariableExpression() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x <= Expression.fromConstant(100)));
         solver.updateVariables();
         Assert.isTrue(x.value <= 100);
@@ -368,7 +368,7 @@ class Tests
     public static function lessThanEqualToUnsatisfiable_VariableExpression() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x <= Expression.fromConstant(100)));
         solver.updateVariables();
         Assert.isTrue(x.value <= 100);
@@ -379,7 +379,7 @@ class Tests
     public static function greaterThanEqualTo_VariableExpression() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x >= Expression.fromConstant(100)));
         solver.updateVariables();
         Assert.isTrue(x.value >= 100);
@@ -391,7 +391,7 @@ class Tests
     public static function greaterThanEqualToUnsatisfiable_VariableExpression() : Void 
     {
         var x = new Variable("x");
-        var solver = new Solver();
+        var solver = new SolverImpl();
         solver.addConstraint((x >= 100));
         solver.updateVariables();
         Assert.isTrue(x.value >= 100);
@@ -403,7 +403,7 @@ class Tests
 
     public static function lessThanEqualTo_VariableVariableTest() : Void 
     {
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         var x = new Variable("x");
         var y = new Variable("y");
@@ -420,7 +420,7 @@ class Tests
 
     public static function lessThanEqualToUnsatisfiable_VariableVariableTest() : Void 
     {
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         var x = new Variable("x");
         var y = new Variable("y");
@@ -436,7 +436,7 @@ class Tests
 
     public static function greaterThanEqualTo_VariableVariableTest() : Void 
     {
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         var x = new Variable("x");
         var y = new Variable("y");
@@ -453,7 +453,7 @@ class Tests
 
     public static function greaterThanEqualToUnsatisfiable_VariableVariableTest() : Void 
     {
-        var solver = new Solver();
+        var solver = new SolverImpl();
 
         var x = new Variable("x");
         var y = new Variable("y");

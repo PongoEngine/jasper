@@ -31,11 +31,6 @@ import jasper.Symbolics.Expression;
 import jasper.Symbolics.Variable;
 import jasper.Symbolics.Term;
 
-using Lambda;
-
-/**
- * Created by alex on 30/01/15.
- */
 class Solver 
 {
    private var cns :Map<Constraint, Tag>;
@@ -46,10 +41,8 @@ class Solver
    private var objective :Row;
    private var artificial :Row;
 
-   /**
-    *  [Description]
-    */
-   public function new() : Void
+    @:allow(jasper.SolverImpl)
+   private function new() : Void
    {
       cns = new Map<Constraint, Tag>();
       rows = new Map<Symbol, Row>();
@@ -60,10 +53,6 @@ class Solver
       artificial = null;
    }
 
-   /**
-    *  [Description]
-    *  @param constraint - 
-    */
    public function addConstraint(constraint :Constraint) : Void 
    {
 
@@ -98,10 +87,6 @@ class Solver
       optimize(objective);
    }
 
-    /**
-     *  [Description]
-     *  @param constraint - 
-     */
     public function removeConstraint(constraint :Constraint) : Void
     {
         var tag = cns.get(constraint);
@@ -139,11 +124,6 @@ class Solver
         optimize(objective);
     }
 
-   /**
-    *  [Description]
-    *  @param constraint - 
-    *  @param tag - 
-    */
    public function removeConstraintEffects(constraint :Constraint, tag :Tag) : Void
    {
       if(tag.marker.getType() == Symbol.SymbolType.ERROR){
@@ -154,11 +134,6 @@ class Solver
       }
    }
 
-   /**
-    *  [Description]
-    *  @param marker - 
-    *  @param strength - 
-    */
    public function removeMarkerEffects(marker :Symbol, strength :Strength) : Void
    {
       var row = rows.get(marker);
@@ -169,11 +144,6 @@ class Solver
       }
    }
 
-   /**
-    *  [Description]
-    *  @param marker - 
-    *  @return Row
-    */
    public function getMarkerLeavingRow(marker :Symbol) : Row
    {
       var dmax = Util.FLOAT_MAX;
@@ -218,21 +188,11 @@ class Solver
       return third;
    }
 
-   /**
-    *  [Description]
-    *  @param constraint - 
-    *  @return Bool
-    */
    public function hasConstraint(constraint :Constraint) : Bool
    {
       return cns.exists(constraint);
    }
 
-   /**
-    *  [Description]
-    *  @param variable - 
-    *  @param strength - 
-    */
    public function addEditVariable(variable :Variable, strength :Strength) : Void
    {
       if(edits.exists(variable)){
@@ -262,10 +222,6 @@ class Solver
       edits.set(variable, info);
    }
 
-   /**
-    *  [Description]
-    *  @param variable - 
-    */
    public function removeEditVariable(variable :Variable) : Void
    {
       var edit = edits.get(variable);
@@ -282,21 +238,11 @@ class Solver
       edits.remove(variable);
    }
 
-   /**
-    *  [Description]
-    *  @param variable - 
-    *  @return Bool
-    */
    public function hasEditVariable(variable :Variable) : Bool
    {
       return edits.exists(variable);
    }
 
-   /**
-    *  [Description]
-    *  @param variable - 
-    *  @param value - 
-    */
    public function suggestValue(variable :Variable, value : Float) : Void
    {
       var info = edits.get(variable);
@@ -336,9 +282,6 @@ class Solver
       dualOptimize();
    }
 
-   /**
-    *  [Description]
-    */
    public function updateVariables() : Void
    {
       for (key in vars.keys()) {
@@ -353,12 +296,6 @@ class Solver
       }
    }
 
-   /**
-    *  [Description]
-    *  @param constraint - 
-    *  @param tag - 
-    *  @return Row
-    */
    public function createRow(constraint :Constraint, tag :Tag) : Row
    {
       var expression = constraint.expression;
@@ -421,12 +358,6 @@ class Solver
       return row;
    }
 
-   /**
-    *  [Description]
-    *  @param row - 
-    *  @param tag - 
-    *  @return Symbol
-    */
    private static function chooseSubject(row :Row, tag :Tag) : Symbol
    {
 
@@ -447,11 +378,6 @@ class Solver
       return Symbol.invalidSymbol();
    }
 
-   /**
-    *  [Description]
-    *  @param row - 
-    *  @return Bool
-    */
    private function addWithArtificialVariable(row :Row) : Bool
    {
       var art = new Symbol(Symbol.SymbolType.SLACK);
@@ -501,11 +427,6 @@ class Solver
       return success;
    }
 
-   /**
-    *  [Description]
-    *  @param symbol - 
-    *  @param row - 
-    */
    public function substitute(symbol :Symbol, row :Row) : Void
    {
       for (key in rows.keys()) {
@@ -522,10 +443,6 @@ class Solver
       }
    }
 
-   /**
-    *  [Description]
-    *  @param objective - 
-    */
    public function optimize(objective :Row) : Void
    {
       while (true) {
@@ -560,9 +477,6 @@ class Solver
       }
    }
 
-   /**
-    *  [Description]
-    */
    public function dualOptimize() : Void
    {
       while(infeasibleRows.length != 0){
@@ -581,11 +495,6 @@ class Solver
       }
    }
 
-   /**
-    *  [Description]
-    *  @param objective - 
-    *  @return Symbol
-    */
    private static function getEnteringSymbol(objective :Row) : Symbol
    {
       for (key in objective.cells.keys()) {
@@ -596,11 +505,6 @@ class Solver
       return Symbol.invalidSymbol();
    }
 
-   /**
-    *  [Description]
-    *  @param row - 
-    *  @return Symbol
-    */
    private function getDualEnteringSymbol(row :Row) :Symbol
    {
       var entering = Symbol.invalidSymbol();
@@ -621,11 +525,6 @@ class Solver
       return entering;
    }
 
-   /**
-    *  [Description]
-    *  @param row - 
-    *  @return Symbol
-    */
    private function anyPivotableSymbol(row :Row) : Symbol
    {
       var symbol :Symbol = Symbol.nothing();
@@ -640,11 +539,6 @@ class Solver
       return symbol;
    }
 
-   /**
-    *  [Description]
-    *  @param entering - 
-    *  @return Row
-    */
    private function getLeavingRow(entering :Symbol) : Row
    {
       var ratio = Util.FLOAT_MAX;
@@ -666,11 +560,6 @@ class Solver
       return row;
    }
 
-   /**
-    *  [Description]
-    *  @param variable - 
-    *  @return Symbol
-    */
    private function getVarSymbol(variable :Variable) : Symbol
    {
       var symbol :Symbol = Symbol.nothing();
@@ -683,11 +572,6 @@ class Solver
       return symbol;
    }
 
-    /**
-     *  [Description]
-     *  @param row - 
-     *  @return Bool
-     */
     private static function allDummies(row :Row) : Bool
     {
         for (key in row.cells.keys()) {
@@ -705,9 +589,6 @@ private class Tag
    public var marker :Symbol;
    public var other :Symbol;
 
-   /**
-    *  [Description]
-    */
    public function new() : Void
    {
       marker = Symbol.invalidSymbol();
@@ -721,12 +602,6 @@ private class EditInfo
    public var constraint :Constraint;
    public var constant :Float;
 
-   /**
-    *  [Description]
-    *  @param constraint - 
-    *  @param tag - 
-    *  @param constant - 
-    */
    public function new(constraint :Constraint, tag :Tag, constant : Float) : Void
    {
       this.constraint = constraint;
