@@ -24,6 +24,7 @@ package jasper;
 /**
  * Created by alex on 30/01/15.
  */
+@:notNull
 abstract Symbol(SymbolType) to Int
 {
     /**

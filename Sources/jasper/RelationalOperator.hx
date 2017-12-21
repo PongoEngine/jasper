@@ -24,9 +24,10 @@ package jasper;
 /**
  * Created by alex on 31/01/15.
  */
-enum RelationalOperator 
+@:enum
+abstract RelationalOperator(Int)
 {
-    OP_LE;
-    OP_GE;
-    OP_EQ;
+    var OP_LE = 0;
+    var OP_GE = 1;
+    var OP_EQ = 2;
 }

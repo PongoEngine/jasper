@@ -24,28 +24,30 @@ package jasper;
 /**
  * Created by alex on 30/01/15.
  */
-class Strength 
+@:notNull
+abstract Strength(Float) to Float
 {
-    public static var REQUIRED :Float = create(1000.0, 1000.0, 1000.0);
-    public static var STRONG :Float = create(1.0, 0.0, 0.0);
-    public static var MEDIUM :Float = create(0.0, 1.0, 0.0);
-    public static var WEAK :Float = create(0.0, 0.0, 1.0);
+    public inline function new(str :Float) : Void
+    {
+        this = str;
+    }
 
-    /**
-     *  [Description]
-     *  @param a - 
-     *  @param b - 
-     *  @param c - 
-     *  @param w - 
-     *  @return Float
-     */
-    public static function create_w(a :Float, b :Float, c :Float, w :Float) : Float
+    @:op(A < B) static function lt(a :Strength, b :Strength) : Bool;
+    @:op(A > B) static function gt(a :Strength, b :Strength) : Bool;
+    @:op(-A) function negate() : Strength;
+
+    public static inline var REQUIRED :Strength = new Strength(1001001000);
+    public static inline var STRONG :Strength = new Strength(1000000);
+    public static inline var MEDIUM :Strength = new Strength(1000);
+    public static inline var WEAK :Strength = new Strength(1);
+
+    public static function create_w(a :Float, b :Float, c :Float, w :Float) : Strength
     {
         var result = 0.0;
         result += Math.max(0.0, Math.min(1000.0, a * w)) * 1000000.0;
         result += Math.max(0.0, Math.min(1000.0, b * w)) * 1000.0;
         result += Math.max(0.0, Math.min(1000.0, c * w));
-        return result;
+        return new Strength(result);
     }
 
     /**
@@ -55,7 +57,7 @@ class Strength
      *  @param c - 
      *  @return Float
      */
-    public static function create(a :Float, b :Float, c :Float) : Float
+    public static inline function create(a :Float, b :Float, c :Float) : Strength
     {
         return create_w(a, b, c, 1.0);
     }
@@ -65,9 +67,9 @@ class Strength
      *  @param value - 
      *  @return Float
      */
-    public static function clip(value :Float) :Float
+    public static function clip(value :Strength) :Strength
     {
-        var min = 0.0;
+        var min = new Strength(0.0);
         var max = REQUIRED;
 
         return if(value < min) min

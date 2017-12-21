@@ -144,7 +144,7 @@ haxe_ds_ObjectMap.prototype = {
 };
 var jasper_Constraint = function(expr,op,strength) {
 	var vars = new haxe_ds_ObjectMap();
-	var _g_head = expr.getTerms().h;
+	var _g_head = expr.terms.h;
 	while(_g_head != null) {
 		var val = _g_head.item;
 		_g_head = _g_head.next;
@@ -163,46 +163,31 @@ var jasper_Constraint = function(expr,op,strength) {
 		var variable1 = variable.next();
 		reducedTerms.add(jasper__$Term_Term_$Impl_$._new(variable1,vars.h[variable1.__id__]));
 	}
-	var this1 = new jasper_Expression_$(reducedTerms,expr.getConstant());
-	this._expression = this1;
-	this._op = op;
-	this._strength = jasper_Strength.clip(strength);
+	var this1 = new jasper_Expression_$(reducedTerms,expr.constant);
+	this.expression = this1;
+	this.operator = op;
+	this.strength = jasper__$Strength_Strength_$Impl_$.clip(strength);
 };
 jasper_Constraint.__name__ = true;
 jasper_Constraint.prototype = {
-	getExpression: function() {
-		return this._expression;
-	}
-	,getStrength: function() {
-		return this._strength;
-	}
-	,getOp: function() {
-		return this._op;
-	}
-	,toString: function() {
-		return "expression: (" + Std.string(this._expression) + ") strength: " + this._strength + " operator: " + Std.string(this._op);
+	toString: function() {
+		return "expression: (" + Std.string(this.expression) + ") strength: " + this.strength + " operator: " + this.operator;
 	}
 };
 var jasper_Expression_$ = function(terms,constant) {
-	this._terms = terms;
-	this._constant = constant;
+	this.terms = terms;
+	this.constant = constant;
 };
 jasper_Expression_$.__name__ = true;
 jasper_Expression_$.prototype = {
-	getConstant: function() {
-		return this._constant;
-	}
-	,getTerms: function() {
-		return this._terms;
-	}
-	,isConstant: function() {
-		return this._terms.length == 0;
+	isConstant: function() {
+		return this.terms.length == 0;
 	}
 	,toString: function() {
-		var sb = "isConstant: " + Std.string(this.isConstant()) + " constant: " + this._constant;
+		var sb = "isConstant: " + Std.string(this.isConstant()) + " constant: " + this.constant;
 		if(!this.isConstant()) {
 			sb += " terms: [";
-			var _g_head = this._terms.h;
+			var _g_head = this.terms.h;
 			while(_g_head != null) {
 				var val = _g_head.item;
 				_g_head = _g_head.next;
@@ -220,14 +205,14 @@ var jasper__$Expression_Expression_$Impl_$ = {};
 jasper__$Expression_Expression_$Impl_$.__name__ = true;
 jasper__$Expression_Expression_$Impl_$.multiplyCoefficient = function(expression,coefficient) {
 	var terms = new List();
-	var _g_head = expression.getTerms().h;
+	var _g_head = expression.terms.h;
 	while(_g_head != null) {
 		var val = _g_head.item;
 		_g_head = _g_head.next;
 		var term = val;
 		terms.add(jasper__$Term_Term_$Impl_$.multiply(term,coefficient));
 	}
-	var this1 = new jasper_Expression_$(terms,expression.getConstant() * jasper__$Value_Value_$Impl_$.toFloat(coefficient));
+	var this1 = new jasper_Expression_$(terms,expression.constant * jasper__$Value_Value_$Impl_$.toFloat(coefficient));
 	return this1;
 };
 jasper__$Expression_Expression_$Impl_$.negate = function(expression) {
@@ -236,28 +221,28 @@ jasper__$Expression_Expression_$Impl_$.negate = function(expression) {
 };
 jasper__$Expression_Expression_$Impl_$.addExpression = function(first,second) {
 	var terms = new List();
-	var _g_head = first.getTerms().h;
+	var _g_head = first.terms.h;
 	while(_g_head != null) {
 		var val = _g_head.item;
 		_g_head = _g_head.next;
 		var t = val;
 		terms.add(t);
 	}
-	var _g_head1 = second.getTerms().h;
+	var _g_head1 = second.terms.h;
 	while(_g_head1 != null) {
 		var val1 = _g_head1.item;
 		_g_head1 = _g_head1.next;
 		var t1 = val1;
 		terms.add(t1);
 	}
-	var this1 = new jasper_Expression_$(terms,first.getConstant() + second.getConstant());
+	var this1 = new jasper_Expression_$(terms,first.constant + second.constant);
 	return this1;
 };
 jasper__$Expression_Expression_$Impl_$.subtractExpression = function(first,second) {
 	return jasper__$Expression_Expression_$Impl_$.addExpression(first,jasper__$Expression_Expression_$Impl_$.negate(second));
 };
 jasper__$Expression_Expression_$Impl_$.equalsExpression = function(first,second) {
-	return new jasper_Constraint(jasper__$Expression_Expression_$Impl_$.subtractExpression(first,second),jasper_RelationalOperator.OP_EQ,jasper_Strength.REQUIRED);
+	return new jasper_Constraint(jasper__$Expression_Expression_$Impl_$.subtractExpression(first,second),2,1001001000);
 };
 jasper__$Expression_Expression_$Impl_$.equalsConstant = function(expression,constant) {
 	var this1 = new jasper_Expression_$(new List(),constant);
@@ -267,13 +252,6 @@ var jasper_InternalSolverError = function(string) {
 	throw new js__$Boot_HaxeError(string);
 };
 jasper_InternalSolverError.__name__ = true;
-var jasper_RelationalOperator = { __ename__ : true, __constructs__ : ["OP_LE","OP_GE","OP_EQ"] };
-jasper_RelationalOperator.OP_LE = ["OP_LE",0];
-jasper_RelationalOperator.OP_LE.__enum__ = jasper_RelationalOperator;
-jasper_RelationalOperator.OP_GE = ["OP_GE",1];
-jasper_RelationalOperator.OP_GE.__enum__ = jasper_RelationalOperator;
-jasper_RelationalOperator.OP_EQ = ["OP_EQ",2];
-jasper_RelationalOperator.OP_EQ.__enum__ = jasper_RelationalOperator;
 var jasper_Row = function(constant,cells) {
 	this._constant = constant;
 	this._cells = cells;
@@ -456,9 +434,9 @@ jasper_Solver.prototype = {
 		}
 	}
 	,createRow: function(constraint,tag) {
-		var expression = constraint.getExpression();
-		var row = new jasper_Row(expression.getConstant(),new haxe_ds_IntMap());
-		var _g_head = expression.getTerms().h;
+		var expression = constraint.expression;
+		var row = new jasper_Row(expression.constant,new haxe_ds_IntMap());
+		var _g_head = expression.terms.h;
 		while(_g_head != null) {
 			var val = _g_head.item;
 			_g_head = _g_head.next;
@@ -473,39 +451,39 @@ jasper_Solver.prototype = {
 				}
 			}
 		}
-		var _g = constraint.getOp();
-		switch(_g[1]) {
+		var _g = constraint.operator;
+		switch(_g) {
 		case 0:
 			break;
 		case 1:
-			var coeff = constraint.getOp() == jasper_RelationalOperator.OP_LE ? 1.0 : -1.0;
+			var coeff = constraint.operator == 0 ? 1.0 : -1.0;
 			var this1 = 2;
 			var slack = this1;
 			tag.marker = slack;
 			row.insertSymbol(slack,coeff);
-			if(constraint.getStrength() < jasper_Strength.REQUIRED) {
-				var this11 = 3;
-				var error = this11;
+			if(constraint.strength < 1001001000) {
+				var this2 = 3;
+				var error = this2;
 				tag.other = error;
 				row.insertSymbol(error,-coeff);
-				this.objective.insertSymbol(error,constraint.getStrength());
+				this.objective.insertSymbol(error,constraint.strength);
 			}
 			break;
 		case 2:
-			if(constraint.getStrength() < jasper_Strength.REQUIRED) {
-				var this12 = 3;
-				var errplus = this12;
-				var this13 = 3;
-				var errminus = this13;
+			if(constraint.strength < 1001001000) {
+				var this3 = 3;
+				var errplus = this3;
+				var this4 = 3;
+				var errminus = this4;
 				tag.marker = errplus;
 				tag.other = errminus;
 				row.insertSymbol(errplus,-1.0);
 				row.insertSymbol(errminus,1.0);
-				this.objective.insertSymbol(errplus,constraint.getStrength());
-				this.objective.insertSymbol(errminus,constraint.getStrength());
+				this.objective.insertSymbol(errplus,constraint.strength);
+				this.objective.insertSymbol(errminus,constraint.strength);
 			} else {
-				var this14 = 4;
-				var dummy = this14;
+				var this5 = 4;
+				var dummy = this5;
 				tag.marker = dummy;
 				row.insertSymbolWithDefault(dummy);
 			}
@@ -519,22 +497,22 @@ jasper_Solver.prototype = {
 	,addWithArtificialVariable: function(row) {
 		var this1 = 2;
 		var art = this1;
-		var this11 = this.rows;
+		var this2 = this.rows;
 		var clonedCells = new haxe_ds_IntMap();
 		var otherCells = row._cells;
-		var key1 = otherCells.keys();
-		while(key1.hasNext()) {
-			var key11 = key1.next();
-			clonedCells.h[key11] = otherCells.h[key11];
+		var key = otherCells.keys();
+		while(key.hasNext()) {
+			var key1 = key.next();
+			clonedCells.h[key1] = otherCells.h[key1];
 		}
 		var value = new jasper_Row(row._constant,clonedCells);
-		this11.h[art] = value;
+		this2.h[art] = value;
 		var clonedCells1 = new haxe_ds_IntMap();
 		var otherCells1 = row._cells;
-		var key12 = otherCells1.keys();
-		while(key12.hasNext()) {
-			var key13 = key12.next();
-			clonedCells1.h[key13] = otherCells1.h[key13];
+		var key2 = otherCells1.keys();
+		while(key2.hasNext()) {
+			var key3 = key2.next();
+			clonedCells1.h[key3] = otherCells1.h[key3];
 		}
 		this.artificial = new jasper_Row(row._constant,clonedCells1);
 		this.optimize(this.artificial);
@@ -605,8 +583,8 @@ jasper_Solver.prototype = {
 					leaving = key1;
 				}
 			}
-			var this11 = 5;
-			var entryKey = this11;
+			var this2 = 5;
+			var entryKey = this2;
 			var key2 = this.rows.keys();
 			while(key2.hasNext()) {
 				var key3 = key2.next();
@@ -631,8 +609,8 @@ jasper_Solver.prototype = {
 			}
 		}
 		if(symbol == 5) {
-			var this11 = 0;
-			symbol = this11;
+			var this2 = 0;
+			symbol = this2;
 		}
 		return symbol;
 	}
@@ -662,8 +640,8 @@ jasper_Solver.prototype = {
 		if(this.vars.h.__keys__[variable.__id__] != null) {
 			symbol = this.vars.h[variable.__id__];
 		} else {
-			var this11 = 1;
-			symbol = this11;
+			var this2 = 1;
+			symbol = this2;
 			this.vars.set(variable,symbol);
 		}
 		return symbol;
@@ -672,27 +650,18 @@ jasper_Solver.prototype = {
 var jasper__$Solver_Tag = function() {
 	var this1 = 0;
 	this.marker = this1;
-	var this11 = 0;
-	this.other = this11;
+	var this2 = 0;
+	this.other = this2;
 };
 jasper__$Solver_Tag.__name__ = true;
 var jasper__$Solver_EditInfo = function() { };
 jasper__$Solver_EditInfo.__name__ = true;
-var jasper_Strength = function() { };
-jasper_Strength.__name__ = true;
-jasper_Strength.create_w = function(a,b,c,w) {
-	var result = 0.0;
-	result += Math.max(0.0,Math.min(1000.0,a * w)) * 1000000.0;
-	result += Math.max(0.0,Math.min(1000.0,b * w)) * 1000.0;
-	result += Math.max(0.0,Math.min(1000.0,c * w));
-	return result;
-};
-jasper_Strength.create = function(a,b,c) {
-	return jasper_Strength.create_w(a,b,c,1.0);
-};
-jasper_Strength.clip = function(value) {
-	var min = 0.0;
-	var max = jasper_Strength.REQUIRED;
+var jasper__$Strength_Strength_$Impl_$ = {};
+jasper__$Strength_Strength_$Impl_$.__name__ = true;
+jasper__$Strength_Strength_$Impl_$.clip = function(value) {
+	var this1 = 0.0;
+	var min = this1;
+	var max = 1001001000;
 	if(value < min) {
 		return min;
 	} else if(value > max) {
@@ -923,6 +892,5 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 String.__name__ = true;
 Array.__name__ = true;
 haxe_ds_ObjectMap.count = 0;
-jasper_Strength.REQUIRED = jasper_Strength.create(1000.0,1000.0,1000.0);
 test_Main.main();
 })();

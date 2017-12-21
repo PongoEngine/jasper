@@ -144,10 +144,10 @@ class Solver
    public function removeConstraintEffects(constraint :Constraint, tag :Tag) : Void
    {
       if(tag.marker.getType() == Symbol.SymbolType.ERROR){
-         removeMarkerEffects(tag.marker, constraint.getStrength());
+         removeMarkerEffects(tag.marker, constraint.strength);
       }
       else if(tag.other.getType() == Symbol.SymbolType.ERROR){
-         removeMarkerEffects(tag.other, constraint.getStrength());
+         removeMarkerEffects(tag.other, constraint.strength);
       }
    }
 
@@ -156,7 +156,7 @@ class Solver
     *  @param marker - 
     *  @param strength - 
     */
-   public function removeMarkerEffects(marker :Symbol, strength :Float) : Void
+   public function removeMarkerEffects(marker :Symbol, strength :Strength) : Void
    {
       var row = rows.get(marker);
       if(row != null){
@@ -230,7 +230,7 @@ class Solver
     *  @param variable - 
     *  @param strength - 
     */
-   public function addEditVariable(variable :Variable, strength :Float) : Void
+   public function addEditVariable(variable :Variable, strength :Strength) : Void
    {
       if(edits.exists(variable)){
          throw new DuplicateEditVariableException();
@@ -358,11 +358,11 @@ class Solver
     */
    public function createRow(constraint :Constraint, tag :Tag) : Row
    {
-      var expression = constraint.getExpression();
-      var row = Row.fromConstant(expression.getConstant());
+      var expression = constraint.expression;
+      var row = Row.fromConstant(expression.constant);
 
 
-      for (term in expression.getTerms()) {
+      for (term in expression.terms) {
          if (!Util.nearZero(term.getCoefficient())) {
             var symbol = getVarSymbol(term.getVariable());
 
@@ -376,32 +376,32 @@ class Solver
          }
       }
 
-      switch (constraint.getOp()) {
+      switch (constraint.operator) {
          case OP_LE:
 
          case OP_GE: {
-            var coeff = constraint.getOp() == RelationalOperator.OP_LE ? 1.0 : -1.0;
+            var coeff = constraint.operator == RelationalOperator.OP_LE ? 1.0 : -1.0;
             var slack = new Symbol(Symbol.SymbolType.SLACK);
             tag.marker = slack;
             row.insertSymbol(slack, coeff);
-            if (constraint.getStrength() < Strength.REQUIRED) {
+            if (constraint.strength < Strength.REQUIRED) {
                var error = new Symbol(Symbol.SymbolType.ERROR);
                tag.other = error;
                row.insertSymbol(error, -coeff);
-               this.objective.insertSymbol(error, constraint.getStrength());
+               this.objective.insertSymbol(error, constraint.strength);
             }
          }
 
          case OP_EQ: {
-            if (constraint.getStrength() < Strength.REQUIRED) {
+            if (constraint.strength < Strength.REQUIRED) {
                var errplus = new Symbol(Symbol.SymbolType.ERROR);
                var errminus = new Symbol(Symbol.SymbolType.ERROR);
                tag.marker = errplus;
                tag.other = errminus;
                row.insertSymbol(errplus, -1.0); // v = eplus - eminus
                row.insertSymbol(errminus, 1.0); // v - eplus + eminus = 0
-               this.objective.insertSymbol(errplus, constraint.getStrength());
-               this.objective.insertSymbol(errminus, constraint.getStrength());
+               this.objective.insertSymbol(errplus, constraint.strength);
+               this.objective.insertSymbol(errminus, constraint.strength);
             } else {
                var dummy = new Symbol(Symbol.SymbolType.DUMMY);
                tag.marker = dummy;

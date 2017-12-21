@@ -25,6 +25,10 @@ import jasper.exception.NonlinearExpressionException;
 
 class Expression_
 {
+
+    public var terms :List<Term>;
+    public var constant :Float;
+
     /**
      *  [Description]
      *  @param terms - 
@@ -32,8 +36,8 @@ class Expression_
      */
     public function new(terms :List<Term>, constant :Float) : Void
     {
-        _terms = terms;
-        _constant = constant;
+        this.terms = terms;
+        this.constant = constant;
     }
 
     /**
@@ -92,47 +96,11 @@ class Expression_
      *  [Description]
      *  @return Float
      */
-    public function getConstant() : Float
-    {
-        return _constant;
-    }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     */
-    public function setConstant(constant :Float) : Void
-    {
-        _constant = constant;
-    }
-
-    /**
-     *  [Description]
-     *  @return List<Term>
-     */
-    public function getTerms() : List<Term>
-    {
-        return _terms;
-    }
-
-    /**
-     *  [Description]
-     *  @param terms - 
-     */
-    public function setTerms(terms :List<Term>) : Void
-    {
-        _terms = terms;
-    }
-
-    /**
-     *  [Description]
-     *  @return Float
-     */
     public function getValue() : Float
     {
-        var result = _constant;
+        var result = constant;
 
-        for (term in _terms) {
+        for (term in terms) {
             result += term.getValue();
         }
         return result;
@@ -144,7 +112,7 @@ class Expression_
      */
     public function isConstant() : Bool
     {
-        return _terms.length == 0;
+        return terms.length == 0;
     }
 
     /**
@@ -153,10 +121,10 @@ class Expression_
      */
     public function toString() : String
     {
-        var sb = "isConstant: " + isConstant() + " constant: " + _constant;
+        var sb = "isConstant: " + isConstant() + " constant: " + constant;
         if (!isConstant()) {
             sb += " terms: [";
-            for (term in _terms) {
+            for (term in terms) {
                 sb += "(";
                 sb += term;
                 sb += ")";
@@ -165,9 +133,6 @@ class Expression_
         }
         return sb;
     }
-
-    private var _terms :List<Term>;
-    private var _constant :Float;
 }
 
 /**
@@ -175,6 +140,7 @@ class Expression_
  */
 @:forward
 @:forwardStatics
+@:notNull
 abstract Expression(Expression_) to Expression_
 {
     /**
@@ -197,11 +163,11 @@ abstract Expression(Expression_) to Expression_
     {
         var terms = new List<Term>();
 
-        for (term in expression.getTerms()) {
+        for (term in expression.terms) {
             terms.add(term * coefficient);
         }
 
-        return new Expression(terms, expression.getConstant() * coefficient.toFloat());
+        return new Expression(terms, expression.constant * coefficient.toFloat());
     }
 
     /**
@@ -213,9 +179,9 @@ abstract Expression(Expression_) to Expression_
     @:op(A * B) public static function multiplyExpression(expression1 :Expression, expression2 :Expression) : Expression 
     {
         if (expression1.isConstant()) {
-            return (new Value(expression1.getConstant()) * expression2);
+            return (new Value(expression1.constant) * expression2);
         } else if (expression2.isConstant()) {
-            return (new Value(expression2.getConstant()) * expression1);
+            return (new Value(expression2.constant) * expression1);
         } else {
             throw new NonlinearExpressionException();
         }
@@ -241,7 +207,7 @@ abstract Expression(Expression_) to Expression_
     @:op(A / B) public static function divideExpression(expression1 :Expression, expression2 :Expression) : Expression
     {
         if (expression2.isConstant()) {
-            return expression1 / new Value(expression2.getConstant());
+            return expression1 / new Value(expression2.constant);
         } else {
             throw new NonlinearExpressionException();
         }
@@ -268,15 +234,15 @@ abstract Expression(Expression_) to Expression_
         //TODO do we need to copy term objects?
         var terms = new List<Term>();
 
-        for(t in first.getTerms()) {
+        for(t in first.terms) {
         	terms.add(t);
         }
 
-        for(t in second.getTerms()) {
+        for(t in second.terms) {
         	terms.add(t);
         }
 
-        return new Expression(terms, first.getConstant() + second.getConstant());
+        return new Expression(terms, first.constant + second.constant);
     }
 
     /**
@@ -290,12 +256,12 @@ abstract Expression(Expression_) to Expression_
         //TODO do we need to copy term objects?
         var terms = new List<Term>();
 
-        for(t in first.getTerms()) {
+        for(t in first.terms) {
         	terms.add(t);
         }
         terms.add(second);
 
-        return new Expression(terms, first.getConstant());
+        return new Expression(terms, first.constant);
     }
 
     /**
@@ -317,7 +283,7 @@ abstract Expression(Expression_) to Expression_
      */
     @:op(A + B) @:commutative public static function addConstant(expression :Expression, constant :Value) : Expression
     {
-        return new Expression(expression.getTerms(), expression.getConstant() + constant);
+        return new Expression(expression.terms, expression.constant + constant);
     }
 
     /**
