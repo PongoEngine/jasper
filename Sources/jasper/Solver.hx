@@ -363,15 +363,15 @@ class Solver
 
 
       for (term in expression.terms) {
-         if (!Util.nearZero(term.getCoefficient())) {
-            var symbol = getVarSymbol(term.getVariable());
+         if (!Util.nearZero(term.coefficient)) {
+            var symbol = getVarSymbol(term.variable);
 
             var otherRow = rows.get(symbol);
 
             if (otherRow == null) {
-               row.insertSymbol(symbol, term.getCoefficient());
+               row.insertSymbol(symbol, term.coefficient);
             } else {
-               row.insertRow(otherRow, term.getCoefficient());
+               row.insertRow(otherRow, term.coefficient);
             }
          }
       }

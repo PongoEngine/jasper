@@ -149,13 +149,12 @@ var jasper_Constraint = function(expr,op,strength) {
 		var val = _g_head.item;
 		_g_head = _g_head.next;
 		var term = val;
-		var key = term.getVariable();
-		var value = vars.h[key.__id__];
+		var value = vars.h[term.variable.__id__];
 		if(value == null) {
 			value = 0.0;
 		}
-		value += term.getCoefficient();
-		vars.set(term.getVariable(),value);
+		value += term.coefficient;
+		vars.set(term.variable,value);
 	}
 	var reducedTerms = new List();
 	var variable = vars.keys();
@@ -435,13 +434,13 @@ jasper_Solver.prototype = {
 			var val = _g_head.item;
 			_g_head = _g_head.next;
 			var term = val;
-			if(!jasper_Util.nearZero(term.getCoefficient())) {
-				var symbol = this.getVarSymbol(term.getVariable());
+			if(!jasper_Util.nearZero(term.coefficient)) {
+				var symbol = this.getVarSymbol(term.variable);
 				var otherRow = this.rows.h[symbol];
 				if(otherRow == null) {
-					row.insertSymbol(symbol,term.getCoefficient());
+					row.insertSymbol(symbol,term.coefficient);
 				} else {
-					row.insertRow(otherRow,term.getCoefficient());
+					row.insertRow(otherRow,term.coefficient);
 				}
 			}
 		}
@@ -665,19 +664,13 @@ jasper__$Strength_Strength_$Impl_$.clip = function(value) {
 	}
 };
 var jasper_Term_$ = function(variable,coefficient) {
-	this._variable = variable;
-	this._coefficient = coefficient;
+	this.variable = variable;
+	this.coefficient = coefficient;
 };
 jasper_Term_$.__name__ = true;
 jasper_Term_$.prototype = {
-	getVariable: function() {
-		return this._variable;
-	}
-	,getCoefficient: function() {
-		return this._coefficient;
-	}
-	,toString: function() {
-		return "variable: (" + Std.string(this._variable) + ") coefficient: " + this._coefficient;
+	toString: function() {
+		return "variable: (" + Std.string(this.variable) + ") coefficient: " + this.coefficient;
 	}
 };
 var jasper__$Term_Term_$Impl_$ = {};
@@ -687,7 +680,7 @@ jasper__$Term_Term_$Impl_$._new = function(variable,coefficient) {
 	return this1;
 };
 jasper__$Term_Term_$Impl_$.multiply = function(term,coefficient) {
-	return jasper__$Term_Term_$Impl_$._new(term.getVariable(),term.getCoefficient() * jasper__$Value_Value_$Impl_$.toFloat(coefficient));
+	return jasper__$Term_Term_$Impl_$._new(term.variable,term.coefficient * jasper__$Value_Value_$Impl_$.toFloat(coefficient));
 };
 jasper__$Term_Term_$Impl_$.addConstant = function(term,constant) {
 	var terms = new List();

@@ -74,12 +74,12 @@ class Constraint
     {
         var vars = new Map<Variable, Float>();
         for(term in expr.terms){
-            var value = vars.get(term.getVariable());
+            var value = vars.get(term.variable);
             if(value == null){
                 value = 0.0;
             }
-            value += term.getCoefficient();
-            vars.set(term.getVariable(), value);
+            value += term.coefficient;
+            vars.set(term.variable, value);
         }
 
         var reducedTerms = new List<Term>();

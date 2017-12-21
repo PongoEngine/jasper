@@ -23,6 +23,10 @@ package jasper;
 
 class Term_
 {
+
+    public var variable :Variable;
+    public var coefficient :Float;
+
     /**
      *  [Description]
      *  @param variable - 
@@ -30,8 +34,8 @@ class Term_
      */
     public function new(variable :Variable, coefficient :Float) : Void
     {
-        _variable = variable;
-        _coefficient = coefficient;
+        this.variable = variable;
+        this.coefficient = coefficient;
     }
 
     /**
@@ -46,47 +50,11 @@ class Term_
 
     /**
      *  [Description]
-     *  @return Variable
-     */
-    public function getVariable() : Variable
-    {
-        return _variable;
-    }
-
-    /**
-     *  [Description]
-     *  @param variable - 
-     */
-    public function setVariable(variable :Variable) : Void
-    {
-        _variable = variable;
-    }
-
-    /**
-     *  [Description]
-     *  @return Float
-     */
-    public function getCoefficient() : Float
-    {
-        return _coefficient;
-    }
-
-    /**
-     *  [Description]
-     *  @param coefficient - 
-     */
-    public function setCoefficient(coefficient : Float) : Void
-    {
-        _coefficient = coefficient;
-    }
-
-    /**
-     *  [Description]
      *  @return Float
      */
     public function getValue() : Float
     {
-        return _coefficient * _variable.getValue();
+        return coefficient * variable.getValue();
     }
 
     /**
@@ -95,11 +63,8 @@ class Term_
      */
     public function toString() : String
     {
-        return "variable: (" + _variable + ") coefficient: "  + _coefficient;
+        return "variable: (" + variable + ") coefficient: "  + coefficient;
     }
-
-    private var _variable :Variable;
-    private var _coefficient :Float;
 }
 
 
@@ -108,6 +73,7 @@ class Term_
  */
 @:forward
 @:forwardStatics
+@:notNull
 abstract Term(Term_) to Term_
 {
     /**
@@ -128,7 +94,7 @@ abstract Term(Term_) to Term_
      */
     @:op(A * B) public static function multiply(term :Term, coefficient :Value) : Term
     {
-        return new Term(term.getVariable(), term.getCoefficient() * coefficient.toFloat());
+        return new Term(term.variable, term.coefficient * coefficient.toFloat());
     }
 
     /**
