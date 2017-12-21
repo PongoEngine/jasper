@@ -51,6 +51,7 @@ class Variable_
  * Created by alex on 30/01/15.
  */
 @:forward
+@:notNull
 abstract Variable(Variable_) to Variable_
 {
     /**

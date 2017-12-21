@@ -21,6 +21,7 @@
 
 package jasper;
 
+@:notNull
 abstract Value(Float) to Float from Float
 {
     /**
