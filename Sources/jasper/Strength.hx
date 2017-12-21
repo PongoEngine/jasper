@@ -69,11 +69,6 @@ abstract Strength(Float) to Float
      */
     public static function clip(value :Strength) :Strength
     {
-        var min = new Strength(0.0);
-        var max = REQUIRED;
-
-        return if(value < min) min
-            else if (value > max) max
-            else value;
+        return new Strength(Math.max(0.0, Math.min(REQUIRED, value)));
     }
 }
