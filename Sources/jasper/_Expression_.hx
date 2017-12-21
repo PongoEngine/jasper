@@ -21,14 +21,14 @@
 
 package jasper;
 
+import haxe.ds.Vector;
 import jasper.Symbolics.Expression;
 import jasper.Symbolics.Term;
 
 class _Expression_
 {
-
-    public var terms :List<Term>;
-    public var constant :Float;
+    public var m_terms (default, null):List<Term>;
+    public var m_constant (default, null):Float;
 
     /**
      *  [Description]
@@ -37,8 +37,8 @@ class _Expression_
      */
     public function new(terms :List<Term>, constant :Float) : Void
     {
-        this.terms = terms;
-        this.constant = constant;
+        this.m_terms = terms;
+        this.m_constant = constant;
     }
 
     /**
@@ -88,42 +88,12 @@ class _Expression_
      *  [Description]
      *  @return Float
      */
-    public function getValue() : Float
+    public function value() : Float
     {
-        var result = this.constant;
-
-        for (term in terms) {
-            result += term.getValue();
-        }
-        return result;
-    }
-
-    /**
-     *  [Description]
-     *  @return Bool
-     */
-    public function isConstant() : Bool
-    {
-        return terms.length == 0;
-    }
-
-    /**
-     *  [Description]
-     *  @return String
-     */
-    public function toString() : String
-    {
-        var sb = "isConstant: " + isConstant() + " constant: " + constant;
-        if (!isConstant()) {
-            sb += " terms: [";
-            for (term in terms) {
-                sb += "(";
-                sb += term;
-                sb += ")";
-            }
-            sb += "] ";
-        }
-        return sb;
+		var result = m_constant;
+		for(term in m_terms)
+			result += term.getValue();
+		return result;
     }
 }
 

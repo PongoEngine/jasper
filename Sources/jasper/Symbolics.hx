@@ -115,11 +115,11 @@ abstract Expression(jasper._Expression_)
     {
         var terms = new List<Term>();
 
-        for (term in expression.terms) {
+        for (term in expression.m_terms) {
             terms.add(term * coefficient);
         }
 
-        return new Expression(terms, expression.constant * coefficient);
+        return new Expression(terms, expression.m_constant * coefficient);
     }
 
     @:op(A/B) static function divideValue(expression :Expression, denominator :Value) : Expression
@@ -136,18 +136,18 @@ abstract Expression(jasper._Expression_)
     {
         var terms = new List<Term>();
 
-        for(t in first.terms) terms.add(t);
-        for(t in second.terms) terms.add(t);
+        for(t in first.m_terms) terms.add(t);
+        for(t in second.m_terms) terms.add(t);
 
-        return new Expression(terms, first.constant + second.constant);
+        return new Expression(terms, first.m_constant + second.m_constant);
     }
 
     @:op(A+B) static function addTerm(first :Expression, second :Term) : Expression
     {
         var terms = new List<Term>();
-        for(t in first.terms) terms.add(t);
+        for(t in first.m_terms) terms.add(t);
         terms.add(second);
-        return new Expression(terms, first.constant);
+        return new Expression(terms, first.m_constant);
     }
 
     @:op(A+B) static function addVariable(expression :Expression, variable :Variable) : Expression
@@ -157,7 +157,7 @@ abstract Expression(jasper._Expression_)
 
     @:op(A+B) static function addValue(expression :Expression, constant :Value) : Expression
     {
-        return new Expression( expression.terms, expression.constant + constant );
+        return new Expression( expression.m_terms, expression.m_constant + constant );
     }
 
     @:op(A-B) static function subtractExpression(first :Expression, second :Expression) : Expression

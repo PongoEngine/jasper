@@ -77,7 +77,7 @@ class Constraint
     private static inline function reduce(expr :Expression) :Expression
     {
         var vars = new Map<Variable, Float>();
-        for(term in expr.terms){
+        for(term in expr.m_terms){
             var value = vars.get(term.variable);
             if(value == null){
                 value = 0.0;
@@ -91,7 +91,7 @@ class Constraint
             reducedTerms.add(new Term(variable, vars.get(variable)));
         }
 
-        return new Expression(reducedTerms, expr.constant);
+        return new Expression(reducedTerms, expr.m_constant);
     }
 
     /**

@@ -324,11 +324,10 @@ class SolverImpl
 	*/
 	private function createRow(constraint :Constraint, tag :Tag) : Row
 	{
-        // typedef std::vector<Term>::const_iterator iter_t;
         var expr :Expression = constraint.expression;
-		var row :Row = Row.fromConstant( expr.constant );
+		var row :Row = Row.fromConstant( expr.m_constant );
 
-		for(term in expr.terms)
+		for(term in expr.m_terms)
 		{
 			if( !Util.nearZero( term.coefficient ) )
 			{
