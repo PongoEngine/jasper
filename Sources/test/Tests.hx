@@ -1,13 +1,9 @@
 package test;
 
 import jasper.Solver;
-import jasper.Symbolics.Variable;
-import jasper.Symbolics.Value;
-import jasper.Symbolics.Expression;
 import jasper.Strength;
 import jasper.Constraint;
 
-using jasper.Symbolics.Term;
 using jasper.Symbolics.Value;
 using jasper.Symbolics.Variable;
 using jasper.Symbolics.Expression;
