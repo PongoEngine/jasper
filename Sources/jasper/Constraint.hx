@@ -114,3 +114,10 @@ class Constraint
         return "expression: (" + expression + ") strength: " + strength + " operator: " + operator;
     }
 }
+
+enum RelationalOperator
+{
+    OP_LE;
+    OP_GE;
+    OP_EQ;
+}
