@@ -39,20 +39,6 @@ class Symbol
 
     /**
      *  [Description]
-     *  @return Symbol
-     */
-    public static inline function invalidSymbol() : Symbol
-    {
-        return new Symbol(SymbolType.INVALID);
-    }
-
-    public static inline function nothing() : Symbol
-    {
-        return new Symbol(SymbolType.NOTHING);
-    }
-
-    /**
-     *  [Description]
      *  @return SymbolType
      */
     public inline function getType() :SymbolType

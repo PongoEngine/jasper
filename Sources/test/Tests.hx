@@ -60,8 +60,8 @@ class Tests
 
         solver.addConstraint(x <= y);
         solver.addConstraint((y == (x + 3.0)));
-        solver.addConstraint((x == 10.0).setStrength(Strength.WEAK));
-        solver.addConstraint((y == 10.0).setStrength(Strength.WEAK));
+        // solver.addConstraint((x == 10.0).setStrength(Strength.WEAK));
+        // solver.addConstraint((y == 10.0).setStrength(Strength.WEAK));
 
         solver.updateVariables();
 

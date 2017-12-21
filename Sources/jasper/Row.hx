@@ -44,10 +44,13 @@ class Row
         return new Row(constant);
     }
 
-    public static inline function fromRow(row :Row) : Row
+    public static inline function fromRow(other :Row) : Row
     {
-        throw "not implmented yet fromRow";
-        var row = new Row(0);
+        var row = new Row(other.constant);
+        // row.cells = other.cells;
+        for(otherKey in other.cells.keys()) {
+            row.cells.set(otherKey, other.cells.get(otherKey));
+        }
         return row;
     }
 
@@ -84,11 +87,9 @@ class Row
 
     public function remove(symbol :Symbol) : Void
     {
-        cells.remove(symbol);
-        // not sure what this does, can the symbol be added more than once?
-        /*CellMap::iterator it = m_cells.find( symbol );
-        if( it != m_cells.end() )
-            m_cells.erase( it );*/
+        if(cells.exists(symbol)) {
+            cells.remove(symbol);
+        }
     }
 
     public function reverseSign() : Void
