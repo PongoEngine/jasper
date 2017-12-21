@@ -119,13 +119,13 @@ class Solver
                 throw new InternalSolverError("internal solver error");
             }
 
-            var leaving :Symbol = null;
+            var leaving :Symbol = Symbol.nothing();
             for(s in rows.keys()){
                 if(rows.get(s) == row){
                     leaving = s;
                 }
             }
-            if(leaving == null){
+            if(leaving.getType() == NOTHING){
                 throw new InternalSolverError("internal solver error");
             }
 
@@ -437,7 +437,7 @@ class Solver
          if (row.coefficientFor(tag.marker) < 0.0)
             return tag.marker;
       }
-      if (tag.other != null && (tag.other.getType() == Symbol.SymbolType.SLACK || tag.other.getType() == Symbol.SymbolType.ERROR)) {
+      if (tag.other.getType() != NOTHING && (tag.other.getType() == Symbol.SymbolType.SLACK || tag.other.getType() == Symbol.SymbolType.ERROR)) {
          if (row.coefficientFor(tag.other) < 0.0)
             return tag.other;
       }
@@ -535,7 +535,7 @@ class Solver
          if(entry == null){
             throw  new InternalSolverError("The objective is unbounded.");
          }
-         var leaving :Symbol = null;
+         var leaving :Symbol = Symbol.nothing();
 
          for(key in rows.keys()){
             if(rows.get(key) == entry){
@@ -543,7 +543,7 @@ class Solver
             }
          }
 
-         var entryKey :Symbol = null;
+         var entryKey :Symbol = Symbol.nothing();
          for(key in rows.keys()){
             if(rows.get(key) == entry){
                entryKey = key;
@@ -625,13 +625,13 @@ class Solver
     */
    private function anyPivotableSymbol(row :Row) : Symbol
    {
-      var symbol :Symbol = null;
+      var symbol :Symbol = Symbol.nothing();
       for (key in row.getCells().keys()) {
          if (key.getType() == Symbol.SymbolType.SLACK || key.getType() == Symbol.SymbolType.ERROR) {
             symbol = key;
          }
       }
-      if (symbol == null) {
+      if (symbol.getType() == NOTHING) {
          symbol = Symbol.invalidSymbol();
       }
       return symbol;
@@ -670,7 +670,7 @@ class Solver
     */
    private function getVarSymbol(variable :Variable) : Symbol
    {
-      var symbol :Symbol = null;
+      var symbol :Symbol = Symbol.nothing();
       if (vars.exists(variable)) {
          symbol = vars.get(variable);
       } else {

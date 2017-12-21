@@ -1,0 +1,20 @@
+{
+    "codedox": {
+        "fileheader": {
+            "templates": {
+                "*": [
+                    "${license_mit}"
+                ]
+            },
+            "params": {
+                "haxe": {
+                    "company": "Jeremy Meltingtallow"
+                },
+                "json": {
+                    "company": "Jeremy Meltingtallow"
+                }
+            }
+        }
+    },
+    "haxe.displayPort": 6000
+}

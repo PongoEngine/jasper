@@ -24,15 +24,15 @@ package jasper;
 /**
  * Created by alex on 30/01/15.
  */
-class Symbol 
+abstract Symbol(SymbolType) to Int
 {
     /**
      *  [Description]
      *  @param type - 
      */
-    public function new(type :SymbolType) : Void
+    public inline function new(type :SymbolType) : Void
     {
-        _type = type;
+        this = type;
     }
 
     /**
@@ -44,23 +44,28 @@ class Symbol
         return new Symbol(SymbolType.INVALID);
     }
 
+    public static inline function nothing() : Symbol
+    {
+        return new Symbol(SymbolType.NOTHING);
+    }
+
     /**
      *  [Description]
      *  @return SymbolType
      */
-    public function getType() :SymbolType
+    public inline function getType() :SymbolType
     {
-        return _type;
+        return this;
     }
-
-    private var _type :SymbolType;
 }
 
-enum SymbolType 
+@:enum
+abstract SymbolType(Int) to Int
 {
-    INVALID;
-    EXTERNAL;
-    SLACK;
-    ERROR;
-    DUMMY;
+    var INVALID = 0;
+    var EXTERNAL = 1;
+    var SLACK = 2;
+    var ERROR = 3;
+    var DUMMY = 4;
+    var NOTHING = 5;
 }

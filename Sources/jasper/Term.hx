@@ -21,7 +21,87 @@
 
 package jasper;
 
-import jasper.impl.Term_;
+class Term_
+{
+    /**
+     *  [Description]
+     *  @param variable - 
+     *  @param coefficient - 
+     */
+    public function new(variable :Variable, coefficient :Float) : Void
+    {
+        _variable = variable;
+        _coefficient = coefficient;
+    }
+
+    /**
+     *  [Description]
+     *  @param variable - 
+     *  @return Term
+     */
+    public static inline function fromVariable(variable :Variable) : Term
+    {
+        return new Term(variable, 1.0);
+    }
+
+    /**
+     *  [Description]
+     *  @return Variable
+     */
+    public function getVariable() : Variable
+    {
+        return _variable;
+    }
+
+    /**
+     *  [Description]
+     *  @param variable - 
+     */
+    public function setVariable(variable :Variable) : Void
+    {
+        _variable = variable;
+    }
+
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getCoefficient() : Float
+    {
+        return _coefficient;
+    }
+
+    /**
+     *  [Description]
+     *  @param coefficient - 
+     */
+    public function setCoefficient(coefficient : Float) : Void
+    {
+        _coefficient = coefficient;
+    }
+
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getValue() : Float
+    {
+        return _coefficient * _variable.getValue();
+    }
+
+    /**
+     *  [Description]
+     *  @return String
+     */
+    public function toString() : String
+    {
+        return "variable: (" + _variable + ") coefficient: "  + _coefficient;
+    }
+
+    private var _variable :Variable;
+    private var _coefficient :Float;
+}
+
 
 /**
  * Created by alex on 30/01/15.

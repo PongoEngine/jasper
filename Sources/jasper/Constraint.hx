@@ -26,12 +26,11 @@ package jasper;
  */
 class Constraint 
 {
-    /**
-     *  [Description]
-     *  @param expr - 
-     *  @param op - 
-     *  @param strength - 
-     */
+
+    private var _expression :Expression;
+    private var _strength :Float;
+    private var _op :RelationalOperator;
+
     public function new(expr :Expression, op :RelationalOperator, strength :Float) : Void
     {
         _expression = reduce(expr);
@@ -39,21 +38,6 @@ class Constraint
         _strength = Strength.clip(strength);
     }
 
-    /**
-     *  [Description]
-     *  @return Constraint
-     */
-    public static inline function fromNull() : Constraint
-    {
-        return new Constraint(null,null,null);
-    }
-
-    /**
-     *  [Description]
-     *  @param expr - 
-     *  @param op - 
-     *  @return Constraint
-     */
     public static inline function fromExpression(expr :Expression, op :RelationalOperator) : Constraint
     {
         return new Constraint(expr, op, Strength.REQUIRED);
@@ -159,8 +143,4 @@ class Constraint
     {
         return "expression: (" + _expression + ") strength: " + _strength + " operator: " + _op;
     }
-
-    private var _expression :Expression;
-    private var _strength :Float;
-    private var _op :RelationalOperator;
 }

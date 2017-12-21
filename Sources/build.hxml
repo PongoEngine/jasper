@@ -1,0 +1,13 @@
+-js main.js
+-dce full
+-main test.Main
+
+--next
+
+-main test.Main
+--interp
+
+--next
+
+-hl main.hl
+-main test.Main

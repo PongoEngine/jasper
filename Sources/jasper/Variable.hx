@@ -21,7 +21,57 @@
 
 package jasper;
 
-import jasper.impl.Variable_;
+class Variable_
+{
+    /**
+     *  [Description]
+     *  @param name - 
+     */
+    public function new(name :String) : Void
+    {
+        _name = name;
+    }
+    
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getValue() : Float
+    {
+        return _value;
+    }
+
+    /**
+     *  [Description]
+     *  @param value - 
+     */
+    public function setValue(value :Float) : Void
+    {
+        _value = value;
+    }
+
+    /**
+     *  [Description]
+     *  @return String
+     */
+    public function getName() : String
+    {
+        return _name;
+    }
+
+    /**
+     *  [Description]
+     *  @return String
+     */
+    public function toString() : String
+    {
+        return "name: " + _name + " value: " + _value;
+    }
+
+    private var _name :String;
+    private var _value :Float = 0.0;
+}
+
 
 /**
  * Created by alex on 30/01/15.
