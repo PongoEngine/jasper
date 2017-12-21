@@ -1,5 +1,5 @@
 /*
- * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
+ * Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,40 +19,16 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.symbolics;
 
-class Variable_
-{
-    public var name (default, null):String;
-    public var value :Float;
-
-    /**
-     *  [Description]
-     *  @param name - 
-     */
-    public function new(name :String) : Void
-    {
-        this.name = name;
-        this.value = 0.0;
-    }
-
-    /**
-     *  [Description]
-     *  @return String
-     */
-    public function toString() : String
-    {
-        return "name: " + name + " value: " + value;
-    }
-}
-
+import jasper.symbolics.Value;
 
 /**
  * Created by alex on 30/01/15.
  */
 @:forward
 @:notNull
-abstract Variable(Variable_) to Variable_
+abstract Variable(jasper.Variable_) to jasper.Variable_
 {
     /**
      *  [Description]
@@ -60,7 +36,7 @@ abstract Variable(Variable_) to Variable_
      */
     public inline function new(name :String) : Void
     {
-        this = new Variable_(name);
+        this = new jasper.Variable_(name);
     }
 
     /**

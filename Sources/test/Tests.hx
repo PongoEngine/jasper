@@ -1,13 +1,13 @@
 package test;
 
 import jasper.Solver;
-import jasper.Variable;
-import jasper.Value;
+import jasper.symbolics.Variable;
+import jasper.symbolics.Value;
 import jasper.Strength;
-import jasper.Expression;
+import jasper.symbolics.Expression;
 import jasper.Constraint;
 
-using jasper.Value.ValueHelper;
+using jasper.symbolics.Value.ValueHelper;
 
 class Tests 
 {

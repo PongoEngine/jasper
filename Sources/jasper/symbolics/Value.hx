@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
+package jasper.symbolics;
 
 @:notNull
 abstract Value(Float) to Float from Float

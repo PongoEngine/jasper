@@ -21,6 +21,10 @@
 
 package jasper;
 
+import jasper.symbolics.Expression;
+import jasper.symbolics.Variable;
+import jasper.symbolics.Term;
+
 /**
  * Created by alex on 30/01/15.
  */

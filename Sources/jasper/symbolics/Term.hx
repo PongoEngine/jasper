@@ -1,5 +1,5 @@
 /*
- * Haxe Port Copyright (c) 2017 Jeremy Meltingtallow
+ * Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,58 +19,13 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package jasper;
-
-class Term_
-{
-
-    public var variable :Variable;
-    public var coefficient :Float;
-
-    /**
-     *  [Description]
-     *  @param variable - 
-     *  @param coefficient - 
-     */
-    public function new(variable :Variable, coefficient :Float) : Void
-    {
-        this.variable = variable;
-        this.coefficient = coefficient;
-    }
-
-    /**
-     *  [Description]
-     *  @param variable - 
-     *  @return Term
-     */
-    public static inline function fromVariable(variable :Variable) : Term
-    {
-        return new Term(variable, 1.0);
-    }
-
-    /**
-     *  [Description]
-     *  @return Float
-     */
-    public function getValue() : Float
-    {
-        return coefficient * variable.value;
-    }
-
-    /**
-     *  [Description]
-     *  @return String
-     */
-    public function toString() : String
-    {
-        return "variable: (" + variable + ") coefficient: "  + coefficient;
-    }
-}
-
+package jasper.symbolics;
 
 /**
  * Created by alex on 30/01/15.
  */
+
+
 @:forward
 @:forwardStatics
 @:notNull
