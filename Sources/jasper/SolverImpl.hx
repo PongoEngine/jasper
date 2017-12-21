@@ -29,6 +29,7 @@ import jasper.Errors.BadRequiredStrength;
 import jasper.Errors.UnknownEditVariable;
 import jasper.Errors.InternalSolverError;
 
+import jasper.Symbol;
 import jasper.Symbolics.Expression;
 import jasper.Symbolics.Variable;
 import jasper.Symbolics.Term;
@@ -86,7 +87,7 @@ class SolverImpl
 		// this represents redundant constraints and the new dummy
 		// marker can enter the basis. If the constant is non-zero,
 		// then it represents an unsatisfiable constraint.
-		if( subject.getType() == INVALID && allDummies( rowptr ) )
+		if( subject.m_type == INVALID && allDummies( rowptr ) )
 		{
 			if( !Util.nearZero( rowptr.constant ) )
 				throw new UnsatisfiableConstraint( constraint );
@@ -97,7 +98,7 @@ class SolverImpl
 		// If an entering symbol still isn't found, then the row must
 		// be added using an artificial variable. If that fails, then
 		// the row represents an unsatisfiable constraint.
-		if( subject.getType() == INVALID )
+		if( subject.m_type == INVALID )
 		{
 			if( !addWithArtificialVariable( rowptr ) )
 				throw new UnsatisfiableConstraint( constraint );
@@ -259,7 +260,7 @@ class SolverImpl
 			var coeff = rows.get(key).coefficientFor( info.tag.marker );
 			if( coeff != 0.0 &&
 				rows.get(key).add( delta * coeff ) < 0.0 &&
-				key.getType() != EXTERNAL )
+				key.m_type != EXTERNAL )
 				infeasibleRows.add( key );
 		}
 	}
@@ -304,7 +305,7 @@ class SolverImpl
         if(vars.exists(variable))
             return vars.get(variable);
 
-        var symbol = new Symbol(EXTERNAL);
+        var symbol = new Symbol(new Id(0), EXTERNAL);
 		vars[ variable ] = symbol;
 		return symbol;
 	}
@@ -346,12 +347,12 @@ class SolverImpl
 			case OP_GE:
 			{
 				var coeff = constraint.operator == OP_LE ? 1.0 : -1.0;
-				var slack = new Symbol(SLACK);
+				var slack = new Symbol(new Id(0), SLACK);
 				tag.marker = slack;
 				row.insertSymbol( slack, coeff );
 				if( constraint.strength < Strength.REQUIRED )
 				{
-					var error = new Symbol(ERROR);
+					var error = new Symbol(new Id(0), ERROR);
 					tag.other = error;
 					row.insertSymbol( error, -coeff );
 					objective.insertSymbol( error, constraint.strength );
@@ -361,8 +362,8 @@ class SolverImpl
 			{
 				if( constraint.strength < Strength.REQUIRED  )
 				{
-					var errplus = new Symbol(ERROR);
-					var errminus = new Symbol(ERROR);
+					var errplus = new Symbol(new Id(0), ERROR);
+					var errminus = new Symbol(new Id(0), ERROR);
 					tag.marker = errplus;
 					tag.other = errminus;
 					row.insertSymbol( errplus, -1.0 ); // v = eplus - eminus
@@ -372,7 +373,7 @@ class SolverImpl
 				}
 				else
 				{
-					var dummy = new Symbol(DUMMY);
+					var dummy = new Symbol(new Id(0), DUMMY);
 					tag.marker = dummy;
 					row.insertSymbol( dummy, 1.0 );
 				}
@@ -399,20 +400,20 @@ class SolverImpl
 	{
 		for(key in row.cells.keys())
 		{
-			if( key.getType() == EXTERNAL )
+			if( key.m_type == EXTERNAL )
 				return key;
 		}
-		if( tag.marker.getType() == SLACK || tag.marker.getType() == ERROR )
+		if( tag.marker.m_type == SLACK || tag.marker.m_type == ERROR )
 		{
 			if( row.coefficientFor( tag.marker ) < 0.0 )
 				return tag.marker;
 		}
-		if( tag.other.getType() == SLACK || tag.other.getType() == ERROR )
+		if( tag.other.m_type == SLACK || tag.other.m_type == ERROR )
 		{
 			if( row.coefficientFor( tag.other ) < 0.0 )
 				return tag.other;
 		}
-		return new Symbol(INVALID);
+		return new Symbol(new Id(0), INVALID);
 	}
 
  	/* Add the row to the tableau using an artificial variable.
@@ -421,7 +422,7 @@ class SolverImpl
  	private function addWithArtificialVariable(row :Row) : Bool
  	{
         // Create and add the artificial variable to the tableau
-		var art = new Symbol(SLACK);
+		var art = new Symbol(new Id(0), SLACK);
 		rows[ art ] = Row.fromRow( row );
 		artificial = Row.fromRow( row );
 
@@ -442,7 +443,7 @@ class SolverImpl
 			if( isEmpty )
 				return success;
 			var entering :Symbol = ( anyPivotableSymbol( rowptr ) );
-			if( entering.getType() == INVALID )
+			if( entering.m_type == INVALID )
 				return false;  // unsatisfiable (will this ever happen?)
 			rowptr.solveForSymbols( art, entering );
 			substitute( entering, rowptr );
@@ -464,7 +465,7 @@ class SolverImpl
 		for(key in rows.keys())
 		{
 			rows.get(key).substitute( symbol, row );
-			if( key.getType() != EXTERNAL &&
+			if( key.m_type != EXTERNAL &&
 				rows.get(key).constant < 0.0 )
 				infeasibleRows.add(key);
 		}
@@ -486,7 +487,7 @@ class SolverImpl
         while( true )
 		{
 			var entering :Symbol = ( getEnteringSymbol( objective ) );
-			if( entering.getType() == INVALID )
+			if( entering.m_type == INVALID )
 				return;
 			var it = getLeavingRow( entering );
 			if( it == null )
@@ -522,7 +523,7 @@ class SolverImpl
 			if( rows.exists(leaving) && rows.get(leaving).constant < 0.0 )
 			{
 				var entering :Symbol = ( getDualEnteringSymbol(rows.get(leaving)) );
-				if( entering.getType() == INVALID)
+				if( entering.m_type == INVALID)
 					throw new InternalSolverError( "Dual optimize failed." );
 				// pivot the entering symbol into the basis
 				var row :Row = rows.get(leaving);
@@ -544,10 +545,10 @@ class SolverImpl
 	{
 		for(key in objective.cells.keys())
 		{
-			if( key.getType() != DUMMY && objective.cells.get(key) < 0.0 )
+			if( key.m_type != DUMMY && objective.cells.get(key) < 0.0 )
 				return key;
 		}
-		return new Symbol(INVALID);
+		return new Symbol(new Id(0), INVALID);
 	}
 
 	/* Compute the entering symbol for the dual optimize operation.
@@ -559,11 +560,11 @@ class SolverImpl
 	*/
 	private function getDualEnteringSymbol(row :Row) : Symbol
 	{
-		var entering :Symbol = new Symbol(INVALID);
+		var entering :Symbol = new Symbol(new Id(0), INVALID);
 		var ratio = Util.FLOAT_MAX;
 		for(key in row.cells.keys())
 		{
-			if( row.cells.get(key) > 0.0 && key.getType() != DUMMY )
+			if( row.cells.get(key) > 0.0 && key.m_type != DUMMY )
 			{
 				var coeff = objective.coefficientFor( key );
 				var r = coeff / row.cells.get(key);
@@ -585,10 +586,10 @@ class SolverImpl
 		for(key in row.cells.keys())
 		{
 			var sym = key;
-			if( sym.getType() == SLACK || sym.getType() == ERROR )
+			if( sym.m_type == SLACK || sym.m_type == ERROR )
 				return sym;
 		}
-		return new Symbol(INVALID);
+		return new Symbol(new Id(0), INVALID);
 	}
 
 	/* Compute the row which holds the exit symbol for a pivot.
@@ -603,7 +604,7 @@ class SolverImpl
         var found :LeavingRow = null;
 		for( key in rows.keys())
 		{
-			if( key.getType() != EXTERNAL )
+			if( key.m_type != EXTERNAL )
 			{
 				var temp = rows.get(key).coefficientFor( entering );
 				if( temp < 0.0 )
@@ -646,7 +647,7 @@ class SolverImpl
 			var c = rows.get(rowKey).coefficientFor( marker );
 			if( c == 0.0 )
 				continue;
-			if( rowKey.getType() == EXTERNAL )
+			if( rowKey.m_type == EXTERNAL )
 			{
 				third = new LeavingRow(rowKey, rows.get(rowKey));
 			}
@@ -680,9 +681,9 @@ class SolverImpl
 	*/
 	private function removeConstraintEffects(cn :Constraint, tag :Tag) : Void
 	{
-        if( tag.marker.getType() == ERROR )
+        if( tag.marker.m_type == ERROR )
 			removeMarkerEffects( tag.marker, cn.strength );
-		if( tag.other.getType() == ERROR )
+		if( tag.other.m_type == ERROR )
 			removeMarkerEffects( tag.other, cn.strength );
 	}
 
@@ -702,7 +703,7 @@ class SolverImpl
 	{
 		for( key in row.cells.keys())
 		{
-			if( key.getType() != DUMMY )
+			if( key.m_type != DUMMY )
 				return false;
 		}
 		return true;
@@ -717,8 +718,8 @@ private class Tag
 
    public function new() : Void
    {
-      marker = new Symbol(INVALID);
-      other = new Symbol(INVALID);
+      marker = new Symbol(new Id(0), INVALID);
+      other = new Symbol(new Id(0), INVALID);
    }
 }
 

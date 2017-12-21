@@ -28,35 +28,34 @@ package jasper;
 // abstract Symbol(SymbolType) to Int
 class Symbol
 {
+
+    public var m_type (default, null):SymbolType;
+    public var m_id (default, null):Id;
+    
     /**
      *  [Description]
      *  @param type - 
      */
-    public inline function new(type :SymbolType) : Void
+    public inline function new(id :Id, type :SymbolType) : Void
     {
-        _symbol = type;
+        m_type = type;
+        m_id = id;
     }
-
-    /**
-     *  [Description]
-     *  @return SymbolType
-     */
-    public inline function getType() :SymbolType
-    {
-        return _symbol;
-    }
-
-    private var _symbol :SymbolType;
 }
 
-@:enum
-abstract SymbolType(Int) to Int
+enum SymbolType
 {
-    var NOTHING = -1;
-    
-    var INVALID = 0;
-    var EXTERNAL = 1;
-    var SLACK = 2;
-    var ERROR = 3;
-    var DUMMY = 4;
+    INVALID;
+    EXTERNAL;
+    SLACK;
+    ERROR;
+    DUMMY;
+}
+
+abstract Id(Int)
+{
+    public inline function new(id :Int) : Void
+    {
+        this = id;
+    }
 }
