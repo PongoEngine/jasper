@@ -73,7 +73,7 @@ class Solver
       var subject = chooseSubject(row, tag);
 
       if(subject.getType() == Symbol.SymbolType.INVALID && allDummies(row)){
-         if (!Util.nearZero(row.getConstant())) {
+         if (!Util.nearZero(row.constant)) {
             throw new UnsatisfiableConstraintException(constraint);
          } else {
             subject = tag.marker;
@@ -191,14 +191,14 @@ class Solver
             third = candidateRow;
          }
          else if(c < 0.0){
-            var r = - candidateRow.getConstant() / c;
+            var r = - candidateRow.constant / c;
             if(r < r1){
                r1 = r;
                first = candidateRow;
             }
          }
          else{
-            var r = candidateRow.getConstant() / c;
+            var r = candidateRow.constant / c;
             if(r < r2){
                r2 = r;
                second = candidateRow;
@@ -345,7 +345,7 @@ class Solver
          if (row == null) {
             variable.setValue(0);
          } else {
-            variable.setValue(row.getConstant());
+            variable.setValue(row.constant);
          }
       }
    }
@@ -411,7 +411,7 @@ class Solver
       }
 
       // Ensure the row as a positive constant.
-      if (row.getConstant() < 0.0) {
+      if (row.constant < 0.0) {
          row.reverseSign();
       }
 
@@ -427,7 +427,7 @@ class Solver
    private static function chooseSubject(row :Row, tag :Tag) : Symbol
    {
 
-      for (key in row.getCells().keys()) {
+      for (key in row.cells.keys()) {
          if (key.getType() == Symbol.SymbolType.EXTERNAL) {
             return key;
          }
@@ -457,7 +457,7 @@ class Solver
       this.artificial = Row.fromRow(row);
 
       optimize(this.artificial);
-      var success = Util.nearZero(artificial.getConstant());
+      var success = Util.nearZero(artificial.constant);
       artificial = null;
 
       var rowptr = this.rows.get(art);
@@ -475,7 +475,7 @@ class Solver
          }
          deleteQueue.clear();
 
-         var cellsLength = Lambda.array(rowptr.getCells()).length; //not optimal
+         var cellsLength = Lambda.array(rowptr.cells).length; //not optimal
          if (cellsLength == 0) {
             return success;
          }
@@ -507,7 +507,7 @@ class Solver
    {
       for (key in rows.keys()) {
          rows.get(key).substitute(symbol, row);
-         if (key.getType() != Symbol.SymbolType.EXTERNAL && rows.get(key).getConstant() < 0.0) {
+         if (key.getType() != Symbol.SymbolType.EXTERNAL && rows.get(key).constant < 0.0) {
             infeasibleRows.push(key);
          }
       }
@@ -565,7 +565,7 @@ class Solver
       while(infeasibleRows.length != 0){
          var leaving = infeasibleRows.pop();
          var row = rows.get(leaving);
-         if(row != null && row.getConstant() < 0.0){
+         if(row != null && row.constant < 0.0){
             var entering = getDualEnteringSymbol(row);
             if(entering.getType() == Symbol.SymbolType.INVALID){
                throw new InternalSolverError("internal solver error");
@@ -585,8 +585,8 @@ class Solver
     */
    private static function getEnteringSymbol(objective :Row) : Symbol
    {
-      for (key in objective.getCells().keys()) {
-         if (key.getType() != Symbol.SymbolType.DUMMY && objective.getCells().get(key) < 0.0) {
+      for (key in objective.cells.keys()) {
+         if (key.getType() != Symbol.SymbolType.DUMMY && objective.cells.get(key) < 0.0) {
             return key;
          }
       }
@@ -602,9 +602,9 @@ class Solver
    {
       var entering = Symbol.invalidSymbol();
       var ratio = Util.FLOAT_MAX;
-      for(s in row.getCells().keys()){
+      for(s in row.cells.keys()){
          if(s.getType() != Symbol.SymbolType.DUMMY){
-            var currentCell = row.getCells().get(s);
+            var currentCell = row.cells.get(s);
             if(currentCell > 0.0){
                var coefficient = objective.coefficientFor(s);
                var r = coefficient / currentCell;
@@ -626,7 +626,7 @@ class Solver
    private function anyPivotableSymbol(row :Row) : Symbol
    {
       var symbol :Symbol = Symbol.nothing();
-      for (key in row.getCells().keys()) {
+      for (key in row.cells.keys()) {
          if (key.getType() == Symbol.SymbolType.SLACK || key.getType() == Symbol.SymbolType.ERROR) {
             symbol = key;
          }
@@ -652,7 +652,7 @@ class Solver
             var candidateRow = rows.get(key);
             var temp = candidateRow.coefficientFor(entering);
             if(temp < 0){
-               var temp_ratio = (-candidateRow.getConstant() / temp);
+               var temp_ratio = (-candidateRow.constant / temp);
                if(temp_ratio < ratio){
                   ratio = temp_ratio;
                   row = candidateRow;
@@ -687,7 +687,7 @@ class Solver
      */
     private static function allDummies(row :Row) : Bool
     {
-        for (key in row.getCells().keys()) {
+        for (key in row.cells.keys()) {
             if (key.getType() != Symbol.SymbolType.DUMMY) {
                 return false;
             }

@@ -253,90 +253,84 @@ var jasper_InternalSolverError = function(string) {
 };
 jasper_InternalSolverError.__name__ = true;
 var jasper_Row = function(constant,cells) {
-	this._constant = constant;
-	this._cells = cells;
+	this.constant = constant;
+	this.cells = cells;
 };
 jasper_Row.__name__ = true;
 jasper_Row.prototype = {
-	getConstant: function() {
-		return this._constant;
-	}
-	,getCells: function() {
-		return this._cells;
-	}
-	,insertSymbol: function(symbol,coefficient) {
-		var existingCoefficient = this._cells.h[symbol];
+	insertSymbol: function(symbol,coefficient) {
+		var existingCoefficient = this.cells.h[symbol];
 		if(existingCoefficient != null) {
 			coefficient += existingCoefficient;
 		}
 		if(jasper_Util.nearZero(coefficient)) {
-			this._cells.remove(symbol);
+			this.cells.remove(symbol);
 		} else {
-			this._cells.h[symbol] = coefficient;
+			this.cells.h[symbol] = coefficient;
 		}
 	}
 	,insertSymbolWithDefault: function(symbol) {
 		this.insertSymbol(symbol,1.0);
 	}
 	,insertRow: function(other,coefficient) {
-		this._constant += other._constant * coefficient;
-		var s = other._cells.keys();
+		this.constant += other.constant * coefficient;
+		var s = other.cells.keys();
 		while(s.hasNext()) {
 			var s1 = s.next();
-			var coeff = other._cells.h[s1] * coefficient;
-			var value = this._cells.h[s1];
+			var coeff = other.cells.h[s1] * coefficient;
+			var value = this.cells.h[s1];
 			if(value == null) {
-				this._cells.h[s1] = 0.0;
+				this.cells.h[s1] = 0.0;
 			}
-			var temp = this._cells.h[s1] + coeff;
-			this._cells.h[s1] = temp;
+			var temp = this.cells.h[s1] + coeff;
+			this.cells.h[s1] = temp;
 			if(jasper_Util.nearZero(temp)) {
-				this._cells.remove(s1);
+				this.cells.remove(s1);
 			}
 		}
 	}
 	,remove: function(symbol) {
-		this._cells.remove(symbol);
+		this.cells.remove(symbol);
 	}
 	,reverseSign: function() {
-		this._constant = -this._constant;
+		this.constant = -this.constant;
 		var newCells = new haxe_ds_IntMap();
-		var s = this._cells.keys();
+		var s = this.cells.keys();
 		while(s.hasNext()) {
 			var s1 = s.next();
-			var value = -this._cells.h[s1];
+			var value = -this.cells.h[s1];
 			newCells.h[s1] = value;
 		}
-		this._cells = newCells;
+		this.cells = newCells;
 	}
 	,solveFor: function(symbol) {
-		var coeff = -1.0 / this._cells.h[symbol];
-		this._cells.remove(symbol);
-		this._constant *= coeff;
+		var coeff = -1.0 / this.cells.h[symbol];
+		this.cells.remove(symbol);
+		this.constant *= coeff;
 		var newCells = new haxe_ds_IntMap();
-		var s = this._cells.keys();
+		var s = this.cells.keys();
 		while(s.hasNext()) {
 			var s1 = s.next();
-			var value = this._cells.h[s1] * coeff;
+			var value = this.cells.h[s1] * coeff;
 			newCells.h[s1] = value;
 		}
-		this._cells = newCells;
+		this.cells = newCells;
 	}
 	,solveForSymbols: function(lhs,rhs) {
 		this.insertSymbol(lhs,-1.0);
 		this.solveFor(rhs);
 	}
 	,coefficientFor: function(symbol) {
-		if(this._cells.h.hasOwnProperty(symbol)) {
-			return this._cells.h[symbol];
+		if(this.cells.h.hasOwnProperty(symbol)) {
+			return this.cells.h[symbol];
 		} else {
 			return 0.0;
 		}
 	}
 	,substitute: function(symbol,row) {
-		if(this._cells.h.hasOwnProperty(symbol)) {
-			var coefficient = this._cells.h[symbol];
-			this._cells.remove(symbol);
+		if(this.cells.h.hasOwnProperty(symbol)) {
+			var coefficient = this.cells.h[symbol];
+			this.cells.remove(symbol);
 			this.insertRow(row,coefficient);
 		}
 	}
@@ -352,7 +346,7 @@ var jasper_Solver = function() {
 };
 jasper_Solver.__name__ = true;
 jasper_Solver.chooseSubject = function(row,tag) {
-	var key = row.getCells().keys();
+	var key = row.cells.keys();
 	while(key.hasNext()) {
 		var key1 = key.next();
 		if(key1 == 1) {
@@ -373,10 +367,10 @@ jasper_Solver.chooseSubject = function(row,tag) {
 	return this1;
 };
 jasper_Solver.getEnteringSymbol = function(objective) {
-	var key = objective.getCells().keys();
+	var key = objective.cells.keys();
 	while(key.hasNext()) {
 		var key1 = key.next();
-		if(key1 != 4 && objective.getCells().h[key1] < 0.0) {
+		if(key1 != 4 && objective.cells.h[key1] < 0.0) {
 			return key1;
 		}
 	}
@@ -384,7 +378,7 @@ jasper_Solver.getEnteringSymbol = function(objective) {
 	return this1;
 };
 jasper_Solver.allDummies = function(row) {
-	var key = row.getCells().keys();
+	var key = row.cells.keys();
 	while(key.hasNext()) {
 		var key1 = key.next();
 		if(key1 != 4) {
@@ -402,7 +396,7 @@ jasper_Solver.prototype = {
 		var row = this.createRow(constraint,tag);
 		var subject = jasper_Solver.chooseSubject(row,tag);
 		if(subject == 0 && jasper_Solver.allDummies(row)) {
-			if(!jasper_Util.nearZero(row.getConstant())) {
+			if(!jasper_Util.nearZero(row.constant)) {
 				throw new js__$Boot_HaxeError(new jasper_exception_UnsatisfiableConstraintException(constraint));
 			} else {
 				subject = tag.marker;
@@ -429,7 +423,7 @@ jasper_Solver.prototype = {
 			if(row == null) {
 				variable.setValue(0);
 			} else {
-				variable.setValue(row.getConstant());
+				variable.setValue(row.constant);
 			}
 		}
 	}
@@ -489,7 +483,7 @@ jasper_Solver.prototype = {
 			}
 			break;
 		}
-		if(row.getConstant() < 0.0) {
+		if(row.constant < 0.0) {
 			row.reverseSign();
 		}
 		return row;
@@ -497,26 +491,26 @@ jasper_Solver.prototype = {
 	,addWithArtificialVariable: function(row) {
 		var this1 = 2;
 		var art = this1;
-		var this11 = this.rows;
+		var this2 = this.rows;
 		var clonedCells = new haxe_ds_IntMap();
-		var otherCells = row._cells;
+		var otherCells = row.cells;
 		var key = otherCells.keys();
 		while(key.hasNext()) {
 			var key1 = key.next();
 			clonedCells.h[key1] = otherCells.h[key1];
 		}
-		var value = new jasper_Row(row._constant,clonedCells);
-		this11.h[art] = value;
+		var value = new jasper_Row(row.constant,clonedCells);
+		this2.h[art] = value;
 		var clonedCells1 = new haxe_ds_IntMap();
-		var otherCells1 = row._cells;
+		var otherCells1 = row.cells;
 		var key2 = otherCells1.keys();
 		while(key2.hasNext()) {
 			var key3 = key2.next();
 			clonedCells1.h[key3] = otherCells1.h[key3];
 		}
-		this.artificial = new jasper_Row(row._constant,clonedCells1);
+		this.artificial = new jasper_Row(row.constant,clonedCells1);
 		this.optimize(this.artificial);
-		var success = jasper_Util.nearZero(this.artificial.getConstant());
+		var success = jasper_Util.nearZero(this.artificial.constant);
 		this.artificial = null;
 		var rowptr = this.rows.h[art];
 		if(rowptr != null) {
@@ -530,7 +524,7 @@ jasper_Solver.prototype = {
 			}
 			while(!deleteQueue.isEmpty()) this.rows.remove(deleteQueue.pop());
 			deleteQueue.clear();
-			var cellsLength = Lambda.array(rowptr.getCells()).length;
+			var cellsLength = Lambda.array(rowptr.cells).length;
 			if(cellsLength == 0) {
 				return success;
 			}
@@ -555,7 +549,7 @@ jasper_Solver.prototype = {
 		while(key.hasNext()) {
 			var key1 = key.next();
 			this.rows.h[key1].substitute(symbol,row);
-			if(key1 != 1 && this.rows.h[key1].getConstant() < 0.0) {
+			if(key1 != 1 && this.rows.h[key1].constant < 0.0) {
 				this.infeasibleRows.push(key1);
 			}
 		}
@@ -601,7 +595,7 @@ jasper_Solver.prototype = {
 	,anyPivotableSymbol: function(row) {
 		var this1 = 5;
 		var symbol = this1;
-		var key = row.getCells().keys();
+		var key = row.cells.keys();
 		while(key.hasNext()) {
 			var key1 = key.next();
 			if(key1 == 2 || key1 == 3) {
@@ -624,7 +618,7 @@ jasper_Solver.prototype = {
 				var candidateRow = this.rows.h[key1];
 				var temp = candidateRow.coefficientFor(entering);
 				if(temp < 0) {
-					var temp_ratio = -candidateRow.getConstant() / temp;
+					var temp_ratio = -candidateRow.constant / temp;
 					if(temp_ratio < ratio) {
 						ratio = temp_ratio;
 						row = candidateRow;

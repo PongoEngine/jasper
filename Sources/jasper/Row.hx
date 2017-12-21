@@ -26,6 +26,9 @@ package jasper;
  */
 class Row 
 {
+    public var constant :Float;
+    public var cells :Map<Symbol, Float>;
+
     /**
      *  [Description]
      *  @param constant - 
@@ -33,8 +36,8 @@ class Row
      */
     public function new(constant :Float, cells :Map<Symbol, Float>) : Void
     {
-        _constant = constant;
-        _cells = cells;
+        this.constant = constant;
+        this.cells = cells;
     }
 
     /**
@@ -45,13 +48,13 @@ class Row
     public static inline function fromRow(other :Row) : Row
     {
         var clonedCells = new Map<Symbol, Float>();
-        var otherCells = other._cells;
+        var otherCells = other.cells;
 
         for(key in otherCells.keys()) {
             clonedCells.set(key, otherCells.get(key));
         }
 
-        return new Row(other._constant, clonedCells);
+        return new Row(other.constant, clonedCells);
     }
 
     /**
@@ -75,48 +78,12 @@ class Row
 
     /**
      *  [Description]
-     *  @return Float
-     */
-    public function getConstant() : Float
-    {
-        return _constant;
-    }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     */
-    public function setConstant(constant :Float) : Void
-    {
-        _constant = constant;
-    }
-
-    /**
-     *  [Description]
-     *  @return Map<Symbol, Float>
-     */
-    public function getCells() : Map<Symbol, Float>
-    {
-        return _cells;
-    }
-
-    /**
-     *  [Description]
-     *  @param cells - 
-     */
-    public function setCells(cells :Map<Symbol, Float>) : Void
-    {
-        _cells = cells;
-    }
-
-    /**
-     *  [Description]
      *  @param value - 
      *  @return Float
      */
     public function add(value :Float) : Float
     {
-        return _constant += value;
+        return constant += value;
     }
 
     /**
@@ -126,16 +93,16 @@ class Row
      */
     public function insertSymbol(symbol :Symbol, coefficient :Float) : Void
     {
-        var existingCoefficient = _cells.get(symbol);
+        var existingCoefficient = cells.get(symbol);
 
         if (existingCoefficient != null) {
             coefficient += existingCoefficient;
         }
 
         if (Util.nearZero(coefficient)) {
-            _cells.remove(symbol);
+            cells.remove(symbol);
         } else {
-            _cells.set(symbol, coefficient);
+            cells.set(symbol, coefficient);
         }
     }
 
@@ -155,19 +122,19 @@ class Row
      */
     public function insertRow(other :Row, coefficient :Float) : Void
     {
-        _constant += other._constant * coefficient;
+        constant += other.constant * coefficient;
 
-        for(s in other._cells.keys()){
-            var coeff = other._cells.get(s) * coefficient;
+        for(s in other.cells.keys()){
+            var coeff = other.cells.get(s) * coefficient;
 
-            var value = _cells.get(s);
+            var value = cells.get(s);
             if(value == null){
-                _cells.set(s, 0.0);
+                cells.set(s, 0.0);
             }
-            var temp = _cells.get(s) + coeff;
-            _cells.set(s, temp);
+            var temp = cells.get(s) + coeff;
+            cells.set(s, temp);
             if(Util.nearZero(temp)){
-                _cells.remove(s);
+                cells.remove(s);
             }
         }
     }
@@ -187,7 +154,7 @@ class Row
      */
     public function remove(symbol :Symbol) : Void
     {
-        _cells.remove(symbol);
+        cells.remove(symbol);
     }
 
     /**
@@ -195,14 +162,14 @@ class Row
      */
     public function reverseSign() : Void
     {
-        _constant = -_constant;
+        constant = -constant;
 
         var newCells = new Map<Symbol, Float>();
-        for(s in _cells.keys()){
-            var value = -_cells.get(s);
+        for(s in cells.keys()){
+            var value = -cells.get(s);
             newCells.set(s, value);
         }
-        _cells = newCells;
+        cells = newCells;
     }
 
     /**
@@ -211,16 +178,16 @@ class Row
      */
     public function solveFor(symbol :Symbol) : Void
     {
-        var coeff = (-1.0) / _cells.get(symbol);
-        _cells.remove(symbol);
-        _constant *= coeff;
+        var coeff = (-1.0) / cells.get(symbol);
+        cells.remove(symbol);
+        constant *= coeff;
 
         var newCells = new Map<Symbol, Float>();
-        for(s in _cells.keys()){
-            var value = _cells.get(s) * coeff;
+        for(s in cells.keys()){
+            var value = cells.get(s) * coeff;
             newCells.set(s, value);
         }
-        _cells = newCells;
+        cells = newCells;
     }
 
     /**
@@ -241,8 +208,8 @@ class Row
      */
     public function coefficientFor(symbol :Symbol) : Float
     {
-        if (_cells.exists(symbol)) {
-            return _cells.get(symbol);
+        if (cells.exists(symbol)) {
+            return cells.get(symbol);
         } else {
             return 0.0;
         }
@@ -255,13 +222,10 @@ class Row
      */
     public function substitute(symbol :Symbol, row :Row) : Void
     {
-        if (_cells.exists(symbol)) {
-            var coefficient = _cells.get(symbol);
-            _cells.remove(symbol);
+        if (cells.exists(symbol)) {
+            var coefficient = cells.get(symbol);
+            cells.remove(symbol);
             insertRow(row, coefficient);
         }
     }
-
-    private var _constant :Float;
-    private var _cells :Map<Symbol, Float>;
 }
