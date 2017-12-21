@@ -4,10 +4,10 @@
 
 --next
 
+-hl main.hl
 -main test.Main
---interp
 
 --next
 
--hl main.hl
 -main test.Main
+--interp

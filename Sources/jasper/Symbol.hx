@@ -63,10 +63,11 @@ abstract Symbol(SymbolType) to Int
 @:enum
 abstract SymbolType(Int) to Int
 {
+    var NOTHING = -1;
+    
     var INVALID = 0;
     var EXTERNAL = 1;
     var SLACK = 2;
     var ERROR = 3;
     var DUMMY = 4;
-    var NOTHING = 5;
 }

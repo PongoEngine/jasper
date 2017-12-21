@@ -27,6 +27,7 @@ package jasper;
 class Util 
 {
     private static inline var EPS = 1.0e-8;
+    public static inline var FLOAT_MAX = 1.79769313486231e+308;
 
     /**
      *  [Description]
@@ -37,6 +38,4 @@ class Util
     {
         return (value < 0.0) ? (-value < EPS) : (value < EPS);
     }
-
-    public static inline var FLOAT_MAX = 1.79769313486231e+308;
 }
