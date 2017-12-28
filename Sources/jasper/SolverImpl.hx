@@ -18,9 +18,7 @@ import jasper.Errors.UnknownEditVariable;
 import jasper.Errors.InternalSolverError;
 
 import jasper.Symbol;
-import jasper.Expression;
 import jasper.Symbolics.Variable;
-import jasper.Symbolics.Term;
 
 using Lambda;
 
@@ -334,13 +332,13 @@ class SolverImpl
 
 		// // Substitute the current basic variables into the row.
 		for(it in expr.m_terms) {
-			if( !Util.nearZero( it.coefficient ) )
+			if( !Util.nearZero( it.m_coefficient ) )
 			{
-				var symbol :Symbol = getVarSymbol( it.variable );
+				var symbol :Symbol = getVarSymbol( it.m_variable );
 				if(m_rows.exists(symbol))
-					row.insertRow(m_rows.get(symbol), it.coefficient);
+					row.insertRow(m_rows.get(symbol), it.m_coefficient);
 				else
-					row.insertSymbol(symbol, it.coefficient);
+					row.insertSymbol(symbol, it.m_coefficient);
 			}
 		}
 

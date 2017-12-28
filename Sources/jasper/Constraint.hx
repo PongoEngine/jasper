@@ -10,7 +10,6 @@
 package jasper;
 
 import jasper.Symbolics.Variable;
-import jasper.Symbolics.Term;
 
 class Constraint 
 {
@@ -63,9 +62,9 @@ class Constraint
         var vars = new Map<Variable, Float>();
 
         for(term in expr.m_terms) {
-            if(!vars.exists(term.variable))
-                vars.set(term.variable, 0);
-            vars[term.variable] += term.coefficient;
+            if(!vars.exists(term.m_variable))
+                vars.set(term.m_variable, 0);
+            vars[term.m_variable] += term.m_coefficient;
         }
 
         var terms = new Array<Term>();

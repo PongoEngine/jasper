@@ -9,7 +9,6 @@
 
 package jasper;
 
-import jasper.Symbolics.Term;
 import jasper.Symbolics.Value;
 import jasper.Symbolics.Variable;
 
@@ -57,9 +56,9 @@ class _Expression_
      */
     public function value() : Float
     {
-		var result = m_constant;
+		var result :Float = m_constant;
 		for(term in m_terms)
-			result += term.getValue();
+			result += term.value();
 		return result;
     }
 }
