@@ -42,4 +42,6 @@ abstract Id(Int)
     {
         this = id;
     }
+
+    @:op(A++) static function increment(A:Id) :Id;
 }

@@ -34,8 +34,6 @@ class _Term_
      */
     public function getValue() : Float
     {
-        test.Assert.notTested("_Term_.hx", "getValue");
-
         return coefficient * variable.value;
     }
 

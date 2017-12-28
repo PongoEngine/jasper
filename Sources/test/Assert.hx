@@ -28,20 +28,5 @@ class Assert
         }
     }
 
-    public static inline function notTested(className :String, funcName :String, shouldThrow :Bool = true) : Void
-    {
-        if(shouldThrow)
-            throw 'Class: $className, Function: $funcName not tested!';
-        else {
-            count++;
-            trace('ID: $count, Class: $className, Function: $funcName');
-        }
-    }
-
-    public static inline function notTestedSymbolics(className :String, funcName :String) : Void
-    {
-        // throw 'Class: $className, Function: $funcName not tested!';
-    }
-
     static var count = -1;
 }

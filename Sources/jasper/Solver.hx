@@ -31,7 +31,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function addConstraint(constraint :Constraint) : Void
 	{
-		test.Assert.notTested("Solver.hx", "addConstraint");
 
 		this.addConstraint( constraint );
 	}
@@ -46,7 +45,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function removeConstraint(constraint :Constraint) : Void
 	{
-		test.Assert.notTested("Solver.hx", "removeConstraint");
 		
 		this.removeConstraint( constraint );
 	}
@@ -59,7 +57,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function hasConstraint(constraint :Constraint) : Bool
 	{
-		test.Assert.notTested("Solver.hx", "hasConstraint");
 		
 		return this.hasConstraint( constraint );
 	}
@@ -79,7 +76,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function addEditVariable(variable :Variable, strength :Strength) : Void
 	{
-		test.Assert.notTested("Solver.hx", "addEditVariable");
 		
 		this.addEditVariable( variable, strength );
 	}
@@ -94,7 +90,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function removeEditVariable(variable :Variable) : Void
 	{
-		test.Assert.notTested("Solver.hx", "removeEditVariable");
 		
 		this.removeEditVariable( variable );
 	}
@@ -107,7 +102,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function hasEditVariable(variable :Variable) : Bool
 	{
-		test.Assert.notTested("Solver.hx", "hasEditVariable");
 		
 		return this.hasEditVariable( variable );
 	}
@@ -128,7 +122,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function suggestValue(variable :Variable, value :Float) : Void
 	{
-		test.Assert.notTested("Solver.hx", "suggestValue");
 		
 		this.suggestValue( variable, value );
 	}
@@ -138,7 +131,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function updateVariables() : Void
 	{
-		test.Assert.notTested("Solver.hx", "updateVariables");
 		
 		this.updateVariables();
 	}
@@ -154,7 +146,6 @@ abstract Solver(SolverImpl)
 	 */
 	public function reset() : Void
 	{
-		test.Assert.notTested("Solver.hx", "reset");
 		
 		// m_impl.reset();
 	}
@@ -164,7 +155,6 @@ abstract Solver(SolverImpl)
 	 */
 	public function dump() : Void
 	{
-		test.Assert.notTested("Solver.hx", "dump");
 		
 		// debug::dump( m_impl );
 	}

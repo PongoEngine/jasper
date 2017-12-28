@@ -6,7 +6,7 @@ import jasper.Constraint;
 
 using jasper.Symbolics.Value;
 using jasper.Symbolics.Variable;
-using jasper.Symbolics.Expression;
+using jasper.Expression;
 
 class Tests 
 {
