@@ -77,6 +77,8 @@ class _Expression_
      */
     public function value() : Float
     {
+        test.Assert.notTested("_Expression_.hx", "value");
+        
 		var result = m_constant;
 		for(term in m_terms)
 			result += term.getValue();

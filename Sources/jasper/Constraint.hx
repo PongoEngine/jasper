@@ -13,6 +13,8 @@ import jasper.Symbolics.Expression;
 import jasper.Symbolics.Variable;
 import jasper.Symbolics.Term;
 
+using Lambda;
+
 class Constraint 
 {
     public var expression :Expression;
@@ -61,22 +63,21 @@ class Constraint
      */
     private static inline function reduce(expr :Expression) :Expression
     {
+        test.Assert.notTested("Constraint.hx", "reduce", false);
         var vars = new Map<Variable, Float>();
-        for(term in expr.m_terms){
-            var value = vars.get(term.variable);
-            if(value == null){
-                value = 0.0;
-            }
-            value += term.coefficient;
-            vars.set(term.variable, value);
+
+        for(term in expr.m_terms) {
+            if(!vars.exists(term.variable))
+                vars.set(term.variable, 0);
+            vars[term.variable] += term.coefficient;
         }
 
-        var reducedTerms = new List<Term>();
-        for(variable in vars.keys()){
-            reducedTerms.add(new Term(variable, vars.get(variable)));
+        var terms = new List<Term>();
+        for(key in vars.keys()) {
+            terms.add(new Term(key, vars.get(key)));
         }
 
-        return new Expression(reducedTerms, expr.m_constant);
+        return new Expression(terms, expr.m_constant);
     }
 
     /**
@@ -86,6 +87,8 @@ class Constraint
      */
     public function setStrength(strength : Strength) : Constraint
     {
+        test.Assert.notTested("Constraint.hx", "setStrength");
+        
         this.strength = strength;
         return this;
     }

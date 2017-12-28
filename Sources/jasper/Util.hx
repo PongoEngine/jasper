@@ -21,6 +21,8 @@ class Util
      */
     public static function nearZero(value :Float) : Bool
     {
+        test.Assert.notTested("Util.hx", "nearZero");
+
         return (value < 0.0) ? (-value < EPS) : (value < EPS);
     }
 }

@@ -28,6 +28,8 @@ abstract Strength(Float) to Float
 
     public static function create_w(a :Float, b :Float, c :Float, w :Float) : Strength
     {
+        test.Assert.notTested("Strength.hx", "create_w");
+
         var result = 0.0;
         result += Math.max(0.0, Math.min(1000.0, a * w)) * 1000000.0;
         result += Math.max(0.0, Math.min(1000.0, b * w)) * 1000.0;
@@ -44,6 +46,8 @@ abstract Strength(Float) to Float
      */
     public static inline function create(a :Float, b :Float, c :Float) : Strength
     {
+        test.Assert.notTested("Strength.hx", "create");
+        
         return create_w(a, b, c, 1.0);
     }
 
@@ -54,6 +58,8 @@ abstract Strength(Float) to Float
      */
     public static function clip(value :Strength) :Strength
     {
+        test.Assert.notTested("Strength.hx", "clip");
+        
         return new Strength(Math.max(0.0, Math.min(REQUIRED, value)));
     }
 }

@@ -55,6 +55,8 @@ class SolverImpl
 	*/
 	public function addConstraint(constraint :Constraint) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "addConstraint");
+
         if(cns.exists(constraint)) {
             throw new DuplicateConstraint(constraint);
         }
@@ -114,6 +116,8 @@ class SolverImpl
 	*/
 	public function removeConstraint(constraint :Constraint) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "removeConstraint");
+		
         if(!cns.exists(constraint)) {
             throw new UnknownConstraint( constraint );
         }
@@ -154,6 +158,8 @@ class SolverImpl
 	*/
 	public function hasConstraint(constraint :Constraint) : Bool
 	{
+		test.Assert.notTested("SolverImpl.hx", "hasConstraint");
+		
         return cns.exists(constraint);
 	}
 
@@ -169,7 +175,7 @@ class SolverImpl
 	*/
 	public function addEditVariable(variable :Variable, strength :Strength) : Void
 	{
-        throw "addEditVariable nor implemented";
+		test.Assert.notTested("SolverImpl.hx", "addEditVariable");
 
         if(edits.exists(variable)) {
             throw new DuplicateEditVariable( variable );
@@ -180,7 +186,7 @@ class SolverImpl
 			throw new BadRequiredStrength();
 
         //JM not sure if this is correct        
-		var cn = new Constraint ( Expression.fromTerm( Term.fromVariable(variable) ), OP_EQ, strength );
+		var cn = new Constraint ( Expression.fromTerm( new Term(variable) ), OP_EQ, strength );
 		addConstraint( cn );
         var info = new EditInfo(cn, cns[cn], 0.0);
 		edits[ variable ] = info;
@@ -194,6 +200,8 @@ class SolverImpl
 	*/
 	public function removeEditVariable(variable :Variable) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "removeEditVariable");
+		
         if(!edits.exists(variable))
             throw new UnknownEditVariable( variable );
 		removeConstraint( edits.get(variable).constraint );
@@ -204,6 +212,8 @@ class SolverImpl
 	*/
 	public function hasEditVariable(variable :Variable) : Bool
 	{
+		test.Assert.notTested("SolverImpl.hx", "hasEditVariable");
+		
         return edits.exists(variable);
 	}
 
@@ -217,6 +227,8 @@ class SolverImpl
 	*/
 	public function suggestValue(variable :Variable, value :Float) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "suggestValue");
+		
         if(!edits.exists(variable)) {
             throw new UnknownEditVariable( variable );
         }
@@ -257,6 +269,8 @@ class SolverImpl
 	*/
 	public function updateVariables() : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "updateVariables");
+		
 		for(varKey in vars.keys())
 		{
             var v :Variable = varKey;
@@ -276,6 +290,8 @@ class SolverImpl
 	*/
 	public function reset() : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "reset");
+		
         for(key in rows.keys()) rows.remove(key);
         for(key in cns.keys()) cns.remove(key);
         for(key in vars.keys()) vars.remove(key);
@@ -290,6 +306,8 @@ class SolverImpl
 	*/
 	private function getVarSymbol(variable :Variable) : Symbol
 	{
+		test.Assert.notTested("SolverImpl.hx", "getVarSymbol");
+		
         if(vars.exists(variable))
             return vars.get(variable);
 
@@ -313,6 +331,8 @@ class SolverImpl
 	*/
 	private function createRow(constraint :Constraint, tag :Tag) : Row
 	{
+		test.Assert.notTested("SolverImpl.hx", "createRow");
+		
         var expr :Expression = constraint.expression;
 		var row :Row = Row.fromConstant( expr.m_constant );
 
@@ -386,6 +406,8 @@ class SolverImpl
 	*/
 	private function chooseSubject(row :Row, tag :Tag) : Symbol
 	{
+		test.Assert.notTested("SolverImpl.hx", "chooseSubject");
+		
 		for(key in row.cells.keys())
 		{
 			if( key.m_type == EXTERNAL )
@@ -409,6 +431,8 @@ class SolverImpl
  	*/
  	private function addWithArtificialVariable(row :Row) : Bool
  	{
+		test.Assert.notTested("SolverImpl.hx", "addWithArtificialVariable");
+		 
         // Create and add the artificial variable to the tableau
 		var art = new Symbol(new Id(0), SLACK);
 		rows[ art ] = Row.fromRow( row );
@@ -450,6 +474,8 @@ class SolverImpl
 	*/
 	private function substitute(symbol :Symbol,row :Row) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "substitute");
+		
 		for(key in rows.keys())
 		{
 			rows.get(key).substitute( symbol, row );
@@ -472,6 +498,8 @@ class SolverImpl
 	*/
 	private function optimize(objective :Row) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "optimize");
+		
         while( true )
 		{
 			var entering :Symbol = ( getEnteringSymbol( objective ) );
@@ -502,6 +530,8 @@ class SolverImpl
 	*/
 	private function dualOptimize() : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "dualOptimize");
+		
         while( !infeasibleRows.empty() )
 		{
 
@@ -531,6 +561,8 @@ class SolverImpl
 	*/
 	private function getEnteringSymbol(objective :Row) : Symbol
 	{
+		test.Assert.notTested("SolverImpl.hx", "getEnteringSymbol");
+		
 		for(key in objective.cells.keys())
 		{
 			if( key.m_type != DUMMY && objective.cells.get(key) < 0.0 )
@@ -548,6 +580,8 @@ class SolverImpl
 	*/
 	private function getDualEnteringSymbol(row :Row) : Symbol
 	{
+		test.Assert.notTested("SolverImpl.hx", "getDualEnteringSymbol");
+		
 		var entering :Symbol = new Symbol(new Id(0), INVALID);
 		var ratio = Util.FLOAT_MAX;
 		for(key in row.cells.keys())
@@ -571,6 +605,8 @@ class SolverImpl
 	*/
 	private function anyPivotableSymbol(row :Row) : Symbol
 	{
+		test.Assert.notTested("SolverImpl.hx", "anyPivotableSymbol");
+		
 		for(key in row.cells.keys())
 		{
 			var sym = key;
@@ -588,6 +624,8 @@ class SolverImpl
 	*/
 	private function getLeavingRow(entering :Symbol) :LeavingRow
 	{
+		test.Assert.notTested("SolverImpl.hx", "getLeavingRow");
+		
 		var ratio = Util.FLOAT_MAX;
         var found :LeavingRow = null;
 		for( key in rows.keys())
@@ -624,6 +662,8 @@ class SolverImpl
 	*/
 	private function getMarkerLeavingRow( marker :Symbol ) :LeavingRow
 	{
+		test.Assert.notTested("SolverImpl.hx", "getMarkerLeavingRow");
+		
         var dmax = Util.FLOAT_MAX;
 		var r1 = dmax;
 		var r2 = dmax;
@@ -669,6 +709,8 @@ class SolverImpl
 	*/
 	private function removeConstraintEffects(cn :Constraint, tag :Tag) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "removeConstraintEffects");
+		
         if( tag.marker.m_type == ERROR )
 			removeMarkerEffects( tag.marker, cn.strength );
 		if( tag.other.m_type == ERROR )
@@ -679,6 +721,8 @@ class SolverImpl
 	*/
 	private function removeMarkerEffects(marker :Symbol, strength :Strength) : Void
 	{
+		test.Assert.notTested("SolverImpl.hx", "removeMarkerEffects");
+		
 		if(rows.exists(marker))
 			objective.insertRow(rows.get(marker), -strength );
 		else
@@ -689,6 +733,8 @@ class SolverImpl
 	*/
 	private function allDummies(row :Row) : Bool
 	{
+		test.Assert.notTested("SolverImpl.hx", "allDummies");
+		
 		for( key in row.cells.keys())
 		{
 			if( key.m_type != DUMMY )

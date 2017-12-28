@@ -8,9 +8,6 @@ using jasper.Symbolics.Value;
 using jasper.Symbolics.Variable;
 using jasper.Symbolics.Expression;
 
-
-// using jasper.Symbolics.Value.ValueHelper;
-
 class Tests 
 {
 
@@ -21,7 +18,7 @@ class Tests
         var solver = new Solver();
         var x = new Variable("x");
 
-        solver.addConstraint(cast(2, Value) + x == 20);
+        solver.addConstraint(x + 2 == 20);
         solver.updateVariables();
 
         Assert.lessThanDelta(x.value, 18, EPSILON, "simpleNew() PASSED");

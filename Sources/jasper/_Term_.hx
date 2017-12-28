@@ -30,20 +30,12 @@ class _Term_
 
     /**
      *  [Description]
-     *  @param variable - 
-     *  @return Term
-     */
-    public static inline function fromVariable(variable :Variable) : Term
-    {
-        return new Term(variable, 1.0);
-    }
-
-    /**
-     *  [Description]
      *  @return Float
      */
     public function getValue() : Float
     {
+        test.Assert.notTested("_Term_.hx", "getValue");
+
         return coefficient * variable.value;
     }
 
