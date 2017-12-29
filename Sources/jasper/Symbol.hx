@@ -4,13 +4,11 @@
  *
  * Distributed under the terms of the Modified BSD License.
  *  
- *  The full license is in the file COPYING.txt, distributed with this software.
+ * The full license is in the file COPYING.txt, distributed with this software.
 */
 
 package jasper;
 
-// @:notNull
-// abstract Symbol(SymbolType) to Int
 class Symbol
 {
     public var m_type (default, null):SymbolType;
