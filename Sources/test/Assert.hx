@@ -1,7 +1,5 @@
 package test;
 
-import haxe.macro.Expr;
-
 class Assert
 {
     public static function lessThanDelta(a :Float, b :Float, delta :Float, ?successMessage :String) : Void

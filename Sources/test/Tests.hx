@@ -2,11 +2,9 @@ package test;
 
 import jasper.Solver;
 import jasper.Strength;
-import jasper.Constraint;
-
-using jasper.Value;
-using jasper.Variable;
-using jasper.Expression;
+import jasper.Value;
+import jasper.Variable;
+import jasper.Expression;
 
 class Tests 
 {
@@ -57,20 +55,18 @@ class Tests
 
         solver.addConstraint(x <= y);
         solver.addConstraint((y == (x + 3.0)));
-
-        // solver.addConstraint((x == 10.0) | Strength.WEAK);
-        solver.addConstraint((y == 10.0));
-
+        solver.addConstraint((x == 10.0) | Strength.WEAK);
+        solver.addConstraint((y == 10.0) | Strength.WEAK);
 
         solver.updateVariables();
-        trace(x.m_value);
 
         if (Math.abs(x.m_value - 10.0) < EPSILON) {
             Assert.lessThanDelta(10, x.m_value, EPSILON, "casso1() PASSED 1/2");
             Assert.lessThanDelta(13, y.m_value, EPSILON, "casso1() PASSED 2/2");
         } else {
+            trace(7, x.m_value);
             Assert.lessThanDelta(7, x.m_value, EPSILON, "casso1() PASSED 1/2");
-            // Assert.lessThanDelta(10, y.m_value, EPSILON, "casso1() PASSED 2/2");
+            Assert.lessThanDelta(10, y.m_value, EPSILON, "casso1() PASSED 2/2");
         }
     }
 
