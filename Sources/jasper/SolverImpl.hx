@@ -326,7 +326,7 @@ class SolverImpl
 	private function createRow(constraint :Constraint, tag :Tag) : Row
 	{
 
-		var expr :Expression = constraint.expression;
+		var expr :Expression = constraint.m_expression;
 		var row :Row = new Row(expr.m_constant);
 
 		// // Substitute the current basic variables into the row.
@@ -342,33 +342,33 @@ class SolverImpl
 		}
 
 		// Add the necessary slack, error, and dummy variables.
-		switch( constraint.operator )
+		switch( constraint.m_op )
 		{
 			case OP_LE:
 			case OP_GE:
 			{
-				var coeff = constraint.operator == OP_LE ? 1.0 : -1.0;
+				var coeff = constraint.m_op == OP_LE ? 1.0 : -1.0;
 				var slack :Symbol = new Symbol(m_id_tick++, SLACK);
 				tag.marker = slack;
 				row.insertSymbol( slack, coeff );
-				if( constraint.strength < Strength.REQUIRED ) {
+				if( constraint.m_strength < Strength.REQUIRED ) {
 					var error = new Symbol (m_id_tick++, ERROR);
 					tag.other = error;
 					row.insertSymbol( error, -coeff );
-					m_objective.insertSymbol( error, constraint.strength );
+					m_objective.insertSymbol( error, constraint.m_strength );
 				}
 			}
 			case OP_EQ:
 			{
-				if( constraint.strength < Strength.REQUIRED ) {
+				if( constraint.m_strength < Strength.REQUIRED ) {
 					var errplus = new Symbol(m_id_tick++, ERROR);
 					var errminus = new Symbol(m_id_tick++, ERROR);
 					tag.marker = errplus;
 					tag.other = errminus;
 					row.insertSymbol( errplus, -1.0 ); // v = eplus - eminus
 					row.insertSymbol( errminus, 1.0 ); // v - eplus + eminus = 0
-					m_objective.insertSymbol( errplus, constraint.strength );
-					m_objective.insertSymbol( errminus, constraint.strength );
+					m_objective.insertSymbol( errplus, constraint.m_strength );
+					m_objective.insertSymbol( errminus, constraint.m_strength );
 				}
 				else {
 					var dummy = new Symbol(m_id_tick++, DUMMY);
@@ -694,9 +694,9 @@ class SolverImpl
 	{
 		
         if( tag.marker.m_type == ERROR )
-			removeMarkerEffects( tag.marker, cn.strength );
+			removeMarkerEffects( tag.marker, cn.m_strength );
 		if( tag.other.m_type == ERROR )
-			removeMarkerEffects( tag.other, cn.strength );
+			removeMarkerEffects( tag.other, cn.m_strength );
 	}
 
 	/* Remove the effects of an error marker on the objective function.

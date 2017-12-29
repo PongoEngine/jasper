@@ -11,9 +11,9 @@ package jasper;
 
 class _Constraint_ 
 {
-    public var expression :Expression;
-    public var strength :Strength;
-    public var operator :RelationalOperator;
+    public var m_expression (default, null):Expression;
+    public var m_strength (default, null):Strength;
+    public var m_op (default, null):RelationalOperator;
 
     /**
      *  [Description]
@@ -21,11 +21,11 @@ class _Constraint_
      *  @param op - 
      *  @param strength - 
      */
-    public function new(expr :Expression, op :RelationalOperator, strength :Strength) : Void
+    private function new(expr :Expression, op :RelationalOperator, strength :Strength) : Void
     {
-        this.expression = reduce(expr);
-        this.operator = op;
-        this.strength = Strength.clip(strength);
+        this.m_expression = expr;
+        this.m_op = op;
+        this.m_strength = strength;
     }
 
     /**
@@ -36,7 +36,21 @@ class _Constraint_
      */
     public static inline function fromConstraint(other :Constraint, strength :Strength) : Constraint
     {
-        return new Constraint(other.expression, other.operator, strength);
+        var s = Strength.clip(strength);
+        return new _Constraint_(other.m_expression,other.m_op,s);
+    }
+
+    /**
+     *  [Description]
+     *  @param expr - 
+     *  @param op - 
+     *  @param strength - 
+     */
+    public static inline function fromExpression(expr :Expression, op :RelationalOperator, strength :Strength) : Constraint
+    {
+        var e = reduce(expr);
+        var s = Strength.clip(strength);
+        return new _Constraint_(e,op,s);
     }
 
     /**
@@ -64,22 +78,11 @@ class _Constraint_
 
     /**
      *  [Description]
-     *  @param strength - 
-     *  @return Constraint
-     */
-    public function setStrength(strength : Strength) : Constraint
-    {
-        this.strength = strength;
-        return this;
-    }
-
-    /**
-     *  [Description]
      *  @return String
      */
     public function toString() : String
     {
-        return "expression: (" + expression + ") strength: " + strength + " operator: " + operator;
+        return "expression: (" + m_expression + ") strength: " + m_strength + " operator: " + m_op;
     }
 }
 
@@ -97,6 +100,6 @@ abstract Constraint(_Constraint_) to _Constraint_ from _Constraint_
 {
     public function new(expr :Expression, op :RelationalOperator, strength :Strength = Strength.REQUIRED) : Void
     {
-        this = new _Constraint_(expr, op, strength);
+        this = _Constraint_.fromExpression(expr, op, strength);
     }
 }
