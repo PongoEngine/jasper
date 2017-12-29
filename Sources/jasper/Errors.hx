@@ -13,6 +13,7 @@ class UnsatisfiableConstraint
 {
     public function new(constraint :Constraint) : Void
     {
+        trace('UnsatisfiableConstraint: $constraint');
     }
 }
 
@@ -20,6 +21,7 @@ class UnknownConstraint
 {
     public function new(constraint :Constraint) : Void
     {
+        trace('UnknownConstraint: $constraint');
     }
 }
 
@@ -27,6 +29,7 @@ class DuplicateConstraint
 {
     public function new(constraint :Constraint) : Void
     {
+        trace('DuplicateConstraint: $constraint');
     }
 }
 
@@ -34,6 +37,7 @@ class UnknownEditVariable
 {
     public function new(variable :Variable) : Void
     {
+        trace('UnknownEditVariable: $variable');
     }
 }
 
@@ -41,6 +45,7 @@ class DuplicateEditVariable
 {
     public function new(variable :Variable) : Void
     {
+        trace('DuplicateEditVariable: $variable');
     }
 }
 
@@ -48,6 +53,7 @@ class BadRequiredStrength
 {
     public function new() : Void
     {
+        trace('BadRequiredStrength');
     }
 }
 
@@ -55,5 +61,6 @@ class InternalSolverError
 {
     public function new(message :String) : Void
     {
+        trace('InternalSolverError: $message');
     }
 }
