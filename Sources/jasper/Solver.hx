@@ -12,7 +12,6 @@ package jasper;
 @:notNull
 abstract Solver(SolverImpl)
 {
-
     public inline function new() : Void
     {
         this = new SolverImpl();
@@ -29,7 +28,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function addConstraint(constraint :Constraint) : Void
 	{
-
 		this.addConstraint( constraint );
 	}
 
@@ -43,7 +41,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function removeConstraint(constraint :Constraint) : Void
 	{
-		
 		this.removeConstraint( constraint );
 	}
 
@@ -55,7 +52,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function hasConstraint(constraint :Constraint) : Bool
 	{
-		
 		return this.hasConstraint( constraint );
 	}
 
@@ -74,7 +70,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function addEditVariable(variable :Variable, strength :Strength) : Void
 	{
-		
 		this.addEditVariable( variable, strength );
 	}
 
@@ -88,7 +83,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function removeEditVariable(variable :Variable) : Void
 	{
-		
 		this.removeEditVariable( variable );
 	}
 
@@ -100,7 +94,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function hasEditVariable(variable :Variable) : Bool
 	{
-		
 		return this.hasEditVariable( variable );
 	}
 
@@ -120,7 +113,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function suggestValue(variable :Variable, value :Float) : Void
 	{
-		
 		this.suggestValue( variable, value );
 	}
 
@@ -129,7 +121,6 @@ abstract Solver(SolverImpl)
 	 */
 	public inline function updateVariables() : Void
 	{
-		
 		this.updateVariables();
 	}
 
@@ -144,7 +135,6 @@ abstract Solver(SolverImpl)
 	 */
 	public function reset() : Void
 	{
-		
 		// m_impl.reset();
 	}
 
@@ -153,7 +143,6 @@ abstract Solver(SolverImpl)
 	 */
 	public function dump() : Void
 	{
-		
 		// debug::dump( m_impl );
 	}
 }

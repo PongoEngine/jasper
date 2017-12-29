@@ -692,7 +692,6 @@ class SolverImpl
 	*/
 	private function removeConstraintEffects(cn :Constraint, tag :Tag) : Void
 	{
-		
         if( tag.marker.m_type == ERROR )
 			removeMarkerEffects( tag.marker, cn.m_strength );
 		if( tag.other.m_type == ERROR )
@@ -703,7 +702,6 @@ class SolverImpl
 	*/
 	private function removeMarkerEffects(marker :Symbol, strength :Strength) : Void
 	{
-		
 		if(m_rows.exists(marker))
 			m_objective.insertRow(m_rows.get(marker), -strength );
 		else
@@ -714,7 +712,6 @@ class SolverImpl
 	*/
 	private function allDummies(row :Row) : Bool
 	{
-		
 		for( key in row.m_cells.keys())
 		{
 			if( key.m_type != DUMMY )
@@ -722,7 +719,6 @@ class SolverImpl
 		}
 		return true;
 	}
-
 }
 
 private class Tag 
