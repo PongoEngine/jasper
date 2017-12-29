@@ -40,4 +40,9 @@ abstract Strength(Float) to Float
     {
         return new Strength(Math.max( 0.0, Math.min( REQUIRED, value ) ));
     }
+
+    @:op(A|B) static function modifyStrength( strength :Strength, constraint :Constraint ) : Constraint
+    {
+        return constraint | strength;
+    }
 }
