@@ -34,7 +34,7 @@ class _Constraint_
      *  @param strength - 
      *  @return Constraint
      */
-    public static inline function fromConstraint(other :Constraint, strength :Strength) : Constraint
+    public static function fromConstraint(other :Constraint, strength :Strength) : Constraint
     {
         var s = Strength.clip(strength);
         return new _Constraint_(other.m_expression,other.m_op,s);
@@ -46,7 +46,7 @@ class _Constraint_
      *  @param op - 
      *  @param strength - 
      */
-    public static inline function fromExpression(expr :Expression, op :RelationalOperator, strength :Strength) : Constraint
+    public static function fromExpression(expr :Expression, op :RelationalOperator, strength :Strength) : Constraint
     {
         var e = reduce(expr);
         var s = Strength.clip(strength);
