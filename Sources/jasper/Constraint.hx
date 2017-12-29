@@ -9,7 +9,7 @@
 
 package jasper;
 
-class Constraint 
+class _Constraint_ 
 {
     public var expression :Expression;
     public var strength :Strength;
@@ -55,7 +55,7 @@ class Constraint
      *  @param expr - 
      *  @return Expression
      */
-    private static inline function reduce(expr :Expression) :Expression
+    private static function reduce(expr :Expression) :Expression
     {
         var vars = new Map<Variable, Float>();
 
@@ -99,4 +99,15 @@ enum RelationalOperator
     OP_LE;
     OP_GE;
     OP_EQ;
+}
+
+@:forward
+@:forwardStatics
+@:notNull
+abstract Constraint(_Constraint_) to _Constraint_ from _Constraint_
+{
+    public function new(expr :Expression, op :RelationalOperator, strength :Strength) : Void
+    {
+        this = new _Constraint_(expr, op, strength);
+    }
 }
