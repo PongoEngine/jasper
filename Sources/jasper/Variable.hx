@@ -9,8 +9,6 @@
 
 package jasper;
 
-import jasper.Symbolics.Value;
-
 class _Variable_
 {
     public var m_name (default, null):String;

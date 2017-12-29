@@ -9,9 +9,6 @@
 
 package jasper;
 
-import jasper.Symbolics.Value;
-import jasper.Variable;
-
 class _Expression_
 {
     public var m_terms (default, null):Array<Term>;

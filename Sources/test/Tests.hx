@@ -4,7 +4,7 @@ import jasper.Solver;
 import jasper.Strength;
 import jasper.Constraint;
 
-using jasper.Symbolics.Value;
+using jasper.Value;
 using jasper.Variable;
 using jasper.Expression;
 
