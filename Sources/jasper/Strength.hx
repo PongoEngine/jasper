@@ -26,7 +26,7 @@ abstract Strength(Float) to Float
     public static inline var MEDIUM :Strength = new Strength(1000);
     public static inline var WEAK :Strength = new Strength(1);
 
-    public static function create_w(a :Float, b :Float, c :Float, w :Float) : Strength
+    public static function create(a :Float, b :Float, c :Float, w :Float = 1.0) : Strength
     {
 
         var result = 0.0;
@@ -36,27 +36,8 @@ abstract Strength(Float) to Float
         return new Strength(result);
     }
 
-    /**
-     *  [Description]
-     *  @param a - 
-     *  @param b - 
-     *  @param c - 
-     *  @return Float
-     */
-    public static inline function create(a :Float, b :Float, c :Float) : Strength
-    {
-        
-        return create_w(a, b, c, 1.0);
-    }
-
-    /**
-     *  [Description]
-     *  @param value - 
-     *  @return Float
-     */
     public static function clip(value :Strength) :Strength
     {
-
         return new Strength(Math.max( 0.0, Math.min( REQUIRED, value ) ));
     }
 }
