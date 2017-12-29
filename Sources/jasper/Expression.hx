@@ -143,7 +143,7 @@ abstract Expression(_Expression_)
 
     @:op(A==B) static function equalsExpression(first :Expression, second :Expression) : Constraint
     {
-        return Constraint.fromExpression( first - second, OP_EQ );
+        return new Constraint( first - second, OP_EQ );
     }
 
     @:op(A==B) static function equalsTerm(expression :Expression, term :Term) : Constraint
@@ -163,7 +163,7 @@ abstract Expression(_Expression_)
 
     @:op(A<=B) static function lteExpression(first :Expression, second :Expression) : Constraint
     {
-        return Constraint.fromExpression( first - second, OP_LE );
+        return new Constraint( first - second, OP_LE );
     }
 
     @:op(A<=B) static function lteTerm(expression :Expression, term :Term) : Constraint
@@ -183,7 +183,7 @@ abstract Expression(_Expression_)
 
     @:op(A>=B) static function gteExpression(first :Expression, second :Expression) : Constraint
     {
-        return Constraint.fromExpression( first - second, OP_GE );
+        return new Constraint( first - second, OP_GE );
     }
 
     @:op(A>=B) static function gteTerm(expression :Expression, term :Term) : Constraint

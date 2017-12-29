@@ -30,17 +30,6 @@ class _Constraint_
 
     /**
      *  [Description]
-     *  @param expr - 
-     *  @param op - 
-     *  @return Constraint
-     */
-    public static inline function fromExpression(expr :Expression, op :RelationalOperator) : Constraint
-    {
-        return new Constraint(expr, op, Strength.REQUIRED);
-    }
-
-    /**
-     *  [Description]
      *  @param other - 
      *  @param strength - 
      *  @return Constraint
@@ -106,7 +95,7 @@ enum RelationalOperator
 @:notNull
 abstract Constraint(_Constraint_) to _Constraint_ from _Constraint_
 {
-    public function new(expr :Expression, op :RelationalOperator, strength :Strength) : Void
+    public function new(expr :Expression, op :RelationalOperator, strength :Strength = Strength.REQUIRED) : Void
     {
         this = new _Constraint_(expr, op, strength);
     }
