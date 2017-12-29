@@ -9,8 +9,6 @@
 
 package jasper;
 
-import jasper.Symbolics.Variable;
-
 class Constraint 
 {
     public var expression :Expression;

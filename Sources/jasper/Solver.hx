@@ -9,8 +9,6 @@
 
 package jasper;
 
-import jasper.Symbolics.Variable;
-
 @:notNull
 abstract Solver(SolverImpl)
 {

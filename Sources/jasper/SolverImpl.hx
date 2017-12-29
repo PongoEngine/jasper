@@ -18,7 +18,6 @@ import jasper.Errors.UnknownEditVariable;
 import jasper.Errors.InternalSolverError;
 
 import jasper.Symbol;
-import jasper.Symbolics.Variable;
 
 using Lambda;
 
@@ -267,9 +266,9 @@ class SolverImpl
 		{
             var v :Variable = varKey;
 			if(!m_rows.exists(m_vars.get(varKey)))
-				v.value = 0.0;
+				v.m_value = 0.0;
 			else
-				v.value = m_rows.get(m_vars.get(varKey)).m_constant;
+				v.m_value = m_rows.get(m_vars.get(varKey)).m_constant;
 		}
 	}
 

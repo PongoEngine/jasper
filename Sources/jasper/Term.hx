@@ -9,7 +9,7 @@
 
 package jasper;
 
-import jasper.Symbolics.Variable;
+import jasper.Variable;
 import jasper.Symbolics.Value;
 
 class _Term_
@@ -34,7 +34,7 @@ class _Term_
      */
     public function value() : Float
     {
-        return m_coefficient * m_variable.value;
+        return m_coefficient * m_variable.m_value;
     }
 
     /**

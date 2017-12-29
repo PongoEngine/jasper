@@ -9,8 +9,6 @@
 
 package jasper;
 
-import jasper.Symbolics.Variable;
-
 class UnsatisfiableConstraint
 {
     public function new(constraint :Constraint) : Void

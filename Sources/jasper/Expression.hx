@@ -10,7 +10,7 @@
 package jasper;
 
 import jasper.Symbolics.Value;
-import jasper.Symbolics.Variable;
+import jasper.Variable;
 
 class _Expression_
 {
