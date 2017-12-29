@@ -11,8 +11,8 @@ package jasper;
 
 class Row 
 {
-    public var m_constant :Float;
-    public var m_cells = new Map<Symbol, Float>();
+    public var m_constant (default, null):Float;
+    public var m_cells (default, null)= new Map<Symbol, Float>();
 
     public function new(constant :Float = 0) : Void
     {
@@ -21,97 +21,134 @@ class Row
 
     public static inline function fromRow(other :Row) : Row
     {
-        
         var row = new Row(other.m_constant);
-        for(otherKey in other.m_cells.keys()) {
-            row.m_cells.set(otherKey, other.m_cells.get(otherKey));
-        }
+        row.m_cells = other.m_cells;
         return row;
     }
 
-    public function add(value :Float) : Float
-    {
-        
-        return this.m_constant += value;
-    }
+	/**
+	 * Add a constant value to the row constant.
+     * The new value of the constant is returned.
+	 */
+	public function add(value :Float) : Float
+	{
+		return m_constant += value;
+	}
 
-    public function insertSymbol(symbol :Symbol, coefficient :Float = 1.0) : Void
-    {
-
+	/**
+	 *  Insert a symbol into the row with a given coefficient.
+     *  If the symbol already exists in the row, the coefficient will be
+     *  added to the existing coefficient. If the resulting coefficient
+     *  is zero, the symbol will be removed from the row.
+	 */
+	public function insertSymbol( symbol :Symbol, coefficient :Float = 1.0 ) : Void
+	{
         if(!m_cells.exists(symbol))
-            m_cells[symbol] = 0;
-        
-        if( Util.nearZero( m_cells[ symbol ] += coefficient ) )
+            m_cells.set(symbol, 0);
+
+		if( Util.nearZero( m_cells[ symbol ] += coefficient ) )
 			m_cells.remove( symbol );
-    }
+	}
 
-    public function insertRow(other :Row, coefficient :Float = 1.0) : Void
-    {
-        
-        this.m_constant += other.m_constant * coefficient;
+	/**
+	 *  Insert a row into this row with a given coefficient.
+     *  The constant and the cells of the other row will be multiplied by
+     *  the coefficient and added to this row. Any cell with a resulting
+     *  coefficient of zero will be removed from the row.
+	 */
+	public function insertRow( other :Row, coefficient :Float = 1.0 ) : Void
+	{
+		m_constant += other.m_constant * coefficient;
+		for(cellKey in m_cells.keys())
+		{
+			var coeff = m_cells[cellKey] * coefficient;
+			if( Util.nearZero( m_cells[ cellKey] += coeff ) )
+				m_cells.remove( cellKey);
+		}
+	}
 
-        for(key in other.m_cells.keys()) {
-            var coeff = other.m_cells.get(key) * coefficient;
-            insertSymbol(key, coeff);
-        }
-    }
-
-    public function remove(symbol :Symbol) : Void
-    {
-        
-        if(m_cells.exists(symbol)) {
-            m_cells.remove(symbol);
-        }
-    }
-
-    public function reverseSign() : Void
-    {
-        
-		m_constant = -m_constant;
-        for(key in m_cells.keys()) {
-            m_cells[key] = -m_cells[key];
-        }
-    }
-
-    public function solveFor(symbol :Symbol) : Void
-    {
-        
-        var coeff = -1.0 / m_cells.get(symbol);
+	/**
+	 *  Remove the given symbol from the row.
+	 */
+	public function remove( symbol :Symbol ) : Void
+	{
         m_cells.remove(symbol);
-        this.m_constant *= coeff;
+	}
 
-        var newCells = new Map<Symbol, Float>();
-        for(s in m_cells.keys()){
-            var value = m_cells.get(s) * coeff;
-            newCells.set(s, value);
+	/**
+	 *  Reverse the sign of the constant and all cells in the row.
+	 */
+	public function reverseSign() : Void
+	{
+		m_constant = -m_constant;
+		for( cellKey in m_cells.keys())
+			m_cells[cellKey] = -m_cells[cellKey];
+	}
+
+	/**
+	 *  Solve the row for the given symbol.
+     *  This method assumes the row is of the form a * x + b * y + c = 0
+     *  and (assuming solve for x) will modify the row to represent the
+     *  right hand side of x = -b/a * y - c / a. The target symbol will
+     *  be removed from the row, and the constant and other cells will
+     *  be multiplied by the negative inverse of the target coefficient.
+     *  The given symbol *must* exist in the row.
+	 */
+	public function solveFor( symbol :Symbol ) : Void
+	{
+        if(!m_cells.exists(symbol)) {
+            throw "err";
         }
-        this.m_cells = newCells;
-    }
-
-    public function solveForSymbols(lhs :Symbol, rhs :Symbol) : Void
-    {
         
-        insertSymbol(lhs, -1.0);
-        solveFor(rhs);
-    }
-
-    public function coefficientFor(symbol :Symbol) : Float
-    {
-        
-        if (this.m_cells.exists(symbol)) {
-            return this.m_cells.get(symbol);
-        } else {
-            return 0.0;
+		var coeff = -1.0 / m_cells[ symbol ];
+		m_cells.remove( symbol );
+		m_constant *= coeff;
+		for(cellKey in m_cells.keys()) {
+            m_cells[cellKey] *= coeff;
         }
-    }
+	}
 
-    public function substitute(symbol :Symbol, row :Row) : Void
-    {
-        
-        if (m_cells.exists(symbol)) {
-            var coefficient = m_cells.get(symbol);
-            m_cells.remove(symbol);
-            insertRow(row, coefficient);
-        }
-    }
+	/**
+	 *  Solve the row for the given symbols.
+     *  This method assumes the row is of the form x = b * y + c and will
+     *  solve the row such that y = x / b - c / b. The rhs symbol will be
+     *  removed from the row, the lhs added, and the result divided by the
+     *  negative inverse of the rhs coefficient.
+     *  The lhs symbol *must not* exist in the row, and the rhs symbol
+     *  *must* exist in the row.
+	 */
+	public function solveForSymbols( lhs :Symbol, rhs :Symbol ) : Void
+	{
+		insertSymbol( lhs, -1.0 );
+		solveFor( rhs );
+	}
+
+	/**
+	 *  Get the coefficient for the given symbol.
+     *  If the symbol does not exist in the row, zero will be returned.
+	 */
+	public function coefficientFor( symbol :Symbol ) : Float
+	{
+		if( !m_cells.exists(symbol))
+			return 0.0;
+
+        return m_cells[symbol];
+	}
+
+	/**
+	 *  Substitute a symbol with the data from another row.
+     *  Given a row of the form a * x + b and a substitution of the
+     *  form x = 3 * y + c the row will be updated to reflect the
+     *  expression 3 * a * y + a * c + b.
+     *  If the symbol does not exist in the row, this is a no-op.
+	 */
+	public function substitute( symbol :Symbol, row :Row ) : Void
+	{
+		if( m_cells.exists(symbol))
+		{
+			var coefficient = m_cells[symbol];
+			m_cells.remove( symbol );
+			insertRow( row, coefficient );
+		}
+	}
 }
