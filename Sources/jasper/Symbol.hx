@@ -14,26 +14,28 @@ class Symbol
     public var m_type (default, null):SymbolType;
     public var m_id (default, null):Id;
     
-    /**
-     *  [Description]
-     *  @param type - 
-     */
-    public inline function new(id :Id, type :SymbolType) : Void
+    public function new(type :SymbolType = SYM_INVALID, id :Id = ID_0) : Void
     {
         m_type = type;
         m_id = id;
     }
+
+    private static inline var ID_0 = new Id(0);
+    private static inline var SYM_INVALID = INVALID;
 }
 
-enum SymbolType
+@:enum
+@:notNull
+abstract SymbolType(Int)
 {
-    INVALID;
-    EXTERNAL;
-    SLACK;
-    ERROR;
-    DUMMY;
+    var INVALID = 0;
+    var EXTERNAL = 1;
+    var SLACK = 2;
+    var ERROR = 3;
+    var DUMMY = 4;
 }
 
+@:notNull
 abstract Id(Int)
 {
     public inline function new(id :Int) : Void
