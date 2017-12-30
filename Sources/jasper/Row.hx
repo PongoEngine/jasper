@@ -12,7 +12,7 @@ package jasper;
 class Row 
 {
     public var m_constant (default, null):Float;
-    public var m_cells (default, null)= new Map<Symbol, Float>();
+    public var m_cells (default, null) = new CellMap();
 
     public function new(constant :Float = 0) : Void
     {
@@ -41,13 +41,11 @@ class Row
      *  added to the existing coefficient. If the resulting coefficient
      *  is zero, the symbol will be removed from the row.
 	 */
-	public function insertSymbol( symbol :Symbol, coefficient :Float = 1.0 ) : Void
+	public inline function insertSymbol( symbol :Symbol, coefficient :Float = 1.0 ) : Void
 	{
-        if(!m_cells.exists(symbol))
-            m_cells.set(symbol, 0);
-
-		if( Util.nearZero( m_cells[ symbol ] += coefficient ) )
-			m_cells.remove( symbol );
+		if(Util.nearZero(m_cells.add(symbol, coefficient))) {
+			m_cells.remove(symbol);
+		}
 	}
 
 	/**
@@ -59,12 +57,10 @@ class Row
 	public function insertRow( other :Row, coefficient :Float = 1.0 ) : Void
 	{
 		m_constant += other.m_constant * coefficient;
-		for(cellKey in m_cells.keys())
-		{
-			var coeff = m_cells[cellKey] * coefficient;
-			if( Util.nearZero( m_cells[ cellKey] += coeff ) )
-				m_cells.remove( cellKey);
-		}
+		m_cells.iterateKeyVal(function(k :Symbol,v :Float) {
+			var coeff = v * coefficient;
+			insertSymbol(k, coeff);
+		});
 	}
 
 	/**
@@ -72,7 +68,7 @@ class Row
 	 */
 	public function remove( symbol :Symbol ) : Void
 	{
-        m_cells.remove(symbol);
+		m_cells.remove(symbol);
 	}
 
 	/**
@@ -81,8 +77,7 @@ class Row
 	public function reverseSign() : Void
 	{
 		m_constant = -m_constant;
-		for( cellKey in m_cells.keys())
-			m_cells[cellKey] = -m_cells[cellKey];
+		m_cells.negate();
 	}
 
 	/**
@@ -96,16 +91,10 @@ class Row
 	 */
 	public function solveFor( symbol :Symbol ) : Void
 	{
-        if(!m_cells.exists(symbol)) {
-            throw "err";
-        }
-        
-		var coeff = -1.0 / m_cells[ symbol ];
+		var coeff = -1.0 / m_cells.get(symbol);
 		m_cells.remove( symbol );
 		m_constant *= coeff;
-		for(cellKey in m_cells.keys()) {
-            m_cells[cellKey] *= coeff;
-        }
+		m_cells.multiplyAll(coeff);
 	}
 
 	/**
@@ -129,10 +118,7 @@ class Row
 	 */
 	public function coefficientFor( symbol :Symbol ) : Float
 	{
-		if( !m_cells.exists(symbol))
-			return 0.0;
-
-        return m_cells[symbol];
+		return m_cells.getWithDefault(symbol, 0.0);
 	}
 
 	/**
@@ -144,11 +130,55 @@ class Row
 	 */
 	public function substitute( symbol :Symbol, row :Row ) : Void
 	{
-		if( m_cells.exists(symbol))
-		{
-			var coefficient = m_cells[symbol];
+		if( m_cells.exists(symbol) ) {
+			var coefficient = m_cells.get(symbol);
 			m_cells.remove( symbol );
 			insertRow( row, coefficient );
 		}
+	}
+}
+
+@:forward(remove, get, exists, keys, array)
+abstract CellMap(Map<Symbol, Float>)
+{
+	public inline function new() : Void
+	{
+		this = new Map<Symbol, Float>();
+	}
+
+	public function add(key :Symbol, val :Float) : Float
+	{
+		if(!this.exists(key))
+			this.set(key, 0);
+		var newVal = this.get(key) + val;
+		this.set(key, newVal);
+		return newVal;
+	}
+
+	public inline function multiplyAll(val :Float) : Void
+	{
+		for(key in this.keys()) {
+			this.set(key, this.get(key) * val);
+		}
+	}
+
+	public inline function iterateKeyVal(fn : Symbol -> Float -> Void) : Void
+	{
+		for(key in this.keys()) {
+			var val = this.get(key);
+			fn(key, val);
+		}
+	}
+
+	public inline function negate() : Void
+	{
+		for(key in this.keys()) {
+			this.set(key, -this.get(key));
+		}
+	}
+
+	public inline function getWithDefault(key :Symbol, default_ :Float) : Float
+	{
+		return this.exists(key) ? this.get(key) : default_;
 	}
 }
