@@ -54,7 +54,7 @@ class Tests
         var solver = new Solver();
 
         solver.addConstraint(x <= y);
-        solver.addConstraint((y == (x + 3.0)));
+        solver.addConstraint(y ==(x + 3.0));
         solver.addConstraint((x == 10.0) | Strength.WEAK);
         solver.addConstraint((y == 10.0) | Strength.WEAK);
 
@@ -63,11 +63,11 @@ class Tests
         trace(x,y);
 
         if (Math.abs(x.m_value - 10.0) < EPSILON) {
-            Assert.lessThanDelta(10, x.m_value, EPSILON, "casso1() PASSED 1/2");
-            Assert.lessThanDelta(13, y.m_value, EPSILON, "casso1() PASSED 2/2");
+            Assert.lessThanDelta(10, x.m_value, EPSILON);
+            Assert.lessThanDelta(13, x.m_value, EPSILON);
         } else {
-            Assert.lessThanDelta(7, x.m_value, EPSILON, "casso1() PASSED 1/2");
-            Assert.lessThanDelta(10, y.m_value, EPSILON, "casso1() PASSED 2/2");
+            Assert.lessThanDelta(7, x.m_value, EPSILON);
+            Assert.lessThanDelta(10, y.m_value, EPSILON);
         }
     }
 

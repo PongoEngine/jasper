@@ -9,6 +9,8 @@
 
 package jasper;
 
+using Lambda;
+
 class Row 
 {
     public var m_constant (default, null):Float;
@@ -25,6 +27,18 @@ class Row
         row.m_cells = other.m_cells;
         return row;
     }
+
+	public function reset() : Void
+	{
+		this.m_constant = 0;
+		this.m_cells = new CellMap();
+	}
+
+	public function resetFromRow(other :Row) : Void
+	{
+		this.m_constant = other.m_constant;
+		this.m_cells = other.m_cells;
+	}
 
 	/**
 	 * Add a constant value to the row constant.
@@ -138,7 +152,7 @@ class Row
 	}
 }
 
-@:forward(remove, get, exists, keys, array)
+@:forward(remove, get, exists, keys)
 abstract CellMap(Map<Symbol, Float>)
 {
 	public inline function new() : Void
@@ -180,5 +194,10 @@ abstract CellMap(Map<Symbol, Float>)
 	public inline function getWithDefault(key :Symbol, default_ :Float) : Float
 	{
 		return this.exists(key) ? this.get(key) : default_;
+	}
+
+	public function empty() : Bool
+	{
+		return Lambda.array(this).length == 0;
 	}
 }
