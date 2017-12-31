@@ -28,7 +28,6 @@ class SolverImpl
     private var m_infeasible_rows :List<Symbol>;
     private var m_objective :Row;
     private var m_artificial :Row;
-	private var m_id_tick :Id = new Id(0);
 
     @:allow(jasper.Solver)
     private function new() : Void
@@ -294,7 +293,7 @@ class SolverImpl
 	{
 		if( m_vars.exists(variable) )
 			return m_vars.get(variable);
-		var symbol = new Symbol( EXTERNAL, m_id_tick++ );
+		var symbol = new Symbol( EXTERNAL );
 		m_vars.set(variable, symbol);
 		return symbol;
 	}
@@ -331,11 +330,11 @@ class SolverImpl
 		switch( constraint.m_op ) {
 			case OP_LE: {
 				var coeff = 1.0;
-				var slack = new Symbol( SLACK, m_id_tick++ );
+				var slack = new Symbol( SLACK );
 				tag.marker = slack;
 				row.insertSymbol( slack, coeff );
 				if( constraint.m_strength < Strength.REQUIRED ) {
-					var error = new Symbol( ERROR, m_id_tick++ );
+					var error = new Symbol( ERROR );
 					tag.other = error;
 					row.insertSymbol( error, -coeff );
 					m_objective.insertSymbol( error, constraint.m_strength );
@@ -343,11 +342,11 @@ class SolverImpl
 			}
 			case OP_GE: {
 				var coeff = -1.0;
-				var slack = new Symbol( SLACK, m_id_tick++ );
+				var slack = new Symbol( SLACK );
 				tag.marker = slack;
 				row.insertSymbol( slack, coeff );
 				if( constraint.m_strength < Strength.REQUIRED ) {
-					var error = new Symbol( ERROR, m_id_tick++ );
+					var error = new Symbol( ERROR );
 					tag.other = error;
 					row.insertSymbol( error, -coeff );
 					m_objective.insertSymbol( error, constraint.m_strength );
@@ -356,8 +355,8 @@ class SolverImpl
 			case OP_EQ:
 			{
 				if( constraint.m_strength < Strength.REQUIRED ) {
-					var errplus = new Symbol( ERROR, m_id_tick++ );
-					var errminus = new Symbol( ERROR, m_id_tick++ );
+					var errplus = new Symbol( ERROR );
+					var errminus = new Symbol( ERROR );
 					tag.marker = errplus;
 					tag.other = errminus;
 					row.insertSymbol( errplus, -1.0 ); // v = eplus - eminus
@@ -366,7 +365,7 @@ class SolverImpl
 					m_objective.insertSymbol( errminus, constraint.m_strength );
 				}
 				else {
-					var dummy = new Symbol( DUMMY, m_id_tick++ );
+					var dummy = new Symbol( DUMMY );
 					tag.marker = dummy;
 					row.insertSymbol( dummy );
 				}
@@ -414,7 +413,7 @@ class SolverImpl
  	private function addWithArtificialVariable( row :Row ) : Bool
  	{
 		// Create and add the artificial variable to the tableau
-		var art = new Symbol( SLACK, m_id_tick++ );
+		var art = new Symbol( SLACK );
 		m_rows.set(art, Row.fromRow(row) );
 		m_artificial.resetFromRow( Row.fromRow(row) );
 

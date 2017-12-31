@@ -12,15 +12,12 @@ package jasper;
 class Symbol
 {
     public var m_type (default, null):SymbolType;
-    public var m_id (default, null):Id;
     
-    public function new(type :SymbolType = SYM_INVALID, id :Id = ID_0) : Void
+    public function new(type :SymbolType = SYM_INVALID) : Void
     {
         m_type = type;
-        m_id = id;
     }
 
-    private static inline var ID_0 = new Id(0);
     private static inline var SYM_INVALID = INVALID;
 }
 
@@ -33,15 +30,4 @@ abstract SymbolType(Int)
     var SLACK = 2;
     var ERROR = 3;
     var DUMMY = 4;
-}
-
-@:notNull
-abstract Id(Int)
-{
-    public inline function new(id :Int) : Void
-    {
-        this = id;
-    }
-
-    @:op(A++) static function increment(A:Id) :Id;
 }
