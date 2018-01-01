@@ -11,7 +11,7 @@ package jasper;
 
 class UnsatisfiableConstraint
 {
-    public function new(constraint :Constraint) : Void
+    public inline function new(constraint :Constraint) : Void
     {
         trace('UnsatisfiableConstraint: $constraint');
     }
@@ -19,7 +19,7 @@ class UnsatisfiableConstraint
 
 class UnknownConstraint
 {
-    public function new(constraint :Constraint) : Void
+    public inline function new(constraint :Constraint) : Void
     {
         trace('UnknownConstraint: $constraint');
     }
@@ -27,7 +27,7 @@ class UnknownConstraint
 
 class DuplicateConstraint
 {
-    public function new(constraint :Constraint) : Void
+    public inline function new(constraint :Constraint) : Void
     {
         trace('DuplicateConstraint: $constraint');
     }
@@ -35,7 +35,7 @@ class DuplicateConstraint
 
 class UnknownEditVariable
 {
-    public function new(variable :Variable) : Void
+    public inline function new(variable :Variable) : Void
     {
         trace('UnknownEditVariable: $variable');
     }
@@ -43,7 +43,7 @@ class UnknownEditVariable
 
 class DuplicateEditVariable
 {
-    public function new(variable :Variable) : Void
+    public inline function new(variable :Variable) : Void
     {
         trace('DuplicateEditVariable: $variable');
     }
@@ -51,7 +51,7 @@ class DuplicateEditVariable
 
 class BadRequiredStrength
 {
-    public function new() : Void
+    public inline function new() : Void
     {
         trace('BadRequiredStrength');
     }
@@ -59,7 +59,7 @@ class BadRequiredStrength
 
 class InternalSolverError
 {
-    public function new(message :String) : Void
+    public inline function new(message :String) : Void
     {
         trace('InternalSolverError: $message');
     }

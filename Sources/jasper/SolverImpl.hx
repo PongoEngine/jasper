@@ -59,7 +59,7 @@ class SolverImpl
 		// Since its likely that those variables will be used in other
 		// constraints and since exceptional conditions are uncommon,
 		// i'm not too worried about aggressive cleanup of the var map.
-		var tag :Tag = {};
+		var tag :Tag = new Tag();
 		var rowptr :Row = createRow( constraint, tag );
 		var subject :Symbol = chooseSubject( rowptr, tag );
 
@@ -690,10 +690,16 @@ class SolverImpl
 	}
 }
 
-typedef Tag =
+class Tag
 {
-	@:optional var marker :Symbol;
-	@:optional var other :Symbol;
+	public var marker :Symbol;
+	public var other :Symbol;
+
+	public function new() : Void
+	{
+		this.marker = new Symbol();
+		this.other = new Symbol();
+	}
 }
 
 typedef EditInfo =
