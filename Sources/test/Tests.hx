@@ -207,7 +207,7 @@ class Tests
         Assert.isTrue(x.m_value <= 100);
         solver.addConstraint((x == 90));
         solver.updateVariables();
-        Assert.lessThanDelta(x.m_value, 90, EPSILON);
+        Assert.lessThanDelta(x.m_value, 90, EPSILON, "lessThanEqualTo_VariableConstantTest() PASSED");
     }
 
     public static function lessThanEqualToUnsatisfiable_VariableConstantTest() : Void 
@@ -230,7 +230,7 @@ class Tests
         Assert.isTrue(x.m_value >= 100);
         solver.addConstraint((x == 110));
         solver.updateVariables();
-        Assert.lessThanDelta(x.m_value, 110, EPSILON);
+        Assert.lessThanDelta(x.m_value, 110, EPSILON, "greaterThanEqualTo_VariableConstantTest() PASSED");
     }
 
     public static function greaterThanEqualToUnsatisfiable_VariableConstantTest() : Void 
@@ -255,7 +255,7 @@ class Tests
         Assert.isTrue(x.m_value <= 100);
         solver.addConstraint((x == 90));
         solver.updateVariables();
-        Assert.lessThanDelta(x.m_value, 90, EPSILON);
+        Assert.lessThanDelta(x.m_value, 90, EPSILON, "lessThanEqualTo_VariableExpression() PASSED");
     }
 
     public static function lessThanEqualToUnsatisfiable_VariableExpression() : Void 
@@ -278,7 +278,7 @@ class Tests
         Assert.isTrue(x.m_value >= 100);
         solver.addConstraint((x == 110));
         solver.updateVariables();
-        Assert.lessThanDelta(x.m_value, 110, EPSILON);
+        Assert.lessThanDelta(x.m_value, 110, EPSILON, "greaterThanEqualTo_VariableExpression() PASSED");
     }
 
     public static function greaterThanEqualToUnsatisfiable_VariableExpression() : Void 
@@ -308,7 +308,7 @@ class Tests
         Assert.isTrue(x.m_value <= 100);
         solver.addConstraint((x == 90));
         solver.updateVariables();
-        Assert.lessThanDelta(x.m_value, 90, EPSILON);
+        Assert.lessThanDelta(x.m_value, 90, EPSILON, "lessThanEqualTo_VariableVariableTest() PASSED");
     }
 
     public static function lessThanEqualToUnsatisfiable_VariableVariableTest() : Void 
@@ -341,7 +341,7 @@ class Tests
         Assert.isTrue(x.m_value >= 100);
         solver.addConstraint((x == 110));
         solver.updateVariables();
-        Assert.lessThanDelta(x.m_value, 110, EPSILON);
+        Assert.lessThanDelta(x.m_value, 110, EPSILON, "greaterThanEqualTo_VariableVariableTest() PASSED");
     }
 
     public static function greaterThanEqualToUnsatisfiable_VariableVariableTest() : Void 
@@ -357,6 +357,21 @@ class Tests
         solver.updateVariables();
         Assert.isTrue(x.m_value >= 100);
         solver.addConstraint((x == 90));
+        solver.updateVariables();
+    }
+
+    public static function addRemoveConstraint() : Void 
+    {
+        var solver = new Solver();
+
+        var x = new Variable("x");
+
+        var constraint = (x == 100);
+
+        solver.addConstraint(constraint);
+        solver.removeConstraint(constraint);
+
+
         solver.updateVariables();
     }
 }

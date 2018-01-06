@@ -21,5 +21,19 @@ class Main
         // Tests.lessThanEqualToUnsatisfiable_ExpressionVariableTest();
         Tests.greaterThanEqualTo_ExpressionVariableTest();
         // Tests.greaterThanEqualToUnsatisfiable_ExpressionVariableTest();
+        Tests.lessThanEqualTo_VariableConstantTest();
+        // Tests.lessThanEqualToUnsatisfiable_VariableConstantTest();
+        Tests.greaterThanEqualTo_VariableConstantTest();
+        // Tests.greaterThanEqualToUnsatisfiable_VariableConstantTest();
+        Tests.lessThanEqualTo_VariableExpression();
+        // Tests.lessThanEqualToUnsatisfiable_VariableExpression();
+        Tests.greaterThanEqualTo_VariableExpression();
+        // Tests.greaterThanEqualToUnsatisfiable_VariableExpression();
+        Tests.lessThanEqualTo_VariableVariableTest();
+        // Tests.lessThanEqualToUnsatisfiable_VariableVariableTest();
+        Tests.greaterThanEqualTo_VariableVariableTest();
+        // Tests.greaterThanEqualToUnsatisfiable_VariableVariableTest();
+
+        Tests.addRemoveConstraint();
     }
 }
