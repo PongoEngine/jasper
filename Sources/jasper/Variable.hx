@@ -18,7 +18,8 @@ class _Variable_
      *  [Description]
      *  @param name - 
      */
-    public function new(name :String) : Void
+    @:allow(jasper.Variable)
+    private function new(name :String) : Void
     {
         this.m_name = name;
         this.m_value = 0.0;
@@ -40,7 +41,7 @@ class _Variable_
 @:notNull
 abstract Variable(_Variable_) to _Variable_
 {
-    public inline function new(name :String) : Void
+    public inline function new(name :String = "") : Void
     {
         this = new _Variable_(name);
     }
