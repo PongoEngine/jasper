@@ -21,11 +21,17 @@ import jasper.ds.SolverMap;
 import jasper.Symbol;
 import jasper.Constraint;
 
-typedef Tag =
+class Tag
 {
-	@:optional var marker :Symbol;
-	@:optional var other :Symbol;
-};
+	public var marker :Symbol;
+	public var other :Symbol;
+
+	public function new() : Void
+	{
+		this.marker = new Symbol();
+		this.other = new Symbol();
+	}
+}
 
 typedef EditInfo =
 {
@@ -81,7 +87,7 @@ class SolverImpl
 		// Since its likely that those variables will be used in other
 		// constraints and since exceptional conditions are uncommon,
 		// i'm not too worried about aggressive cleanup of the var map.
-		var tag :Tag = {};
+		var tag :Tag = new Tag();
 		var rowptr :Row = createRow( constraint, tag );
 		var subject :Symbol =  chooseSubject( rowptr, tag );
 
@@ -228,7 +234,6 @@ class SolverImpl
 	*/
 	public function suggestValue( variable :Variable, value :Float )
 	{
-		// EditMap::iterator it = m_edits.find( variable );
 		if( !m_edits.exists( variable ) )
 			throw new UnknownEditVariable( variable );
 
@@ -238,7 +243,6 @@ class SolverImpl
 		info.constant = value;
 
 		// Check first if the positive error variable is basic.
-		// RowMap::iterator row_it = m_rows.find( info.tag.marker );
 		if( m_rows.exists(info.tag.marker) )
 		{
 			if( m_rows.get(info.tag.marker).add( -delta ) < 0.0 )
@@ -247,7 +251,6 @@ class SolverImpl
 		}
 
 		// Check next if the negative error variable is basic.
-		// row_it = m_rows.find( info.tag.other );
 		if( m_rows.exists( info.tag.other ) )
 		{
 			if( m_rows.get( info.tag.other ).add( delta ) < 0.0 )
@@ -270,8 +273,6 @@ class SolverImpl
 	public function updateVariables()
 	{
 		m_vars.iterateKeyVal(function(variable, symbol) {
-			// Variable& var( const_cast<Variable&>( var_it->first ) );
-			// row_iter_t row_it = m_rows.find( var_it->second );
 			if( !m_rows.exists( symbol ) )
 				variable.m_value = 0.0;
 			else
@@ -604,7 +605,27 @@ class SolverImpl
 	*/
 	private function getLeavingRow( entering :Symbol, cb: Symbol -> Row -> Void ) //symbol,row
 	{
-		throw "getLeavingRow";
+		var ratio = Util.FLOAT_MAX;
+		var symbol :Symbol = null;
+		var row :Row = null;
+		m_rows.iterateKeyVal(function(fSymbol, fRow) {
+			if( fSymbol.m_type != EXTERNAL )
+			{
+				var temp = fRow.coefficientFor( entering );
+				if( temp < 0.0 )
+				{
+					var temp_ratio = -fRow.m_constant / temp;
+					if( temp_ratio < ratio )
+					{
+						ratio = temp_ratio;
+						symbol = fSymbol;
+						row = fRow;
+					}
+				}
+			}
+		});
+
+		cb(symbol, row);
 	}
 
 	/* Compute the leaving row for a marker variable.
@@ -643,8 +664,12 @@ class SolverImpl
 	*/
 	private function allDummies( row :Row ) : Bool
 	{
-		throw "allDummies";
-		return false;
+		for( cellKey in row.m_cells.keys())
+		{
+			if( cellKey.m_type != DUMMY )
+				return false;
+		}
+		return true;
 	}
 
 	private var m_cns :CnMap;
