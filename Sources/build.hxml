@@ -2,12 +2,12 @@
 -dce full
 -main test.Main
 
-# --next
+--next
 
-# -hl main.hl
-# -main test.Main
+-hl main.hl
+-main test.Main
 
-# --next
+--next
 
-# -main test.Main
-# --interp
+-main test.Main
+--interp

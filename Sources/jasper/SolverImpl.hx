@@ -426,7 +426,22 @@ class SolverImpl
 	*/
 	private function chooseSubject( row :Row, tag :Tag ) : Symbol
 	{
-		return null;
+		for( cellKey in row.m_cells.keys() )
+		{
+			if( cellKey.m_type == EXTERNAL )
+				return cellKey;
+		}
+		if( tag.marker.m_type == SLACK || tag.marker.m_type == ERROR )
+		{
+			if( row.coefficientFor( tag.marker ) < 0.0 )
+				return tag.marker;
+		}
+		if( tag.other.m_type == SLACK || tag.other.m_type == ERROR )
+		{
+			if( row.coefficientFor( tag.other ) < 0.0 )
+				return tag.other;
+		}
+		return new Symbol();
 	}
 
  	/* Add the row to the tableau using an artificial variable.
@@ -434,7 +449,38 @@ class SolverImpl
  	*/
  	private function addWithArtificialVariable( row :Row ) : Bool
  	{
-		 return false;
+		// Create and add the artificial variable to the tableau
+		var art = new Symbol( SLACK );
+		m_rows[ art ] = Row.fromRow(row);
+		m_artificial = Row.fromRow(row);
+
+		// Optimize the artificial objective. This is successful
+		// only if the artificial objective is optimized to zero.
+		optimize( m_artificial );
+		var success = Util.nearZero( m_artificial.m_constant );
+		m_artificial = null;
+
+		// If the artificial variable is basic, pivot the row so that
+		// it becomes basic. If the row is constant, exit early.
+		if( m_rows.exists( art ) )
+		{
+			var rowptr :Row = m_rows.get( art );
+			m_rows.remove( art );
+			if( rowptr.m_cells.empty() )
+				return success;
+			var entering :Symbol = anyPivotableSymbol( rowptr );
+			if( entering.m_type == INVALID )
+				return false;  // unsatisfiable (will this ever happen?)
+			rowptr.solveForSymbols( art, entering );
+			substitute( entering, rowptr );
+			m_rows[ entering ] = rowptr;
+		}
+
+		// Remove the artificial variable from the tableau.
+		for( row in m_rows )
+			row.remove( art );
+		m_objective.remove( art );
+		return success;
  	}
 
 	/* Substitute the parametric symbol with the given row.
@@ -443,6 +489,15 @@ class SolverImpl
 	*/
 	private function substitute( symbol :Symbol, row :Row )
 	{
+		m_rows.iterateKeyVal(function(symbol, row) {
+			row.substitute( symbol, row );
+			if( symbol.m_type != EXTERNAL &&
+				row.m_constant < 0.0 )
+				m_infeasible_rows.push( symbol );
+		});
+		m_objective.substitute( symbol, row );
+		if( m_artificial != null )
+			m_artificial.substitute( symbol, row );
 	}
 
 	/* Optimize the system for the given objective function.
@@ -455,6 +510,22 @@ class SolverImpl
 	*/
 	private function optimize( objective :Row )
 	{
+		while( true )
+		{
+			var entering :Symbol = getEnteringSymbol( objective );
+			if( entering.m_type == INVALID )
+				return;
+
+			getLeavingRow(entering, function(leaving, row) {
+				if( row == null )
+					throw new InternalSolverError( "The objective is unbounded." );
+				// pivot the entering symbol into the basis
+				m_rows.remove( entering );
+				row.solveForSymbols( leaving, entering );
+				substitute( entering, row );
+				m_rows[ entering ] = row;
+			});
+		}
 	}
 
 	/* Optimize the system using the dual of the simplex method.
@@ -469,6 +540,22 @@ class SolverImpl
 	*/
 	private function dualOptimize()
 	{
+		while( m_infeasible_rows.length > 0 )
+		{
+			var leaving :Symbol = m_infeasible_rows.pop();
+			if( m_rows.exists( leaving ) && m_rows.get( leaving ).m_constant < 0.0 )
+			{
+				var entering :Symbol = getDualEnteringSymbol( m_rows.get( leaving ) );
+				if( entering.m_type == INVALID )
+					throw new InternalSolverError( "Dual optimize failed." );
+				// pivot the entering symbol into the basis
+				var row :Row =  m_rows.get( leaving );
+				m_rows.remove( leaving );
+				row.solveForSymbols( leaving, entering );
+				substitute( entering, row );
+				m_rows[ entering ] = row;
+			}
+		}
 	}
 
 	/* Compute the entering variable for a pivot operation.
@@ -479,7 +566,12 @@ class SolverImpl
 	*/
 	private function getEnteringSymbol( objective :Row ) : Symbol
 	{
-		return null;
+		for( cellKey in objective.m_cells.keys())
+		{
+			if( cellKey.m_type != DUMMY && objective.m_cells[cellKey] < 0.0 )
+				return cellKey;
+		}
+		return new Symbol();
 	}
 
 	/* Compute the entering symbol for the dual optimize operation.
@@ -491,6 +583,7 @@ class SolverImpl
 	*/
 	private function getDualEnteringSymbol( row :Row ) : Symbol
 	{
+		throw "getDualEnteringSymbol";
 		return null;
 	}
 
@@ -499,6 +592,7 @@ class SolverImpl
 	*/
 	private function anyPivotableSymbol( row :Row ) : Symbol
 	{
+		throw "anyPivotableSymbol";
 		return null;
 	}
 
@@ -508,9 +602,10 @@ class SolverImpl
 	found, the end() iterator will be returned. This indicates that
 	the objective function is unbounded.
 	*/
-	// RowMap::iterator getLeavingRow( const Symbol& entering )
-	// {
-	// }
+	private function getLeavingRow( entering :Symbol, cb: Symbol -> Row -> Void ) //symbol,row
+	{
+		throw "getLeavingRow";
+	}
 
 	/* Compute the leaving row for a marker variable.
 	This method will return an iterator to the row in the row map
@@ -527,24 +622,28 @@ class SolverImpl
 	*/
 	private function getMarkerLeavingRow( marker :Symbol, cb :Symbol -> Row -> Void ) //symbol,row
 	{
+		throw "getMarkerLeavingRow";
 	}
 
 	/* Remove the effects of a constraint on the objective function.
 	*/
 	private function removeConstraintEffects( cn :Constraint, tag :Tag )
 	{
+		throw "removeConstraintEffects";
 	}
 
 	/* Remove the effects of an error marker on the objective function.
 	*/
 	private function removeMarkerEffects( marker :Symbol, strength :Strength )
 	{
+		throw "removeMarkerEffects";
 	}
 
 	/* Test whether a row is composed of all dummy variables.
 	*/
 	private function allDummies( row :Row ) : Bool
 	{
+		throw "allDummies";
 		return false;
 	}
 
