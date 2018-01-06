@@ -1,23 +1,11 @@
 package jasper.ds;
 
-import jasper.ds.SolverMap._JasperMap_;
-
-@:forward(remove, exists, keys)
-abstract FloatMap<K:{}>(_JasperMap_<K, Float>)
+@:forward(remove, exists, keys, empty, keyValIterator)
+abstract FloatMap<K:{}>(JasperMap<K, Float>)
 {
 	public inline function new() : Void
 	{
-		this = new _JasperMap_<K, Float>();
-	}
-
-	public inline function keyValIterator() : Iterator<{k:K,v:Float}>
-	{
-		return this.keyValIterator();
-	}
-
-	public function empty() : Bool
-	{
-		return this.empty();
+		this = new JasperMap<K, Float>();
 	}
 
     @:arrayAccess
