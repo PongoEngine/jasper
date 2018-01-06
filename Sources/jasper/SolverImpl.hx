@@ -62,6 +62,7 @@ class SolverImpl
         m_rows = new RowMap();
         m_vars = new VarMap();
         m_edits = new EditMap();
+		m_infeasible_rows = [];
         m_objective = new Row();
         m_artificial = null;
     }
@@ -558,8 +559,12 @@ class SolverImpl
 	 */
 	private function anyPivotableSymbol( row :Row ) : Symbol
 	{
-		throw "anyPivotableSymbol";
-		return null;
+		for( it in row.m_cells.keyValIterator() )
+		{
+			if( it.first.m_type == SLACK || it.first.m_type == ERROR)
+				return it.first;
+		}
+		return new Symbol();
 	}
 
 	/**
