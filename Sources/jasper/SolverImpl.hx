@@ -575,8 +575,25 @@ class SolverImpl
 	 */
 	private function getLeavingRow( entering :Symbol) : {first:Symbol,second:Row}
 	{
-		throw "getLeavingRow";
-		return null;
+		var ratio = Util.FLOAT_MAX;
+		var found = null;
+		for( it in m_rows.keyValIterator() )
+		{
+			if( it.first.m_type != EXTERNAL )
+			{
+				var temp = it.second.coefficientFor( entering );
+				if( temp < 0.0 )
+				{
+					var temp_ratio = -it.second.m_constant / temp;
+					if( temp_ratio < ratio )
+					{
+						ratio = temp_ratio;
+						found = it;
+					}
+				}
+			}
+		}
+		return found;
 	}
 
 	/**
