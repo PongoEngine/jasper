@@ -18,7 +18,7 @@ abstract FloatMap<K:{}>(Map<K, Float>)
 
 	public function empty() : Bool
 	{
-		return Lambda.array(this).length == 0;
+		return Lambda.count(this) == 0;
 	}
 
     @:arrayAccess
