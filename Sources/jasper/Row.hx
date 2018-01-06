@@ -58,8 +58,7 @@ class Row
 	public function insertRow( other :Row, coefficient :Float = 1.0 ) : Void
 	{
 		m_constant += other.m_constant * coefficient;
-		for( it in other.m_cells.keyValIterator() )
-		{
+		for(it in other.m_cells.keyValIterator()) {
 			var coeff = it.v * coefficient;
 			if( Util.nearZero( m_cells[ it.k ] += coeff ) )
 				m_cells.remove( it.k );
@@ -80,9 +79,8 @@ class Row
 	public function reverseSign() : Void
 	{
 		m_constant = -m_constant;
-		for(key in m_cells.keys()) {
-			m_cells[key] = -m_cells[key];
-		}
+		for( it in m_cells.keyValIterator() )
+			it.v = -it.v;
 	}
 
 	/**
@@ -99,9 +97,8 @@ class Row
 		var coeff = -1.0 / m_cells[ symbol ];
 		m_cells.remove( symbol );
 		m_constant *= coeff;
-		for(key in m_cells.keys()) {
-			m_cells[key] *= coeff;
-		}
+		for( it in m_cells.keyValIterator() )
+			it.v *= coeff;
 	}
 
 	/**
@@ -125,7 +122,7 @@ class Row
 	 */
 	public function coefficientFor( symbol :Symbol ) : Float
 	{
-		return m_cells[symbol];
+		return m_cells.exists(symbol) ? m_cells.get(symbol) : 0.0;
 	}
 
 	/**
@@ -137,8 +134,9 @@ class Row
 	 */
 	public function substitute( symbol :Symbol, row :Row ) : Void
 	{
-		if( m_cells.exists(symbol) ) {
-			var coefficient = m_cells.get(symbol);
+		if( m_cells.exists( symbol ) )
+		{
+			var coefficient = m_cells.get( symbol );
 			m_cells.remove( symbol );
 			insertRow( row, coefficient );
 		}
