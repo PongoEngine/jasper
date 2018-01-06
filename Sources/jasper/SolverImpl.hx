@@ -52,7 +52,7 @@ class SolverImpl
         m_vars = new VarMap();
         m_edits = new EditMap();
         m_objective = new Row();
-        m_artificial = new Row();
+        m_artificial = null;
     }
 
 	/**
@@ -69,54 +69,7 @@ class SolverImpl
 	 */
 	public function addConstraint( constraint :Constraint )
 	{
-		if( m_cns.exists( constraint ) )
-			throw new DuplicateConstraint( constraint );
-
-		// Creating a row causes symbols to reserved for the variables
-		// in the constraint. If this method exits with an exception,
-		// then its possible those variables will linger in the var map.
-		// Since its likely that those variables will be used in other
-		// constraints and since exceptional conditions are uncommon,
-		// i'm not too worried about aggressive cleanup of the var map.
-		var tag :Tag = {};
-		var rowptr :Row = createRow( constraint, tag );
-		var subject :Symbol =  chooseSubject( rowptr, tag );
-
-		// If chooseSubject could find a valid entering symbol, one
-		// last option is available if the entire row is composed of
-		// dummy variables. If the constant of the row is zero, then
-		// this represents redundant constraints and the new dummy
-		// marker can enter the basis. If the constant is non-zero,
-		// then it represents an unsatisfiable constraint.
-		if( subject.m_type == INVALID && allDummies( rowptr ) ) {
-			if( !Util.nearZero( rowptr.m_constant ) ) {
-				trace("omg");
-				throw new UnsatisfiableConstraint( constraint );
-			}
-			else
-				subject = tag.marker;
-		}
-
-		// If an entering symbol still isn't found, then the row must
-		// be added using an artificial variable. If that fails, then
-		// the row represents an unsatisfiable constraint.
-		if( subject.m_type == INVALID ) {
-			if( !addWithArtificialVariable( rowptr ) ) {
-				throw new UnsatisfiableConstraint( constraint );
-			}
-		}
-		else {
-			rowptr.solveFor( subject );
-			substitute( subject, rowptr );
-			m_rows[ subject ] = rowptr;
-		}
-
-		m_cns[ constraint ] = tag;
-
-		// Optimizing after each constraint is added performs less
-		// aggregate work due to a smaller average system size. It
-		// also ensures the solver remains in a consistent state.
-		optimize( m_objective );
+		throw "addConstraint";
 	}
 
 	/**
@@ -131,36 +84,7 @@ class SolverImpl
 	 */
 	public function removeConstraint( constraint :Constraint )
 	{
-		if( !m_cns.exists(constraint) )
-			throw new UnknownConstraint( constraint );
-
-		var tag :Tag = m_cns.get(constraint);
-		m_cns.remove( constraint );
-
-		// Remove the error effects from the objective function
-		// *before* pivoting, or substitutions into the objective
-		// will lead to incorrect solver results.
-		removeConstraintEffects( constraint, tag );
-
-		// If the marker is basic, simply drop the row. Otherwise,
-		// pivot the marker into the basis and then drop the row.
-		if( m_rows.exists( tag.marker ) ) {
-			m_rows.remove( tag.marker );
-		}
-		else {
-			getMarkerLeavingRow(tag.marker, function(symbol, row) {
-				if( row == null )
-					throw new InternalSolverError( "failed to find leaving row" );
-				m_rows.remove( tag.marker );
-				row.solveForSymbols( symbol, tag.marker );
-				substitute( tag.marker, row );
-			});
-		}
-
-		// Optimizing after each constraint is removed ensures that the
-		// solver remains consistent. It makes the solver api easier to
-		// use at a small tradeoff for speed.
-		optimize( m_objective );
+		throw "removeConstraint";
 	}
 
 	/**
@@ -171,7 +95,8 @@ class SolverImpl
 	 */
 	public function hasConstraint( constraint :Constraint ) : Bool
 	{
-		return m_cns.exists( constraint );
+		throw "hasConstraint";
+		return false;
 	}
 
 	/**
@@ -191,22 +116,7 @@ class SolverImpl
 	 */
 	public function addEditVariable( variable :Variable, strength :Strength )
 	{
-		throw "addEditVariable compare new Expression([term])";
-
-		if( m_edits.exists( variable ) )
-			throw new DuplicateEditVariable( variable );
-		strength = Strength.clip( strength );
-		if( strength == Strength.REQUIRED )
-			throw new BadRequiredStrength();
-
-		var term = new Term(variable);
-		var cn = new Constraint( new Expression([term]), OP_EQ, strength );
-		addConstraint( cn );
-		var info :EditInfo = {};
-		info.tag = m_cns[ cn ];
-		info.constraint = cn;
-		info.constant = 0.0;
-		m_edits[ variable ] = info;
+		throw "addEditVariable";
 	}
 
 	/**
@@ -221,17 +131,15 @@ class SolverImpl
 	 */
 	public function removeEditVariable( variable :Variable )
 	{
-		if( !m_edits.exists( variable ) )
-			throw new UnknownEditVariable( variable );
-		removeConstraint( m_edits.get( variable ).constraint );
-		m_edits.remove( variable );
+		throw "removeEditVariable";
 	}
 
 	/* Test whether an edit variable has been added to the solver.
 	*/
 	public function hasEditVariable( variable :Variable ) : Bool
 	{
-		return m_edits.exists( variable );
+		throw "hasEditVariable";
+		return false;
 	}
 
 	/**
@@ -249,42 +157,7 @@ class SolverImpl
 	 */
 	public function suggestValue( variable :Variable, value :Float )
 	{
-		if( !m_edits.exists( variable ) )
-			throw new UnknownEditVariable( variable );
-
-		// DualOptimizeGuard guard( *this );
-		var info :EditInfo = m_edits.get(variable);
-		var delta = value - info.constant;
-		info.constant = value;
-
-		// Check first if the positive error variable is basic.
-		if( m_rows.exists(info.tag.marker) )
-		{
-			if( m_rows.get(info.tag.marker).add( -delta ) < 0.0 )
-				m_infeasible_rows.push( info.tag.marker );
-			dualOptimize();
-			return;
-		}
-
-		// Check next if the negative error variable is basic.
-		if( m_rows.exists( info.tag.other ) )
-		{
-			if( m_rows.get( info.tag.other ).add( delta ) < 0.0 )
-				m_infeasible_rows.push( info.tag.other );
-			dualOptimize();
-			return;
-		}
-
-		// Otherwise update each row where the error variables exist.
-		m_rows.iterateKeyVal(function(symbol, row) {
-			var coeff = row.coefficientFor( info.tag.marker );
-			if( coeff != 0.0 &&
-				row.add( delta * coeff ) < 0.0 &&
-				symbol.m_type != EXTERNAL )
-				m_infeasible_rows.push( symbol );
-		});
-
-		dualOptimize();
+		throw "suggestValue";
 	}
 
 	/**
@@ -292,12 +165,7 @@ class SolverImpl
 	 */
 	public function updateVariables()
 	{
-		m_vars.iterateKeyVal(function(variable, symbol) {
-			if( !m_rows.exists( symbol ) )
-				variable.m_value = 0.0;
-			else
-				variable.m_value = m_rows.get(symbol).m_constant;
-		});
+		throw "updateVariables";
 	}
 
 	/**
@@ -311,27 +179,11 @@ class SolverImpl
 	public function reset()
 	{
 		throw "reset!!";
-		// clearRows();
-		// m_cns.clear();
-		// m_vars.clear();
-		// m_edits.clear();
-		// m_infeasible_rows.clear();
-		// m_objective.reset( new Row() );
-		// m_artificial.reset();
-		// m_id_tick = 1;
 	}
-
-	// struct RowDeleter
-	// {
-	// 	template<typename T>
-	// 	void operator()( T& pair ) { delete pair.second; }
-	// };
 
 	private function clearRows()
 	{
-		throw "clearRows!!";
-		// std::for_each( m_rows.begin(), m_rows.end(), RowDeleter() );
-		// m_rows.clear();
+		throw "clearRows";
 	}
 
 	/**
@@ -343,11 +195,8 @@ class SolverImpl
 	 */
 	private function getVarSymbol( variable :Variable ) : Symbol
 	{
-		if( m_vars.exists( variable ) )
-			return m_vars.get( variable );
-		var symbol = new Symbol( EXTERNAL );
-		m_vars[ variable ] = symbol;
-		return symbol;
+		throw "getVarSymbol";
+		return null;
 	}
 
 	/**
@@ -371,80 +220,8 @@ class SolverImpl
 	 */
 	private function createRow( constraint :Constraint, tag :Tag ) : Row
 	{
-		var expr :Expression = constraint.m_expression;
-		var row :Row = new Row( expr.m_constant );
-
-		// Substitute the current basic variables into the row.
-		for( term in expr.m_terms )
-		{
-			if( !Util.nearZero( term.m_coefficient ) )
-			{
-				var symbol :Symbol = getVarSymbol( term.m_variable );
-				if( m_rows.exists( symbol) )
-					row.insertRow( m_rows.get( symbol), term.m_coefficient );
-				else
-					row.insertSymbol( symbol, term.m_coefficient );
-			}
-		}
-
-		// Add the necessary slack, error, and dummy variables.
-		switch( constraint.m_op )
-		{
-			case OP_LE:
-			{
-				var coeff = 1.0;
-				var slack = new Symbol(SLACK);
-				tag.marker = slack;
-				row.insertSymbol( slack, coeff );
-				if( constraint.m_strength < Strength.REQUIRED )
-				{
-					var error = new Symbol( ERROR );
-					tag.other = error;
-					row.insertSymbol( error, -coeff );
-					m_objective.insertSymbol( error, constraint.m_strength );
-				}
-			}
-			case OP_GE:
-			{
-				var coeff = -1.0;
-				var slack = new Symbol(SLACK);
-				tag.marker = slack;
-				row.insertSymbol( slack, coeff );
-				if( constraint.m_strength < Strength.REQUIRED )
-				{
-					var error = new Symbol( ERROR );
-					tag.other = error;
-					row.insertSymbol( error, -coeff );
-					m_objective.insertSymbol( error, constraint.m_strength );
-				}
-			}
-			case OP_EQ:
-			{
-				if( constraint.m_strength < Strength.REQUIRED )
-				{
-					var errplus = new Symbol( ERROR );
-					var errminus = new Symbol( ERROR );
-					tag.marker = errplus;
-					tag.other = errminus;
-					row.insertSymbol( errplus, -1.0 ); // v = eplus - eminus
-					row.insertSymbol( errminus, 1.0 ); // v - eplus + eminus = 0
-					m_objective.insertSymbol( errplus, constraint.m_strength );
-					m_objective.insertSymbol( errminus, constraint.m_strength );
-				}
-				else
-				{
-					var dummy = new Symbol( DUMMY );
-					tag.marker = dummy;
-					row.insertSymbol( dummy );
-				}
-			}
-		}
-
-		// Ensure the row as a positive constant.
-		if( row.m_constant < 0.0 )
-			row.reverseSign();
-
-		return row;
+		throw "createRow";
+		return null;
 	}
 
 	/**
@@ -464,22 +241,8 @@ class SolverImpl
 	 */
 	private function chooseSubject( row :Row, tag :Tag ) : Symbol
 	{
-		for( cellKey in row.m_cells.keys() )
-		{
-			if( cellKey.m_type == EXTERNAL )
-				return cellKey;
-		}
-		if( tag.marker.m_type == SLACK || tag.marker.m_type == ERROR )
-		{
-			if( row.coefficientFor( tag.marker ) < 0.0 )
-				return tag.marker;
-		}
-		if( tag.other != null && (tag.other.m_type == SLACK || tag.other.m_type == ERROR) )
-		{
-			if( row.coefficientFor( tag.other ) < 0.0 )
-				return tag.other;
-		}
-		return new Symbol();
+		throw "chooseSubject";
+		return null;
 	}
 
  	/**
@@ -491,45 +254,8 @@ class SolverImpl
  	 */
  	private function addWithArtificialVariable( row :Row ) : Bool
  	{
-		// Create and add the artificial variable to the tableau
-		var art = new Symbol(SLACK);
-		m_rows[ art ] = Row.fromRow(row);
-		m_artificial = Row.fromRow(row);
-
-		// Optimize the artificial objective. This is successful
-		// only if the artificial objective is optimized to zero.
-		optimize( m_artificial );
-		var success = Util.nearZero( m_artificial.m_constant );
-		m_artificial = null;
-
-		// If the artificial variable is basic, pivot the row so that
-		// it becomes basic. If the row is constant, exit early.
-		// RowMap::iterator it = m_rows.find( art );
-		if( m_rows.exists( art ) )
-		{
-			// std::auto_ptr<Row> rowptr( it->second );
-			var rowptr = m_rows.get(art);
-			m_rows.remove( art );
-			if( rowptr.m_cells.empty() ) {
-				trace("we are empty!");
-				return success;
-			}
-
-			var entering :Symbol = anyPivotableSymbol( rowptr );
-			if( entering.m_type == INVALID) {
-				return false;  // unsatisfiable (will this ever happen?)
-			}
-			rowptr.solveForSymbols( art, entering );
-			substitute( entering, rowptr );
-			m_rows[ entering ] = rowptr;
-		}
-
-		// Remove the artificial variable from the tableau.
-		// RowMap::iterator end = m_rows.end();
-		for( row in m_rows )
-			row.remove( art );
-		m_objective.remove( art );
-		return success;
+		throw "addWithArtificialVariable";
+		return false;
  	}
 
 	/**
@@ -542,15 +268,7 @@ class SolverImpl
 	 */
 	private function substitute( symbol :Symbol, row :Row )
 	{
-		m_rows.iterateKeyVal(function(symbol, row) {
-			row.substitute( symbol, row );
-			if( symbol.m_type != EXTERNAL &&
-				row.m_constant < 0.0 )
-				m_infeasible_rows.push( symbol );
-		});
-		m_objective.substitute( symbol, row );
-		if( m_artificial != null )
-			m_artificial.substitute( symbol, row );
+		throw "substitute";
 	}
 
 	/**
@@ -567,22 +285,7 @@ class SolverImpl
 	 */
 	private function optimize( objective :Row )
 	{
-		while( true )
-		{
-			var entering :Symbol = getEnteringSymbol( objective );
-			if( entering.m_type == INVALID )
-				return;
-
-			getLeavingRow(entering, function(leaving, row) {
-				if( row == null )
-					throw new InternalSolverError( "The objective is unbounded." );
-				// pivot the entering symbol into the basis
-				m_rows.remove( entering );
-				row.solveForSymbols( leaving, entering );
-				substitute( entering, row );
-				m_rows[ entering ] = row;
-			});
-		}
+		throw "optimize";
 	}
 
 	/**
@@ -599,22 +302,7 @@ class SolverImpl
 	 */
 	private function dualOptimize()
 	{
-		while( m_infeasible_rows.length > 0 )
-		{
-			var leaving :Symbol = m_infeasible_rows.pop();
-			if( m_rows.exists( leaving ) && m_rows.get( leaving ).m_constant < 0.0 )
-			{
-				var entering :Symbol = getDualEnteringSymbol( m_rows.get( leaving ) );
-				if( entering.m_type == INVALID )
-					throw new InternalSolverError( "Dual optimize failed." );
-				// pivot the entering symbol into the basis
-				var row :Row =  m_rows.get( leaving );
-				m_rows.remove( leaving );
-				row.solveForSymbols( leaving, entering );
-				substitute( entering, row );
-				m_rows[ entering ] = row;
-			}
-		}
+		throw "dualOptimize";
 	}
 
 	/**
@@ -629,12 +317,8 @@ class SolverImpl
 	 */
 	private function getEnteringSymbol( objective :Row ) : Symbol
 	{
-		for( cellKey in objective.m_cells.keys())
-		{
-			if( cellKey.m_type != DUMMY && objective.m_cells[cellKey] < 0.0 )
-				return cellKey;
-		}
-		return new Symbol();
+		throw "getEnteringSymbol";
+		return null;
 	}
 
 	/**
@@ -677,29 +361,10 @@ class SolverImpl
 	 *  @param entering - 
 	 *  @param cb - 
 	 */
-	private function getLeavingRow( entering :Symbol, cb: Symbol -> Row -> Void )
+	private function getLeavingRow( entering :Symbol) : {k:Symbol,v:Row}
 	{
-		var ratio = Util.FLOAT_MAX;
-		var symbol :Symbol = null;
-		var row :Row = null;
-		m_rows.iterateKeyVal(function(fSymbol, fRow) {
-			if( fSymbol.m_type != EXTERNAL )
-			{
-				var temp = fRow.coefficientFor( entering );
-				if( temp < 0.0 )
-				{
-					var temp_ratio = -fRow.m_constant / temp;
-					if( temp_ratio < ratio )
-					{
-						ratio = temp_ratio;
-						symbol = fSymbol;
-						row = fRow;
-					}
-				}
-			}
-		});
-
-		cb(symbol, row);
+		throw "getLeavingRow";
+		return null;
 	}
 
 	/**
@@ -721,9 +386,10 @@ class SolverImpl
 	 *  @param cb - 
 	 *  @return //symbol,row
 	 */
-	private function getMarkerLeavingRow( marker :Symbol, cb :Symbol -> Row -> Void ) //symbol,row
+	private function getMarkerLeavingRow( marker :Symbol) : {k:Symbol,v:Row}
 	{
 		throw "getMarkerLeavingRow";
+		return null;
 	}
 
 	/**
@@ -756,12 +422,8 @@ class SolverImpl
 	 */
 	private function allDummies( row :Row ) : Bool
 	{
-		for( cellKey in row.m_cells.keys())
-		{
-			if( cellKey.m_type != DUMMY )
-				return false;
-		}
-		return true;
+		throw "allDummies";
+		return false;
 	}
 
 	private var m_cns :CnMap;

@@ -58,11 +58,12 @@ class Row
 	public function insertRow( other :Row, coefficient :Float = 1.0 ) : Void
 	{
 		m_constant += other.m_constant * coefficient;
-		other.m_cells.iterateKeyVal(function(otherKey, otherVal) {
-			var coeff = otherVal * coefficient;
-			if( Util.nearZero( m_cells[ otherKey ] += coeff ) )
-				m_cells.remove( otherKey );
-		});
+		for( it in other.m_cells.keyValIterator() )
+		{
+			var coeff = it.v * coefficient;
+			if( Util.nearZero( m_cells[ it.k ] += coeff ) )
+				m_cells.remove( it.k );
+		}
 	}
 
 	/**
