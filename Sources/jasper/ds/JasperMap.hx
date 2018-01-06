@@ -2,6 +2,7 @@ package jasper.ds;
 
 import haxe.Constraints.IMap;
 
+@:generic
 class JasperMap<K:{},V> implements IMap<K, V>
 {
 	public function new() : Void
@@ -64,6 +65,7 @@ class JasperMap<K:{},V> implements IMap<K, V>
     private var _keys :Array<K>;
 }
 
+@:generic
 private class JasperIterator<K:{},V> 
 {
     public function new(map :JasperMap<K,V>) 
@@ -85,6 +87,7 @@ private class JasperIterator<K:{},V>
     private var _index : Int = 0;
 }
 
+@:generic
 private class KeyValIterator<K:{},V> 
 {
     public function new(map :JasperMap<K,V>) 

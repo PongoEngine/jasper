@@ -21,11 +21,6 @@ import jasper.ds.SolverMap;
 import jasper.Symbol;
 import jasper.Constraint;
 
-// typedef Tag =
-// {
-// 	@:optional var marker :Symbol;
-// 	@:optional var other :Symbol;
-// };
 class Tag
 {
 	public var marker :Symbol;
