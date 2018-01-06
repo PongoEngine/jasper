@@ -19,7 +19,8 @@ class _Expression_
      *  @param terms - 
      *  @param constant - 
      */
-    public function new(terms :Array<Term>, constant :Float = 0.0) : Void
+    @:allow(jasper.Expression)
+    private function new(terms :Array<Term>, constant :Float) : Void
     {
         this.m_terms = terms;
         this.m_constant = constant;
