@@ -29,9 +29,9 @@ abstract Strength(Float) to Float
     public static function create(a :Float, b :Float, c :Float, w :Float = 1.0) : Strength
     {
         var result = 0.0;
-        result += Math.max(0.0, Math.min(1000.0, a * w)) * 1000000.0;
-        result += Math.max(0.0, Math.min(1000.0, b * w)) * 1000.0;
-        result += Math.max(0.0, Math.min(1000.0, c * w));
+        result += Math.max( 0.0, Math.min( 1000.0, a * w ) ) * 1000000.0;
+        result += Math.max( 0.0, Math.min( 1000.0, b * w ) ) * 1000.0;
+        result += Math.max( 0.0, Math.min( 1000.0, c * w ) );
         return new Strength(result);
     }
 
