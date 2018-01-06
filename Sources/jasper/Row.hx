@@ -24,7 +24,9 @@ class Row
     public static inline function fromRow(other :Row) : Row
     {
         var row = new Row(other.m_constant);
-        row.m_cells = other.m_cells;
+		for(it in other.m_cells.keyValIterator()) {
+			row.m_cells[it.first] = it.second;
+		}
         return row;
     }
 

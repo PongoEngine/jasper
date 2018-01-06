@@ -55,20 +55,13 @@ class Tests
 
         solver.addConstraint(x <= y);
         solver.addConstraint((x + 3.0) == y);
-        // solver.addConstraint((x == 10.0) | Strength.WEAK);
-        // solver.addConstraint((y == 10.0) | Strength.MEDIUM);
+        solver.addConstraint((x == 10.0) | Strength.WEAK);
+        solver.addConstraint((y == 10.0) | Strength.WEAK);
 
         solver.updateVariables();
 
-        trace(x,y);
-
-        if (Math.abs(x.m_value - 10.0) < EPSILON) {
-            Assert.lessThanDelta(10, x.m_value, EPSILON);
-            Assert.lessThanDelta(13, x.m_value, EPSILON);
-        } else {
-            Assert.lessThanDelta(7, x.m_value, EPSILON);
-            Assert.lessThanDelta(10, y.m_value, EPSILON);
-        }
+        Assert.lessThanDelta(10, x.m_value, EPSILON, "casso1() PASSED 1/2");
+        Assert.lessThanDelta(13, y.m_value, EPSILON, "casso1() PASSED 2/2");
     }
 
     public static function inconsistent1() : Void
