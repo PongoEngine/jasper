@@ -72,7 +72,7 @@ abstract Expression(_Expression_)
         this = new jasper._Expression_(terms, constant);
     }
 
-    @:op(A*B) static function multiplyValue(expression :Expression, coefficient :Value) : Expression
+    @:op(A*B) @:commutative static function multiplyValue(expression :Expression, coefficient :Value) : Expression
     {
         var terms = new Array<Term>();
 
@@ -103,7 +103,7 @@ abstract Expression(_Expression_)
         return new Expression(terms, first.m_constant + second.m_constant);
     }
 
-    @:op(A+B) static function addTerm(first :Expression, second :Term) : Expression
+    @:op(A+B) @:commutative static function addTerm(first :Expression, second :Term) : Expression
     {
         var terms = new Array<Term>();
         for(t in first.m_terms) terms.push(t);
@@ -111,12 +111,12 @@ abstract Expression(_Expression_)
         return new Expression(terms, first.m_constant);
     }
 
-    @:op(A+B) static function addVariable(expression :Expression, variable :Variable) : Expression
+    @:op(A+B) @:commutative static function addVariable(expression :Expression, variable :Variable) : Expression
     {
         return expression + new Term(variable);
     }
 
-    @:op(A+B) static function addValue(expression :Expression, constant :Value) : Expression
+    @:op(A+B) @:commutative static function addValue(expression :Expression, constant :Value) : Expression
     {
         return new Expression( expression.m_terms, expression.m_constant + constant );
     }
@@ -146,17 +146,17 @@ abstract Expression(_Expression_)
         return new Constraint( first - second, OP_EQ );
     }
 
-    @:op(A==B) static function equalsTerm(expression :Expression, term :Term) : Constraint
+    @:op(A==B) @:commutative static function equalsTerm(expression :Expression, term :Term) : Constraint
     {
         return expression == Expression.fromTerm(term);
     }
 
-    @:op(A==B) static function equalsVariable(expression :Expression, variable :Variable) : Constraint
+    @:op(A==B) @:commutative static function equalsVariable(expression :Expression, variable :Variable) : Constraint
     {
         return expression == new Term(variable);
     }
 
-    @:op(A==B) static function equalsValue(expression :Expression, constant :Value) : Constraint
+    @:op(A==B) @:commutative static function equalsValue(expression :Expression, constant :Value) : Constraint
     {
         return expression == Expression.fromConstant(constant);
     }

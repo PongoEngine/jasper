@@ -45,7 +45,7 @@ abstract Variable(_Variable_) to _Variable_
         this = new _Variable_(name);
     }
 
-    @:op(A*B) static function nultiplyValue(variable :Variable, coefficient :Value) : Term
+    @:op(A*B) @:commutative static function multiplyValue(variable :Variable, coefficient :Value) : Term
     {
         return new Term( variable, coefficient );
     }
@@ -60,22 +60,12 @@ abstract Variable(_Variable_) to _Variable_
         return variable * -1.0;
     }
 
-    @:op(A+B) static function addExpression(variable :Variable, expression :Expression) : Expression
-    {
-        return expression + variable;
-    }
-
-    @:op(A+B) static function addTerm(variable :Variable, term :Term) : Expression
-    {
-        return term + variable;
-    }
-
     @:op(A+B) static function addVariable(first :Variable, second :Variable) : Expression
     {
         return new Term(first) + second;
     }
 
-    @:op(A+B) static function addValue(variable :Variable, constant :Value) : Expression
+    @:op(A+B) @:commutative static function addValue(variable :Variable, constant :Value) : Expression
     {
         return new Term(variable) + constant;
     }
@@ -100,22 +90,12 @@ abstract Variable(_Variable_) to _Variable_
         return variable + -constant;
     }
 
-    @:op(A==B) static function equalsExpression(variable :Variable, expression :Expression) : Constraint
-    {
-        return expression == variable;
-    }
-
-    @:op(A==B) static function equalsTerm(variable :Variable, term :Term) : Constraint
-    {
-        return term == variable;
-    }
-
     @:op(A==B) static function equalsVariable(first :Variable, second :Variable) : Constraint
     {
         return new Term(first) == second;
     }
 
-    @:op(A==B) static function equalsValue(variable :Variable, constant :Value) : Constraint
+    @:op(A==B) @:commutative static function equalsValue(variable :Variable, constant :Value) : Constraint
     {
         return new Term(variable) == constant;
     }

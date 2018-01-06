@@ -56,7 +56,7 @@ abstract Term(_Term_)
         this = new _Term_(variable, coefficient);
     }
 
-    @:op(A*B) static function multiplyValue(term :Term, coefficient :Value) : Term
+    @:op(A*B) @:commutative static function multiplyValue(term :Term, coefficient :Value) : Term
     {
         return new Term( term.m_variable, term.m_coefficient * coefficient );
     }
@@ -71,11 +71,6 @@ abstract Term(_Term_)
         return term * -1.0;
     }
 
-    @:op(A+B) static function addExpression(term :Term, expression :Expression) : Expression
-    {
-        return expression + term;
-    }
-
     @:op(A+B) static function addTerm(first :Term, second :Term) : Expression
     {
         var terms = new Array<Term>();
@@ -85,12 +80,12 @@ abstract Term(_Term_)
         return new Expression(terms);
     }
 
-    @:op(A+B) static function addVariable(term :Term, variable :Variable) : Expression
+    @:op(A+B) @:commutative static function addVariable(term :Term, variable :Variable) : Expression
     {
         return term + new Term(variable);
     }
 
-    @:op(A+B) static function addValue(term :Term, constant :Value) : Expression
+    @:op(A+B) @:commutative static function addValue(term :Term, constant :Value) : Expression
     {
         return Expression.fromTerm( term, constant );
     }
@@ -115,22 +110,17 @@ abstract Term(_Term_)
         return term + -constant;
     }
 
-    @:op(A==B) static function equalsExpression(term :Term, expression :Expression) : Constraint
-    {
-        return expression == term;
-    }
-
     @:op(A==B) static function equalsTerm(first :Term, second :Term) : Constraint
     {
         return Expression.fromTerm(first) == second;
     }
 
-    @:op(A==B) static function equalsVariable(term :Term, variable :Variable) : Constraint
+    @:op(A==B) @:commutative static function equalsVariable(term :Term, variable :Variable) : Constraint
     {
         return Expression.fromTerm(term) == variable;
     }
 
-    @:op(A==B) static function equalsValue(term :Term, constant :Value) : Constraint
+    @:op(A==B) @:commutative static function equalsValue(term :Term, constant :Value) : Constraint
     {
         return Expression.fromTerm(term) == constant;
     }
@@ -175,5 +165,3 @@ abstract Term(_Term_)
         return Expression.fromTerm(term) >= constant;
     }
 }
-
-
