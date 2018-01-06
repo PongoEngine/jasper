@@ -19,6 +19,7 @@ import jasper.Errors.InternalSolverError;
 import jasper.ds.SolverMap;
 
 import jasper.Symbol;
+import jasper.Constraint;
 
 typedef Tag =
 {
@@ -90,8 +91,7 @@ class SolverImpl
 		// this represents redundant constraints and the new dummy
 		// marker can enter the basis. If the constant is non-zero,
 		// then it represents an unsatisfiable constraint.
-		if( subject.m_type == INVALID && allDummies( rowptr ) )
-		{
+		if( subject.m_type == INVALID && allDummies( rowptr ) ) {
 			if( !Util.nearZero( rowptr.m_constant ) )
 				throw new UnsatisfiableConstraint( constraint );
 			else
@@ -101,13 +101,11 @@ class SolverImpl
 		// If an entering symbol still isn't found, then the row must
 		// be added using an artificial variable. If that fails, then
 		// the row represents an unsatisfiable constraint.
-		if( subject.m_type == INVALID )
-		{
+		if( subject.m_type == INVALID ) {
 			if( !addWithArtificialVariable( rowptr ) )
 				throw new UnsatisfiableConstraint( constraint );
 		}
-		else
-		{
+		else {
 			rowptr.solveFor( subject );
 			substitute( subject, rowptr );
 			m_rows[ subject ] = rowptr;
@@ -129,13 +127,44 @@ class SolverImpl
 	*/
 	public function removeConstraint( constraint :Constraint )
 	{
+		// CnMap::iterator cn_it = m_cns.find( constraint );
+		if( !m_cns.exists(constraint) )
+			throw new UnknownConstraint( constraint );
+
+		var tag :Tag = m_cns.get(constraint);
+		m_cns.remove( constraint );
+
+		// Remove the error effects from the objective function
+		// *before* pivoting, or substitutions into the objective
+		// will lead to incorrect solver results.
+		removeConstraintEffects( constraint, tag );
+
+		// If the marker is basic, simply drop the row. Otherwise,
+		// pivot the marker into the basis and then drop the row.
+		if( m_rows.exists( tag.marker ) ) {
+			m_rows.remove( tag.marker );
+		}
+		else {
+			getMarkerLeavingRow(tag.marker, function(symbol, row) {
+				if( row == null )
+					throw new InternalSolverError( "failed to find leaving row" );
+				m_rows.remove( tag.marker );
+				row.solveForSymbols( symbol, tag.marker );
+				substitute( tag.marker, row );
+			});
+		}
+
+		// Optimizing after each constraint is removed ensures that the
+		// solver remains consistent. It makes the solver api easier to
+		// use at a small tradeoff for speed.
+		optimize( m_objective );
 	}
 
 	/* Test whether a constraint has been added to the solver.
 	*/
 	public function hasConstraint( constraint :Constraint ) : Bool
 	{
-		return false;
+		return m_cns.exists( constraint );
 	}
 
 	/* Add an edit variable to the solver.
@@ -150,6 +179,22 @@ class SolverImpl
 	*/
 	public function addEditVariable( variable :Variable, strength :Strength )
 	{
+		throw "addEditVariable compare new Expression([term])";
+
+		if( m_edits.exists( variable ) )
+			throw new DuplicateEditVariable( variable );
+		strength = Strength.clip( strength );
+		if( strength == Strength.REQUIRED )
+			throw new BadRequiredStrength();
+
+		var term = new Term(variable);
+		var cn = new Constraint( new Expression([term]), OP_EQ, strength );
+		addConstraint( cn );
+		var info :EditInfo = {};
+		info.tag = m_cns[ cn ];
+		info.constraint = cn;
+		info.constant = 0.0;
+		m_edits[ variable ] = info;
 	}
 
 	/* Remove an edit variable from the solver.
@@ -160,13 +205,17 @@ class SolverImpl
 	*/
 	public function removeEditVariable( variable :Variable )
 	{
+		if( !m_edits.exists( variable ) )
+			throw new UnknownEditVariable( variable );
+		removeConstraint( m_edits.get( variable ).constraint );
+		m_edits.remove( variable );
 	}
 
 	/* Test whether an edit variable has been added to the solver.
 	*/
 	public function hasEditVariable( variable :Variable ) : Bool
 	{
-		return false;
+		return m_edits.exists( variable );
 	}
 
 	/* Suggest a value for the given edit variable.
@@ -179,12 +228,55 @@ class SolverImpl
 	*/
 	public function suggestValue( variable :Variable, value :Float )
 	{
+		// EditMap::iterator it = m_edits.find( variable );
+		if( !m_edits.exists( variable ) )
+			throw new UnknownEditVariable( variable );
+
+		// DualOptimizeGuard guard( *this );
+		var info :EditInfo = m_edits.get(variable);
+		var delta = value - info.constant;
+		info.constant = value;
+
+		// Check first if the positive error variable is basic.
+		// RowMap::iterator row_it = m_rows.find( info.tag.marker );
+		if( m_rows.exists(info.tag.marker) )
+		{
+			if( m_rows.get(info.tag.marker).add( -delta ) < 0.0 )
+				m_infeasible_rows.push( info.tag.marker );
+			return;
+		}
+
+		// Check next if the negative error variable is basic.
+		// row_it = m_rows.find( info.tag.other );
+		if( m_rows.exists( info.tag.other ) )
+		{
+			if( m_rows.get( info.tag.other ).add( delta ) < 0.0 )
+				m_infeasible_rows.push( info.tag.other );
+			return;
+		}
+
+		// Otherwise update each row where the error variables exist.
+		m_rows.iterateKeyVal(function(symbol, row) {
+			var coeff = row.coefficientFor( info.tag.marker );
+			if( coeff != 0.0 &&
+				row.add( delta * coeff ) < 0.0 &&
+				symbol.m_type != EXTERNAL )
+				m_infeasible_rows.push( symbol );
+		});
 	}
 
 	/* Update the values of the external solver variables.
 	*/
 	public function updateVariables()
 	{
+		m_vars.iterateKeyVal(function(variable, symbol) {
+			// Variable& var( const_cast<Variable&>( var_it->first ) );
+			// row_iter_t row_it = m_rows.find( var_it->second );
+			if( !m_rows.exists( symbol ) )
+				variable.m_value = 0.0;
+			else
+				variable.m_value = m_rows.get(symbol).m_constant;
+		});
 	}
 
 	/* Reset the solver to the empty starting condition.
@@ -196,6 +288,15 @@ class SolverImpl
 	*/
 	public function reset()
 	{
+		throw "reset!!";
+		// clearRows();
+		// m_cns.clear();
+		// m_vars.clear();
+		// m_edits.clear();
+		// m_infeasible_rows.clear();
+		// m_objective.reset( new Row() );
+		// m_artificial.reset();
+		// m_id_tick = 1;
 	}
 
 	// struct RowDeleter
@@ -206,6 +307,9 @@ class SolverImpl
 
 	private function clearRows()
 	{
+		throw "clearRows!!";
+		// std::for_each( m_rows.begin(), m_rows.end(), RowDeleter() );
+		// m_rows.clear();
 	}
 
 	/* Get the symbol for the given variable.
@@ -213,7 +317,11 @@ class SolverImpl
 	*/
 	private function getVarSymbol( variable :Variable ) : Symbol
 	{
-		return null;
+		if( m_vars.exists( variable ) )
+			return m_vars.get( variable );
+		var symbol = new Symbol( EXTERNAL );
+		m_vars[ variable ] = symbol;
+		return symbol;
 	}
 
 	/* Create a new Row object for the given constraint.
@@ -231,7 +339,80 @@ class SolverImpl
 	*/
 	private function createRow( constraint :Constraint, tag :Tag ) : Row
 	{
-		return null;
+		var expr :Expression = constraint.m_expression;
+		var row :Row = new Row( expr.m_constant );
+
+		// Substitute the current basic variables into the row.
+		for( term in expr.m_terms )
+		{
+			if( !Util.nearZero( term.m_coefficient ) )
+			{
+				var symbol :Symbol = getVarSymbol( term.m_variable );
+				if( m_rows.exists( symbol) )
+					row.insertRow( m_rows.get( symbol), term.m_coefficient );
+				else
+					row.insertSymbol( symbol, term.m_coefficient );
+			}
+		}
+
+		// Add the necessary slack, error, and dummy variables.
+		switch( constraint.m_op )
+		{
+			case OP_LE:
+			{
+				var coeff = 1.0;
+				var slack = new Symbol(SLACK);
+				tag.marker = slack;
+				row.insertSymbol( slack, coeff );
+				if( constraint.m_strength < Strength.REQUIRED )
+				{
+					var error = new Symbol( ERROR );
+					tag.other = error;
+					row.insertSymbol( error, -coeff );
+					m_objective.insertSymbol( error, constraint.m_strength );
+				}
+			}
+			case OP_GE:
+			{
+				var coeff = -1.0;
+				var slack = new Symbol(SLACK);
+				tag.marker = slack;
+				row.insertSymbol( slack, coeff );
+				if( constraint.m_strength < Strength.REQUIRED )
+				{
+					var error = new Symbol( ERROR );
+					tag.other = error;
+					row.insertSymbol( error, -coeff );
+					m_objective.insertSymbol( error, constraint.m_strength );
+				}
+			}
+			case OP_EQ:
+			{
+				if( constraint.m_strength < Strength.REQUIRED )
+				{
+					var errplus = new Symbol( ERROR );
+					var errminus = new Symbol( ERROR );
+					tag.marker = errplus;
+					tag.other = errminus;
+					row.insertSymbol( errplus, -1.0 ); // v = eplus - eminus
+					row.insertSymbol( errminus, 1.0 ); // v - eplus + eminus = 0
+					m_objective.insertSymbol( errplus, constraint.m_strength );
+					m_objective.insertSymbol( errminus, constraint.m_strength );
+				}
+				else
+				{
+					var dummy = new Symbol( DUMMY );
+					tag.marker = dummy;
+					row.insertSymbol( dummy );
+				}
+			}
+		}
+
+		// Ensure the row as a positive constant.
+		if( row.m_constant < 0.0 )
+			row.reverseSign();
+
+		return row;
 	}
 
 	/* Choose the subject for solving for the row.
@@ -344,9 +525,9 @@ class SolverImpl
 	will be returned. This indicates an internal solver error since
 	the marker *should* exist somewhere in the tableau.
 	*/
-	// RowMap::iterator getMarkerLeavingRow( const Symbol& marker )
-	// {
-	// }
+	private function getMarkerLeavingRow( marker :Symbol, cb :Symbol -> Row -> Void ) //symbol,row
+	{
+	}
 
 	/* Remove the effects of a constraint on the objective function.
 	*/
