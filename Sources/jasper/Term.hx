@@ -19,7 +19,8 @@ class _Term_
      *  @param variable - 
      *  @param coefficient - 
      */
-    public function new(variable :Variable, coefficient :Float) : Void
+    @:allow(jasper.Term)
+    private function new(variable :Variable, coefficient :Float) : Void
     {
         this.m_variable = variable;
         this.m_coefficient = coefficient;
