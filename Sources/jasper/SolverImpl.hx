@@ -415,13 +415,13 @@ class SolverImpl
 		// Create and add the artificial variable to the tableau
 		var art = new Symbol( SLACK );
 		m_rows.set(art, Row.fromRow(row) );
-		m_artificial.resetFromRow( Row.fromRow(row) );
+		// m_artificial.resetFromRow( Row.fromRow(row) );
 
 		// Optimize the artificial objective. This is successful
 		// only if the artificial objective is optimized to zero.
 		optimize( m_artificial );
 		var success = Util.nearZero( m_artificial.m_constant );
-		m_artificial.reset();
+		// m_artificial.reset();
 
 		// If the artificial variable is basic, pivot the row so that
 		// it becomes basic. If the row is constant, exit early.

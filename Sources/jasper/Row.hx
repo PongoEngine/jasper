@@ -28,18 +28,6 @@ class Row
         return row;
     }
 
-	public function reset() : Void
-	{
-		this.m_constant = 0;
-		this.m_cells = new FloatMap();
-	}
-
-	public function resetFromRow(other :Row) : Void
-	{
-		this.m_constant = other.m_constant;
-		this.m_cells = other.m_cells;
-	}
-
 	/**
 	 * Add a constant value to the row constant.
      * The new value of the constant is returned.
