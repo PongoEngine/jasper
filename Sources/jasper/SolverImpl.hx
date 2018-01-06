@@ -408,8 +408,38 @@ class SolverImpl
  	 */
  	private function addWithArtificialVariable( row :Row ) : Bool
  	{
-		throw "addWithArtificialVariable";
-		return false;
+		// Create and add the artificial variable to the tableau
+		var art = new Symbol( SLACK );
+		m_rows[ art ] = Row.fromRow(row);
+		m_artificial = Row.fromRow(row);
+
+		// Optimize the artificial objective. This is successful
+		// only if the artificial objective is optimized to zero.
+		optimize( m_artificial );
+		var success = Util.nearZero( m_artificial.m_constant );
+		m_artificial = null;
+
+		// If the artificial variable is basic, pivot the row so that
+		// it becomes basic. If the row is constant, exit early.
+		if( m_rows.exists( art ) )
+		{
+			var rowptr :Row = m_rows.get( art );
+			m_rows.remove( art );
+			if( rowptr.m_cells.empty() )
+				return success;
+			var entering :Symbol = anyPivotableSymbol( rowptr );
+			if( entering.m_type == INVALID )
+				return false;  // unsatisfiable (will this ever happen?)
+			rowptr.solveForSymbols( art, entering );
+			substitute( entering, rowptr );
+			m_rows[ entering ] = rowptr;
+		}
+
+		// Remove the artificial variable from the tableau.
+		for( it in m_rows.keyValIterator() )
+			it.second.remove( art );
+		m_objective.remove( art );
+		return success;
  	}
 
 	/**
