@@ -54,9 +54,9 @@ class Tests
         var solver = new Solver();
 
         solver.addConstraint(x <= y);
-        solver.addConstraint(y ==(x + 3.0));
-        solver.addConstraint((x == 10.0) | Strength.WEAK);
-        solver.addConstraint((y == 10.0) | Strength.MEDIUM);
+        solver.addConstraint((x + 3.0) == y);
+        // solver.addConstraint((x == 10.0) | Strength.WEAK);
+        // solver.addConstraint((y == 10.0) | Strength.MEDIUM);
 
         solver.updateVariables();
 

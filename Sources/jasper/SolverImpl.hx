@@ -21,17 +21,11 @@ import jasper.ds.SolverMap;
 import jasper.Symbol;
 import jasper.Constraint;
 
-class Tag
+typedef Tag =
 {
-	public var marker :Symbol;
-	public var other :Symbol;
-
-	public function new() : Void
-	{
-		this.marker = new Symbol();
-		this.other = new Symbol();
-	}
-}
+	@:optional var marker :Symbol;
+	@:optional var other :Symbol;
+};
 
 typedef EditInfo =
 {
@@ -87,7 +81,7 @@ class SolverImpl
 		// Since its likely that those variables will be used in other
 		// constraints and since exceptional conditions are uncommon,
 		// i'm not too worried about aggressive cleanup of the var map.
-		var tag :Tag = new Tag();
+		var tag :Tag = {};
 		var rowptr :Row = createRow( constraint, tag );
 		var subject :Symbol =  chooseSubject( rowptr, tag );
 
@@ -98,8 +92,10 @@ class SolverImpl
 		// marker can enter the basis. If the constant is non-zero,
 		// then it represents an unsatisfiable constraint.
 		if( subject.m_type == INVALID && allDummies( rowptr ) ) {
-			if( !Util.nearZero( rowptr.m_constant ) )
+			if( !Util.nearZero( rowptr.m_constant ) ) {
+				trace("omg");
 				throw new UnsatisfiableConstraint( constraint );
+			}
 			else
 				subject = tag.marker;
 		}
@@ -108,8 +104,10 @@ class SolverImpl
 		// be added using an artificial variable. If that fails, then
 		// the row represents an unsatisfiable constraint.
 		if( subject.m_type == INVALID ) {
-			if( !addWithArtificialVariable( rowptr ) )
+			if( !addWithArtificialVariable( rowptr ) ) {
+				trace("omg2222");
 				throw new UnsatisfiableConstraint( constraint );
+			}
 		}
 		else {
 			rowptr.solveFor( subject );
@@ -133,7 +131,6 @@ class SolverImpl
 	*/
 	public function removeConstraint( constraint :Constraint )
 	{
-		// CnMap::iterator cn_it = m_cns.find( constraint );
 		if( !m_cns.exists(constraint) )
 			throw new UnknownConstraint( constraint );
 
@@ -437,7 +434,7 @@ class SolverImpl
 			if( row.coefficientFor( tag.marker ) < 0.0 )
 				return tag.marker;
 		}
-		if( tag.other.m_type == SLACK || tag.other.m_type == ERROR )
+		if( tag.other != null && (tag.other.m_type == SLACK || tag.other.m_type == ERROR) )
 		{
 			if( row.coefficientFor( tag.other ) < 0.0 )
 				return tag.other;
