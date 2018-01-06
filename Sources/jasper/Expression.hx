@@ -19,32 +19,10 @@ class _Expression_
      *  @param terms - 
      *  @param constant - 
      */
-    public function new(terms :Array<Term>, constant :Float) : Void
+    public function new(terms :Array<Term>, constant :Float = 0.0) : Void
     {
         this.m_terms = terms;
         this.m_constant = constant;
-    }
-
-    /**
-     *  [Description]
-     *  @param constant - 
-     *  @return Expression
-     */
-    public static inline function fromConstant(constant :Float) : Expression
-    {
-        return new Expression(new Array<Term>(), constant);
-    }
-
-    /**
-     *  [Description]
-     *  @param term - 
-     *  @return Expression
-     */
-    public static function fromTerm(term :Term, constant :Float = 0.0) : Expression
-    {
-        var terms = new Array<Term>();
-        terms.push(term);
-        return new Expression(terms, constant);
     }
 
     /**
@@ -148,7 +126,7 @@ abstract Expression(_Expression_)
 
     @:op(A==B) @:commutative static function equalsTerm(expression :Expression, term :Term) : Constraint
     {
-        return expression == Expression.fromTerm(term);
+        return expression == new Expression([term]);
     }
 
     @:op(A==B) @:commutative static function equalsVariable(expression :Expression, variable :Variable) : Constraint
@@ -158,7 +136,7 @@ abstract Expression(_Expression_)
 
     @:op(A==B) @:commutative static function equalsValue(expression :Expression, constant :Value) : Constraint
     {
-        return expression == Expression.fromConstant(constant);
+        return expression == new Expression([], constant);
     }
 
     @:op(A<=B) static function lteExpression(first :Expression, second :Expression) : Constraint
@@ -168,7 +146,7 @@ abstract Expression(_Expression_)
 
     @:op(A<=B) static function lteTerm(expression :Expression, term :Term) : Constraint
     {
-        return expression <= Expression.fromTerm(term);
+        return expression <= new Expression([term]);
     }
 
     @:op(A<=B) static function lteVariable(expression :Expression, variable :Variable) : Constraint
@@ -178,7 +156,7 @@ abstract Expression(_Expression_)
 
     @:op(A<=B) static function lteValue(expression :Expression, constant :Value) : Constraint
     {
-        return expression <= Expression.fromConstant(constant);
+        return expression <= new Expression([], constant);
     }
 
     @:op(A>=B) static function gteExpression(first :Expression, second :Expression) : Constraint
@@ -188,7 +166,7 @@ abstract Expression(_Expression_)
 
     @:op(A>=B) static function gteTerm(expression :Expression, term :Term) : Constraint
     {
-        return expression >= Expression.fromTerm(term);
+        return expression >= new Expression([term]);
     }
 
     @:op(A>=B) static function gteVariable(expression :Expression, variable :Variable) : Constraint
@@ -198,6 +176,6 @@ abstract Expression(_Expression_)
 
     @:op(A>=B) static function gteValue(expression :Expression, constant :Value) : Constraint
     {
-        return expression >= Expression.fromConstant(constant);
+        return expression >= new Expression([], constant);
     }
 }

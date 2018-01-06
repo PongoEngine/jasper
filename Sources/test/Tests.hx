@@ -165,7 +165,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((Expression.fromConstant(100) <= x));
+        solver.addConstraint((new Expression([], 100) <= x));
         solver.updateVariables();
         Assert.isTrue(100 <= x.m_value);
         solver.addConstraint((x == 110));
@@ -177,7 +177,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((Expression.fromConstant(100) <= x));
+        solver.addConstraint((new Expression([], 100) <= x));
         solver.updateVariables();
         Assert.isTrue(x.m_value <= 100);
         solver.addConstraint((x == 10));
@@ -188,7 +188,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((Expression.fromConstant(100) >= x));
+        solver.addConstraint((new Expression([], 100) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.m_value);
         solver.addConstraint((x == 90));
@@ -200,7 +200,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((Expression.fromConstant(100) >= x));
+        solver.addConstraint((new Expression([], 100) >= x));
         solver.updateVariables();
         Assert.isTrue(100 >= x.m_value);
         solver.addConstraint((x == 110));
@@ -261,7 +261,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((x <= Expression.fromConstant(100)));
+        solver.addConstraint((x <= new Expression([], 100)));
         solver.updateVariables();
         Assert.isTrue(x.m_value <= 100);
         solver.addConstraint((x == 90));
@@ -273,7 +273,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((x <= Expression.fromConstant(100)));
+        solver.addConstraint((x <= new Expression([], 100)));
         solver.updateVariables();
         Assert.isTrue(x.m_value <= 100);
         solver.addConstraint((x == 110));
@@ -284,7 +284,7 @@ class Tests
     {
         var x = new Variable("x");
         var solver = new Solver();
-        solver.addConstraint((x >= Expression.fromConstant(100)));
+        solver.addConstraint((x >= new Expression([], 100)));
         solver.updateVariables();
         Assert.isTrue(x.m_value >= 100);
         solver.addConstraint((x == 110));

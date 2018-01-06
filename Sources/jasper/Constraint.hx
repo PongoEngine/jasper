@@ -9,6 +9,8 @@
 
 package jasper;
 
+import jasper.ds.FloatMap;
+
 class _Constraint_ 
 {
     public var m_expression (default, null):Expression;
@@ -36,8 +38,8 @@ class _Constraint_
      */
     public static function fromConstraint(other :Constraint, strength :Strength) : Constraint
     {
-        var s = Strength.clip(strength);
-        return new _Constraint_(other.m_expression,other.m_op,s);
+        strength = Strength.clip(strength);
+        return new _Constraint_(other.m_expression,other.m_op,strength);
     }
 
     /**
@@ -48,9 +50,9 @@ class _Constraint_
      */
     public static function fromExpression(expr :Expression, op :RelationalOperator, strength :Strength) : Constraint
     {
-        var e = reduce(expr);
-        var s = Strength.clip(strength);
-        return new _Constraint_(e,op,s);
+        expr = reduce(expr);
+        strength = Strength.clip(strength);
+        return new _Constraint_(expr,op,strength);
     }
 
     /**
@@ -60,18 +62,13 @@ class _Constraint_
      */
     private static function reduce(expr :Expression) :Expression
     {
-        var vars = new Map<Variable, Float>();
+        var vars = new FloatMap();
 
         for(term in expr.m_terms) {
-            if(!vars.exists(term.m_variable))
-                vars.set(term.m_variable, 0);
             vars[term.m_variable] += term.m_coefficient;
         }
 
-        var terms = new Array<Term>();
-        for(key in vars.keys()) {
-            terms.push(new Term(key, vars.get(key)));
-        }
+        var terms = [for (key in vars.keys()) new Term(key, vars.get(key))];
 
         return new Expression(terms, expr.m_constant);
     }

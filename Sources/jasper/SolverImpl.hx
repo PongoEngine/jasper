@@ -168,7 +168,7 @@ class SolverImpl
 		if( strength == Strength.REQUIRED )
 			throw new BadRequiredStrength();
 
-		var expr = Expression.fromTerm(new Term(variable));
+		var expr = new Expression([new Term(variable)]);
 		var cn = new Constraint( expr, OP_EQ, strength );
 		addConstraint( cn );
 		var info :EditInfo = {};

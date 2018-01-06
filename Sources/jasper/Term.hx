@@ -87,7 +87,7 @@ abstract Term(_Term_)
 
     @:op(A+B) @:commutative static function addValue(term :Term, constant :Value) : Expression
     {
-        return Expression.fromTerm( term, constant );
+        return new Expression([term], constant);
     }
 
     @:op(A-B) static function subtractExpression(term :Term, expression :Expression) : Expression
@@ -112,17 +112,17 @@ abstract Term(_Term_)
 
     @:op(A==B) static function equalsTerm(first :Term, second :Term) : Constraint
     {
-        return Expression.fromTerm(first) == second;
+        return new Expression([first]) == second;
     }
 
     @:op(A==B) @:commutative static function equalsVariable(term :Term, variable :Variable) : Constraint
     {
-        return Expression.fromTerm(term) == variable;
+        return new Expression([term]) == variable;
     }
 
     @:op(A==B) @:commutative static function equalsValue(term :Term, constant :Value) : Constraint
     {
-        return Expression.fromTerm(term) == constant;
+        return new Expression([term]) == constant;
     }
 
     @:op(A<=B) static function lteExpression(term :Term, expression :Expression) : Constraint
@@ -132,17 +132,17 @@ abstract Term(_Term_)
 
     @:op(A<=B) static function lteTerm(first :Term, second :Term) : Constraint
     {
-        return Expression.fromTerm(first) <= second;
+        return new Expression([first]) <= second;
     }
 
     @:op(A<=B) static function lteVariable(term :Term, variable :Variable) : Constraint
     {
-        return Expression.fromTerm(term) <= variable;
+        return new Expression([term]) <= variable;
     }
 
     @:op(A<=B) static function lteValue(term :Term, constant :Value) : Constraint
     {
-        return Expression.fromTerm(term) <= constant;
+        return new Expression([term]) <= constant;
     }
 
     @:op(A>=B) static function gteExpression(term :Term, expression :Expression) : Constraint
@@ -152,16 +152,16 @@ abstract Term(_Term_)
 
     @:op(A>=B) static function gteTerm(first :Term, second :Term) : Constraint
     {
-        return Expression.fromTerm(first) >= second;
+        return new Expression([first]) >= second;
     }
 
     @:op(A>=B) static function gteVariable(term :Term, variable :Variable) : Constraint
     {
-        return Expression.fromTerm(term) >= variable;
+        return new Expression([term]) >= variable;
     }
 
     @:op(A>=B) static function gteValue(term :Term, constant :Value) : Constraint
     {
-        return Expression.fromTerm(term) >= constant;
+        return new Expression([term]) >= constant;
     }
 }
