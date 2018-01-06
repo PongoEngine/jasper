@@ -90,7 +90,7 @@ private class KeyValIterator<K:{},V>
     public function new(map :JasperMap<K,V>) 
 	{
         _map = map;
-		_item = {k:null,v:null};
+		_item = {first:null,second:null};
 	}
 
     public function hasNext() : Bool 
@@ -98,14 +98,14 @@ private class KeyValIterator<K:{},V>
         return _index < _map._keys.length;
 	}
 
-    public function next() : {k:K,v:V}
+    public function next() : {first:K,second:V}
 	{
-		_item.k = _map._keys[_index++];
-		_item.v = _map.get(_item.k);
+		_item.first = _map._keys[_index++];
+		_item.second = _map.get(_item.first);
         return _item;
 	}
 
 	private var _map : JasperMap<K,V>;
     private var _index : Int = 0;
-	private var _item :{k:K,v:V};
+	private var _item :{first:K,second:V};
 }

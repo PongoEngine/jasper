@@ -59,9 +59,9 @@ class Row
 	{
 		m_constant += other.m_constant * coefficient;
 		for(it in other.m_cells.keyValIterator()) {
-			var coeff = it.v * coefficient;
-			if( Util.nearZero( m_cells[ it.k ] += coeff ) )
-				m_cells.remove( it.k );
+			var coeff = it.second * coefficient;
+			if( Util.nearZero( m_cells[ it.first ] += coeff ) )
+				m_cells.remove( it.first );
 		}
 	}
 
@@ -79,8 +79,9 @@ class Row
 	public function reverseSign() : Void
 	{
 		m_constant = -m_constant;
-		for( it in m_cells.keyValIterator() )
-			it.v = -it.v;
+		for( it in m_cells.keyValIterator() ) {
+			m_cells[it.first] = -it.second;
+		}
 	}
 
 	/**
@@ -97,8 +98,9 @@ class Row
 		var coeff = -1.0 / m_cells[ symbol ];
 		m_cells.remove( symbol );
 		m_constant *= coeff;
-		for( it in m_cells.keyValIterator() )
-			it.v *= coeff;
+		for( it in m_cells.keyValIterator() ) {
+			m_cells[it.first] = it.second * coeff;
+		}
 	}
 
 	/**

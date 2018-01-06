@@ -1,6 +1,6 @@
 package jasper.ds;
 
-@:forward(exists, remove)
+@:forward(exists, remove, keyValIterator)
 abstract SolverMap<K:{},V>(JasperMap<K,V>)
 {
 	public inline function new() : Void

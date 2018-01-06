@@ -69,7 +69,54 @@ class SolverImpl
 	 */
 	public function addConstraint( constraint :Constraint )
 	{
-		throw "addConstraint";
+		if( m_cns.exists( constraint ) )
+			throw new DuplicateConstraint( constraint );
+
+		// Creating a row causes symbols to reserved for the variables
+		// in the constraint. If this method exits with an exception,
+		// then its possible those variables will linger in the var map.
+		// Since its likely that those variables will be used in other
+		// constraints and since exceptional conditions are uncommon,
+		// i'm not too worried about aggressive cleanup of the var map.
+		var tag :Tag = {};
+		var rowptr :Row = createRow( constraint, tag );
+		var subject :Symbol = chooseSubject( rowptr, tag );
+
+		// If chooseSubject could find a valid entering symbol, one
+		// last option is available if the entire row is composed of
+		// dummy variables. If the constant of the row is zero, then
+		// this represents redundant constraints and the new dummy
+		// marker can enter the basis. If the constant is non-zero,
+		// then it represents an unsatisfiable constraint.
+		if( subject.m_type == INVALID && allDummies( rowptr ) )
+		{
+			if( !Util.nearZero( rowptr.m_constant ) )
+				throw new UnsatisfiableConstraint( constraint );
+			else
+				subject = tag.marker;
+		}
+
+		// If an entering symbol still isn't found, then the row must
+		// be added using an artificial variable. If that fails, then
+		// the row represents an unsatisfiable constraint.
+		if( subject.m_type == INVALID )
+		{
+			if( !addWithArtificialVariable( rowptr ) )
+				throw new UnsatisfiableConstraint( constraint );
+		}
+		else
+		{
+			rowptr.solveFor( subject );
+			substitute( subject, rowptr );
+			m_rows[ subject ] = rowptr;
+		}
+
+		m_cns[ constraint ] = tag;
+
+		// Optimizing after each constraint is added performs less
+		// aggregate work due to a smaller average system size. It
+		// also ensures the solver remains in a consistent state.
+		optimize( m_objective );
 	}
 
 	/**
@@ -165,7 +212,14 @@ class SolverImpl
 	 */
 	public function updateVariables()
 	{
-		throw "updateVariables";
+		for( var_it in m_vars.keyValIterator())
+		{
+			var var_ :Variable = var_it.first;
+			if( !m_rows.exists( var_it.second ) )
+				var_.m_value = 0.0;
+			else
+				var_.m_value = m_rows.get( var_it.second ).m_constant;
+		}
 	}
 
 	/**
@@ -195,8 +249,11 @@ class SolverImpl
 	 */
 	private function getVarSymbol( variable :Variable ) : Symbol
 	{
-		throw "getVarSymbol";
-		return null;
+		if( m_vars.exists( variable ) )
+			return m_vars.get( variable );
+		var symbol = new Symbol( EXTERNAL );
+		m_vars[ variable ] = symbol;
+		return symbol;
 	}
 
 	/**
@@ -220,8 +277,80 @@ class SolverImpl
 	 */
 	private function createRow( constraint :Constraint, tag :Tag ) : Row
 	{
-		throw "createRow";
-		return null;
+		var expr :Expression = constraint.m_expression;
+		var row :Row = new Row( expr.m_constant );
+
+		// Substitute the current basic variables into the row.
+		for(term in expr.m_terms)
+		{
+			if( !Util.nearZero( term.m_coefficient ) )
+			{
+				var symbol :Symbol = getVarSymbol( term.m_variable );
+				if( m_rows.exists( symbol ))
+					row.insertRow( m_rows.get( symbol ), term.m_coefficient );
+				else
+					row.insertSymbol( symbol, term.m_coefficient );
+			}
+		}
+
+		// Add the necessary slack, error, and dummy variables.
+		switch( constraint.m_op )
+		{
+			case OP_LE:
+			{
+				var coeff = 1.0;
+				var slack = new Symbol( SLACK );
+				tag.marker = slack;
+				row.insertSymbol( slack, coeff );
+				if( constraint.m_strength < Strength.REQUIRED )
+				{
+					var error = new Symbol( ERROR );
+					tag.other = error;
+					row.insertSymbol( error, -coeff );
+					m_objective.insertSymbol( error, constraint.m_strength );
+				}
+			}
+			case OP_GE:
+			{
+				var coeff = -1.0;
+				var slack = new Symbol( SLACK );
+				tag.marker = slack;
+				row.insertSymbol( slack, coeff );
+				if( constraint.m_strength < Strength.REQUIRED )
+				{
+					var error = new Symbol( ERROR );
+					tag.other = error;
+					row.insertSymbol( error, -coeff );
+					m_objective.insertSymbol( error, constraint.m_strength );
+				}
+			}
+			case OP_EQ:
+			{
+				if( constraint.m_strength < Strength.REQUIRED )
+				{
+					var errplus = new Symbol( ERROR );
+					var errminus = new Symbol( ERROR );
+					tag.marker = errplus;
+					tag.other = errminus;
+					row.insertSymbol( errplus, -1.0 ); // v = eplus - eminus
+					row.insertSymbol( errminus, 1.0 ); // v - eplus + eminus = 0
+					m_objective.insertSymbol( errplus, constraint.m_strength );
+					m_objective.insertSymbol( errminus, constraint.m_strength );
+				}
+				else
+				{
+					var dummy = new Symbol( DUMMY );
+					tag.marker = dummy;
+					row.insertSymbol( dummy );
+				}
+			}
+		}
+
+		// Ensure the row as a positive constant.
+		if( row.m_constant < 0.0 )
+			row.reverseSign();
+
+		return row;
 	}
 
 	/**
@@ -241,8 +370,22 @@ class SolverImpl
 	 */
 	private function chooseSubject( row :Row, tag :Tag ) : Symbol
 	{
-		throw "chooseSubject";
-		return null;
+		for( it in row.m_cells.keyValIterator() )
+		{
+			if( it.first.m_type == EXTERNAL )
+				return it.first;
+		}
+		if( tag.marker.m_type == SLACK || tag.marker.m_type == ERROR )
+		{
+			if( row.coefficientFor( tag.marker ) < 0.0 )
+				return tag.marker;
+		}
+		if( tag.other.m_type == SLACK || tag.other.m_type == ERROR )
+		{
+			if( row.coefficientFor( tag.other ) < 0.0 )
+				return tag.other;
+		}
+		return new Symbol();
 	}
 
  	/**
@@ -268,7 +411,16 @@ class SolverImpl
 	 */
 	private function substitute( symbol :Symbol, row :Row )
 	{
-		throw "substitute";
+		for( it in m_rows.keyValIterator() )
+		{
+			it.second.substitute( symbol, row );
+			if( it.first.m_type != EXTERNAL &&
+				it.second.m_constant < 0.0 )
+				m_infeasible_rows.push( it.first );
+		}
+		m_objective.substitute( symbol, row );
+		if( m_artificial != null )
+			m_artificial.substitute( symbol, row );
 	}
 
 	/**
@@ -285,7 +437,22 @@ class SolverImpl
 	 */
 	private function optimize( objective :Row )
 	{
-		throw "optimize";
+		while( true )
+		{
+			var entering :Symbol = getEnteringSymbol( objective );
+			if( entering.m_type == INVALID )
+				return;
+			var it = getLeavingRow( entering );
+			if( it == null )
+				throw new InternalSolverError( "The objective is unbounded." );
+			// pivot the entering symbol into the basis
+			var leaving :Symbol = it.first;
+			var row :Row = it.second;
+			m_rows.remove( it.first );
+			row.solveForSymbols( leaving, entering );
+			substitute( entering, row );
+			m_rows[ entering ] = row;
+		}
 	}
 
 	/**
@@ -317,8 +484,12 @@ class SolverImpl
 	 */
 	private function getEnteringSymbol( objective :Row ) : Symbol
 	{
-		throw "getEnteringSymbol";
-		return null;
+		for( it in objective.m_cells.keyValIterator() )
+		{
+			if( it.first.m_type != DUMMY && it.second < 0.0 )
+				return it.first;
+		}
+		return new Symbol();
 	}
 
 	/**
@@ -361,7 +532,7 @@ class SolverImpl
 	 *  @param entering - 
 	 *  @param cb - 
 	 */
-	private function getLeavingRow( entering :Symbol) : {k:Symbol,v:Row}
+	private function getLeavingRow( entering :Symbol) : {first:Symbol,second:Row}
 	{
 		throw "getLeavingRow";
 		return null;
@@ -386,7 +557,7 @@ class SolverImpl
 	 *  @param cb - 
 	 *  @return //symbol,row
 	 */
-	private function getMarkerLeavingRow( marker :Symbol) : {k:Symbol,v:Row}
+	private function getMarkerLeavingRow( marker :Symbol) : {first:Symbol,second:Row}
 	{
 		throw "getMarkerLeavingRow";
 		return null;
