@@ -10,5 +10,7 @@ class Main
         Tests.simple0();
         Tests.simple1();
         Tests.casso1();
+        // Tests.inconsistent1();
+        Tests.inconsistent2();
     }
 }

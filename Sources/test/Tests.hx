@@ -8,7 +8,6 @@ import jasper.Expression;
 
 class Tests 
 {
-
     private static inline var EPSILON = 1.0e-8;
 
     public static function simpleNew() : Void 
@@ -71,8 +70,6 @@ class Tests
 
         solver.addConstraint((x == 10.0));
         solver.addConstraint((x == 5.0));
-
-        solver.updateVariables();
     }
 
     public static function inconsistent2() : Void
@@ -87,7 +84,6 @@ class Tests
 
     public static function inconsistent3() : Void
     {
-
         var w = new Variable("w");
         var x = new Variable("x");
         var y = new Variable("y");
