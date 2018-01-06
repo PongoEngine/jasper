@@ -98,9 +98,8 @@ class Row
 		var coeff = -1.0 / m_cells[ symbol ];
 		m_cells.remove( symbol );
 		m_constant *= coeff;
-		for( it in m_cells.keyValIterator() ) {
-			m_cells[it.first] = it.second * coeff;
-		}
+		for( it in m_cells.keyValIterator())
+			m_cells[it.first] *= coeff;
 	}
 
 	/**
@@ -124,7 +123,7 @@ class Row
 	 */
 	public function coefficientFor( symbol :Symbol ) : Float
 	{
-		return m_cells.exists(symbol) ? m_cells.get(symbol) : 0.0;
+		return m_cells[symbol];
 	}
 
 	/**

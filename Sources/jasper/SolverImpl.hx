@@ -486,14 +486,12 @@ class SolverImpl
 			var it = getLeavingRow( entering );
 			if( it == null )
 				throw new InternalSolverError( "The objective is unbounded." );
-			// pivot the entering symbol into the basis
-			var leaving :Symbol = it.first;
-			var row :Row = it.second;
 			m_rows.remove( it.first );
-			row.solveForSymbols( leaving, entering );
-			substitute( entering, row );
-			m_rows[ entering ] = row;
+			it.second.solveForSymbols( it.first, entering );
+			substitute( entering, it.second );
+			m_rows[ entering ] = it.second;
 		}
+		trace("done optimizeing!");
 	}
 
 	/**
@@ -527,8 +525,9 @@ class SolverImpl
 	{
 		for( it in objective.m_cells.keyValIterator() )
 		{
-			if( it.first.m_type != DUMMY && it.second < 0.0 )
+			if( it.first.m_type != DUMMY && it.second < 0.0 ) {
 				return it.first;
+			}
 		}
 		return new Symbol();
 	}
@@ -576,7 +575,7 @@ class SolverImpl
 	private function getLeavingRow( entering :Symbol) : {first:Symbol,second:Row}
 	{
 		var ratio = Util.FLOAT_MAX;
-		var found = null;
+		var found :{first:Symbol,second:Row} = null;
 		for( it in m_rows.keyValIterator() )
 		{
 			if( it.first.m_type != EXTERNAL )
@@ -589,6 +588,7 @@ class SolverImpl
 					{
 						ratio = temp_ratio;
 						found = it;
+						break;
 					}
 				}
 			}
