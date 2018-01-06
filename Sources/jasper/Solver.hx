@@ -136,7 +136,6 @@ abstract Solver(SolverImpl)
 	public function reset() : Void
 	{
 		throw "reset";
-		// m_impl.reset();
 	}
 
 	/**
@@ -145,6 +144,5 @@ abstract Solver(SolverImpl)
 	public function dump() : Void
 	{
 		throw "dump";
-		// debug::dump( m_impl );
 	}
 }
