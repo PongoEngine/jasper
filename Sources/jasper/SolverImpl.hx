@@ -604,8 +604,12 @@ class SolverImpl
 	 */
 	private function allDummies( row :Row ) : Bool
 	{
-		throw "allDummies";
-		return false;
+		for( it in row.m_cells.keyValIterator() )
+		{
+			if( it.first.m_type != DUMMY )
+				return false;
+		}
+		return true;
 	}
 
 	private var m_cns :CnMap;
