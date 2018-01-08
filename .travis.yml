@@ -2,4 +2,4 @@ language: haxe
 haxe:
   - "3.4.4"
 script:
-  - haxe build.hxml && node bin/tests.js
+  - haxe build.hxml

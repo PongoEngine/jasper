@@ -1,19 +1,22 @@
 package tests;
 
 import haxe.unit.TestCase;
+import haxe.unit.TestRunner;
 
 class Main
 {
     public static function main() : Void
     {
-        new Test().run();
+        var runner = new TestRunner();
+        runner.add(new BaseTest());
+        runner.run();
     }
 }
 
-class Test extends TestCase
+class BaseTest extends TestCase
 {
-    public function run() : Void
+    public function testJasper() : Void
     {
-        assertEquals("a", "a");
+        assertEquals(1, 1);
     }
 }
