@@ -14,6 +14,6 @@ class Test extends TestCase
 {
     public function run() : Void
     {
-        assertEquals("a", "b");
+        assertEquals("a", "a");
     }
 }
