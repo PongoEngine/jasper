@@ -1,7 +1,8 @@
 language: haxe
 haxe:
   - "3.4.4"
-  - stable      # the latest stable release defined in https://haxe.org/download/list/
-  - development # the latest build of the development branch in http://build.haxe.org/
+  - stable
 hxml:
   - build.hxml
+script:
+  - haxe build.hxml && node bin/tests.js
