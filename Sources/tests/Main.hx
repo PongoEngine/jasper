@@ -2,6 +2,8 @@ package tests;
 
 import haxe.unit.TestCase;
 import haxe.unit.TestRunner;
+import jasper.Solver;
+import jasper.Variable;
 
 class Main
 {
@@ -17,6 +19,12 @@ class BaseTest extends TestCase
 {
     public function testJasper() : Void
     {
-        assertEquals(1, 1);
+        var solver = new Solver();
+        var x = new Variable("x");
+
+        solver.addConstraint(x + 2 == 20);
+        solver.updateVariables();
+
+        assertEquals(x.m_value, 18);
     }
 }
