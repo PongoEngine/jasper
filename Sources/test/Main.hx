@@ -35,5 +35,7 @@ class Main
         // // Tests.greaterThanEqualToUnsatisfiable_VariableVariableTest();
 
         Tests.addRemoveConstraint();
+        Tests.addEditVariable();
+        Tests.removeEditVariable();
     }
 }

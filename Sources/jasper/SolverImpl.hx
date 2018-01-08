@@ -138,7 +138,40 @@ class SolverImpl
 	 */
 	public function removeConstraint( constraint :Constraint )
 	{
-		throw "removeConstraint";
+		if( !m_cns.exists( constraint ) )
+			throw new UnknownConstraint( constraint );
+
+		var tag :Tag = m_cns.get( constraint );
+		m_cns.remove( constraint );
+
+		// Remove the error effects from the objective function
+		// *before* pivoting, or substitutions into the objective
+		// will lead to incorrect solver results.
+		removeConstraintEffects( constraint, tag );
+
+		// If the marker is basic, simply drop the row. Otherwise,
+		// pivot the marker into the basis and then drop the row.
+		// RowMap::iterator row_it = m_rows.find( tag.marker );
+		if( m_rows.exists( tag.marker ) )
+		{
+			m_rows.remove( tag.marker );
+		}
+		else
+		{
+			var row_it = getMarkerLeavingRow( tag.marker );
+			if( row_it == null )
+				throw new InternalSolverError( "failed to find leaving row" );
+			var leaving :Symbol = row_it.first;
+			var rowptr :Row = row_it.second ;
+			m_rows.remove( row_it.first );
+			rowptr.solveForSymbols( leaving, tag.marker );
+			substitute( tag.marker, rowptr );
+		}
+
+		// Optimizing after each constraint is removed ensures that the
+		// solver remains consistent. It makes the solver api easier to
+		// use at a small tradeoff for speed.
+		optimize( m_objective );
 	}
 
 	/**
@@ -149,8 +182,7 @@ class SolverImpl
 	 */
 	public function hasConstraint( constraint :Constraint ) : Bool
 	{
-		throw "hasConstraint";
-		return false;
+		return m_cns.exists( constraint );
 	}
 
 	/**
@@ -170,7 +202,20 @@ class SolverImpl
 	 */
 	public function addEditVariable( variable :Variable, strength :Strength )
 	{
-		throw "addEditVariable";
+		if( m_edits.exists( variable ))
+			throw new DuplicateEditVariable( variable );
+		strength = Strength.clip( strength );
+		if( strength == Strength.REQUIRED )
+			throw new BadRequiredStrength();
+
+		var term = new Term(variable);
+		var cn = new Constraint( new Expression([term]), OP_EQ, strength );
+		addConstraint( cn );
+		var info :EditInfo = {};
+		info.tag = m_cns[ cn ];
+		info.constraint = cn;
+		info.constant = 0.0;
+		m_edits[ variable ] = info;
 	}
 
 	/**
@@ -185,15 +230,17 @@ class SolverImpl
 	 */
 	public function removeEditVariable( variable :Variable )
 	{
-		throw "removeEditVariable";
+		if( !m_edits.exists( variable ) )
+			throw new UnknownEditVariable( variable );
+		removeConstraint( m_edits.get( variable ).constraint );
+		m_edits.remove( variable );
 	}
 
 	/* Test whether an edit variable has been added to the solver.
 	*/
 	public function hasEditVariable( variable :Variable ) : Bool
 	{
-		throw "hasEditVariable";
-		return false;
+		return m_edits.exists( variable );
 	}
 
 	/**
@@ -211,7 +258,42 @@ class SolverImpl
 	 */
 	public function suggestValue( variable :Variable, value :Float )
 	{
-		throw "suggestValue";
+		if( !m_edits.exists( variable ) )
+			throw new UnknownEditVariable( variable );
+
+		var info :EditInfo = m_edits.get( variable );
+		var delta = value - info.constant;
+		info.constant = value;
+
+		// Check first if the positive error variable is basic.
+		if( m_rows.exists( info.tag.marker ) )
+		{
+			if( m_rows.get( info.tag.marker ).add( -delta ) < 0.0 )
+				m_infeasible_rows.push( info.tag.marker );
+			dualOptimize();
+			return;
+		}
+
+		// Check next if the negative error variable is basic.
+		if( m_rows.exists( info.tag.other ) )
+		{
+			if( m_rows.get( info.tag.other ).add( delta ) < 0.0 )
+				m_infeasible_rows.push( info.tag.other );
+			dualOptimize();
+			return;
+		}
+
+		// Otherwise update each row where the error variables exist.
+		for( row_it in m_rows.keyValIterator() )
+		{
+			var coeff = row_it.second.coefficientFor( info.tag.marker );
+			if( coeff != 0.0 &&
+				row_it.second.add( delta * coeff ) < 0.0 &&
+				row_it.first.m_type != EXTERNAL )
+				m_infeasible_rows.push( row_it.first );
+		}
+
+		dualOptimize();
 	}
 
 	/**
@@ -239,12 +321,13 @@ class SolverImpl
 	 */
 	public function reset()
 	{
-		throw "reset!!";
-	}
-
-	private function clearRows()
-	{
-		throw "clearRows";
+		m_cns = new CnMap();
+        m_rows = new RowMap();
+        m_vars = new VarMap();
+        m_edits = new EditMap();
+		m_infeasible_rows = [];
+        m_objective = new Row();
+        m_artificial = null;
 	}
 
 	/**
@@ -487,7 +570,6 @@ class SolverImpl
 			substitute( entering, it.second );
 			m_rows[ entering ] = it.second;
 		}
-		trace("done optimizeing!");
 	}
 
 	/**
@@ -504,7 +586,23 @@ class SolverImpl
 	 */
 	private function dualOptimize()
 	{
-		throw "dualOptimize";
+		while( !(m_infeasible_rows.length == 0) )
+		{
+			var leaving :Symbol = m_infeasible_rows.pop();
+			var it = m_rows.get( leaving );
+			if( it != null && it.m_constant < 0.0 )
+			{
+				var entering :Symbol = getDualEnteringSymbol( it );
+				if( entering.m_type == INVALID )
+					throw new InternalSolverError( "Dual optimize failed." );
+				// pivot the entering symbol into the basis
+				var row :Row = it;
+				m_rows.remove( leaving );
+				row.solveForSymbols( leaving, entering );
+				substitute( entering, row );
+				m_rows[ entering ] = row;
+			}
+		}
 	}
 
 	/**
@@ -541,8 +639,22 @@ class SolverImpl
 	 */
 	private function getDualEnteringSymbol( row :Row ) : Symbol
 	{
-		throw "getDualEnteringSymbol";
-		return null;
+		var entering :Symbol = null;
+		var ratio = Util.FLOAT_MAX;
+		for( it in row.m_cells.keyValIterator() )
+		{
+			if( it.second > 0.0 && it.first.m_type != DUMMY )
+			{
+				var coeff = m_objective.coefficientFor( it.first );
+				var r = coeff / it.second;
+				if( r < ratio )
+				{
+					ratio = r;
+					entering = it.first;
+				}
+			}
+		}
+		return entering;
 	}
 
 	/**
@@ -617,8 +729,46 @@ class SolverImpl
 	 */
 	private function getMarkerLeavingRow( marker :Symbol) : {first:Symbol,second:Row}
 	{
-		throw "getMarkerLeavingRow";
-		return null;
+		var dmax = Util.FLOAT_MAX;
+		var r1 = dmax;
+		var r2 = dmax;
+		var end = null;
+		var first = end;
+		var second = end;
+		var third = end;
+		for( it in m_rows.keyValIterator() )
+		{
+			var c = it.second.coefficientFor( marker );
+			if( c == 0.0 )
+				continue;
+			if( it.first.m_type == EXTERNAL )
+			{
+				third = it;
+			}
+			else if( c < 0.0 )
+			{
+				var r = -it.second.m_constant / c;
+				if( r < r1 )
+				{
+					r1 = r;
+					first = it;
+				}
+			}
+			else
+			{
+				var r = it.second.m_constant / c;
+				if( r < r2 )
+				{
+					r2 = r;
+					second = it;
+				}
+			}
+		}
+		if( first != end )
+			return first;
+		if( second != end )
+			return second;
+		return third;
 	}
 
 	/**
@@ -629,7 +779,10 @@ class SolverImpl
 	 */
 	private function removeConstraintEffects( cn :Constraint, tag :Tag )
 	{
-		throw "removeConstraintEffects";
+		if( tag.marker.m_type == ERROR )
+			removeMarkerEffects( tag.marker, cn.m_strength );
+		if( tag.other.m_type == ERROR )
+			removeMarkerEffects( tag.other, cn.m_strength );
 	}
 
 	/**
@@ -640,7 +793,10 @@ class SolverImpl
 	 */
 	private function removeMarkerEffects( marker :Symbol, strength :Strength )
 	{
-		throw "removeMarkerEffects";
+		if( m_rows.exists( marker ) )
+			m_objective.insertRow( m_rows.get( marker ), -strength );
+		else
+			m_objective.insertSymbol( marker, -strength );
 	}
 
 	/**

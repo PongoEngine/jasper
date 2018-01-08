@@ -374,4 +374,40 @@ class Tests
 
         solver.updateVariables();
     }
+
+    public static function addEditVariable() : Void 
+    {
+        var solver = new Solver();
+
+        var x = new Variable("x");
+        var y = new Variable("y");
+
+        var constraint = (x == 100);
+
+        solver.addConstraint(constraint);
+        solver.addEditVariable(y, Strength.WEAK);
+
+        solver.suggestValue(y, 100);
+
+
+        solver.updateVariables();
+    }
+
+    public static function removeEditVariable() : Void 
+    {
+        var solver = new Solver();
+
+        var x = new Variable("x");
+        var y = new Variable("y");
+
+        var constraint = (x == 100);
+
+        solver.addConstraint(constraint);
+        solver.addEditVariable(y, Strength.WEAK);
+        solver.removeEditVariable(y);
+
+
+        solver.updateVariables();
+        solver.reset();
+    }
 }

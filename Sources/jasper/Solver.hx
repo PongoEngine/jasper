@@ -135,7 +135,7 @@ abstract Solver(SolverImpl)
 	 */
 	public function reset() : Void
 	{
-		throw "reset";
+		this.reset();
 	}
 
 	/**
