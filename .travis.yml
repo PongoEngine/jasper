@@ -5,6 +5,3 @@ haxe:
   - development # the latest build of the development branch in http://build.haxe.org/
 script:
   - haxe build.hxml
-cache:
-  - neko
-  - haxe
