@@ -12,8 +12,11 @@ The motivation to develop Jasper was to port a cassowary implementation to haxe.
 ## Acknowledgments
 
 https://github.com/nucleic/kiwi
+
 https://github.com/alexbirkett/kiwi-java
+
 https://github.com/Tw1ddle/haxe-kiwi
+
 https://github.com/underscorediscovery/cassowary-hx
 
 ## License
