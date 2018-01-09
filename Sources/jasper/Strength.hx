@@ -10,7 +10,7 @@
 package jasper;
 
 @:notNull
-abstract Strength(Float) to Float
+abstract Strength(Float) to Float from Float
 {
     public inline function new(str :Float) : Void
     {
@@ -21,10 +21,10 @@ abstract Strength(Float) to Float
     @:op(A > B) static function gt(a :Strength, b :Strength) : Bool;
     @:op(-A) function negate() : Strength;
 
-    public static inline var REQUIRED :Strength = new Strength(1001001000);
-    public static inline var STRONG :Strength = new Strength(1000000);
-    public static inline var MEDIUM :Strength = new Strength(1000);
-    public static inline var WEAK :Strength = new Strength(1);
+    public static inline var REQUIRED :Strength = 1001001000;
+    public static inline var STRONG :Strength = 1000000;
+    public static inline var MEDIUM :Strength = 1000;
+    public static inline var WEAK :Strength = 1;
 
     public static function create(a :Float, b :Float, c :Float, w :Float = 1.0) : Strength
     {
