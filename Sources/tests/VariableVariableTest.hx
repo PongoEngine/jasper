@@ -8,8 +8,8 @@ import haxe.unit.TestCase;
 
 class VariableVariableTest extends TestCase
 {
-	public function testLessThanEqualTo() : Void
-	{
+    public function testLessThanEqualTo() : Void
+    {
         var solver = new Solver();
 
         var x = new Variable("x");

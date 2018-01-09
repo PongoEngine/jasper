@@ -32,10 +32,10 @@ class _Expression_
      */
     public function value() : Float
     {
-		var result :Float = m_constant;
-		for(term in m_terms)
-			result += term.value();
-		return result;
+        var result :Float = m_constant;
+        for(term in m_terms)
+            result += term.value();
+        return result;
     }
 }
 

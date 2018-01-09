@@ -8,8 +8,8 @@ import haxe.unit.TestCase;
 
 class ExpressionVariableTest extends TestCase
 {
-	public function testLessThanEqualTo() : Void
-	{
+    public function testLessThanEqualTo() : Void
+    {
         var x = new Variable("x");
         var solver = new Solver();
         solver.addConstraint(new Expression([], 100) <= x);
