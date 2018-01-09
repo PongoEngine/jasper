@@ -14,6 +14,11 @@ class Main
     {
         var runner = new TestRunner();
         runner.add(new BaseTest());
+        runner.add(new ConstantVariableTest());
+        runner.add(new ExpressionVariableTest());
+        runner.add(new VariableConstantTest());
+        runner.add(new VariableExpression());
+        runner.add(new VariableVariableTest());
         runner.run();
     }
 }
