@@ -46,6 +46,12 @@ abstract Variable(_Variable_) to _Variable_
         this = new _Variable_(name);
     }
 
+    @:to
+    public function toFloat() : Float
+    {
+        return this.m_value;
+    }
+
     @:op(A*B) @:commutative static function multiplyValue(variable :Variable, coefficient :Value) : Term
     {
         return new Term( variable, coefficient );
