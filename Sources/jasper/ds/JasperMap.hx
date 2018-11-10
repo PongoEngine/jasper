@@ -16,37 +16,37 @@ class JasperMap<K:{},V> implements IMap<K, V>
         return _keys.length == 0;
     }
 
-    public inline function exists(key :K) : Bool
+    public function exists(key :K) : Bool
     {
         return _map.exists(key);
     }
 
-    public inline function get(key :K) : V
+    public function get(key :K) : V
     {
         return _map.get(key);
     }
 
-    public inline function iterator() : JasperIterator<K,V>
+    public function iterator() : JasperIterator<K,V>
     {
         return new JasperIterator(this);
     }
 
-    public inline function keyValIterator() : KeyValIterator<K,V>
+    public function keyValIterator() : KeyValIterator<K,V>
     {
         return new KeyValIterator(this);
     }
 
-    public inline function keys() : Iterator<K>
+    public function keys() : Iterator<K>
     {
         return _keys.iterator();
     }
 
-    public inline function remove(key :K) : Bool
+    public function remove(key :K) : Bool
     {
         return _map.remove(key) && _keys.remove(key);
     }
 
-    public inline function set(key :K, value :V) : Void
+    public function set(key :K, value :V) : Void
     {
         if (!_map.exists(key)) {
             _keys.push(key);
@@ -54,7 +54,17 @@ class JasperMap<K:{},V> implements IMap<K, V>
         _map[key] = value;
     }
 
-    public inline function toString() : String
+    public function copy() : JasperMap<K,V> {
+        var copied = new JasperMap<K,V>();
+        for(key in keys()) copied.set(key, get(key));
+        return copied;
+    }
+
+    @:runtime public function keyValueIterator() : KeyValueIterator<K, V> {
+		return new haxe.iterators.MapKeyValueIterator(this);
+	}
+
+    public function toString() : String
     {
         return _map.toString();
     }
