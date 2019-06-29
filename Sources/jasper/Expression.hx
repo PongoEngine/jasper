@@ -62,12 +62,12 @@ abstract Expression(_Expression_)
         return new Expression(terms, expression.m_constant * coefficient);
     }
 
-    @:op(A/B) static function divideValue(expression :Expression, denominator :Value) : Expression
+    @:op(A/B) static inline function divideValue(expression :Expression, denominator :Value) : Expression
     {
         return expression * ( 1.0 / denominator );
     }
 
-    @:op(-A) static function negateExpression(expression :Expression) : Expression
+    @:op(-A) static inline function negateExpression(expression :Expression) : Expression
     {
         return expression * -1.0;
     }
@@ -90,92 +90,92 @@ abstract Expression(_Expression_)
         return new Expression(terms, first.m_constant);
     }
 
-    @:op(A+B) @:commutative static function addVariable(expression :Expression, variable :Variable) : Expression
+    @:op(A+B) @:commutative static inline function addVariable(expression :Expression, variable :Variable) : Expression
     {
         return expression + new Term(variable);
     }
 
-    @:op(A+B) @:commutative static function addValue(expression :Expression, constant :Value) : Expression
+    @:op(A+B) @:commutative static inline function addValue(expression :Expression, constant :Value) : Expression
     {
         return new Expression( expression.m_terms, expression.m_constant + constant );
     }
 
-    @:op(A-B) static function subtractExpression(first :Expression, second :Expression) : Expression
+    @:op(A-B) static inline function subtractExpression(first :Expression, second :Expression) : Expression
     {
         return first + -second;
     }
 
-    @:op(A-B) static function subtractTerm(expression :Expression, term :Term) : Expression
+    @:op(A-B) static inline function subtractTerm(expression :Expression, term :Term) : Expression
     {
         return expression + -term;
     }
 
-    @:op(A-B) static function subtractVariable(expression :Expression, variable :Variable) : Expression
+    @:op(A-B) static inline function subtractVariable(expression :Expression, variable :Variable) : Expression
     {
         return expression + -variable;
     }
 
-    @:op(A-B) static function subtractValue(expression :Expression, constant :Value) : Expression
+    @:op(A-B) static inline function subtractValue(expression :Expression, constant :Value) : Expression
     {
         return expression + -constant;
     }
 
-    @:op(A==B) static function equalsExpression(first :Expression, second :Expression) : Constraint
+    @:op(A==B) static inline function equalsExpression(first :Expression, second :Expression) : Constraint
     {
         return new Constraint( first - second, OP_EQ );
     }
 
-    @:op(A==B) @:commutative static function equalsTerm(expression :Expression, term :Term) : Constraint
+    @:op(A==B) @:commutative static inline function equalsTerm(expression :Expression, term :Term) : Constraint
     {
         return expression == new Expression([term]);
     }
 
-    @:op(A==B) @:commutative static function equalsVariable(expression :Expression, variable :Variable) : Constraint
+    @:op(A==B) @:commutative static inline function equalsVariable(expression :Expression, variable :Variable) : Constraint
     {
         return expression == new Term(variable);
     }
 
-    @:op(A==B) @:commutative static function equalsValue(expression :Expression, constant :Value) : Constraint
+    @:op(A==B) @:commutative static inline function equalsValue(expression :Expression, constant :Value) : Constraint
     {
         return expression == new Expression([], constant);
     }
 
-    @:op(A<=B) static function lteExpression(first :Expression, second :Expression) : Constraint
+    @:op(A<=B) static inline function lteExpression(first :Expression, second :Expression) : Constraint
     {
         return new Constraint( first - second, OP_LE );
     }
 
-    @:op(A<=B) static function lteTerm(expression :Expression, term :Term) : Constraint
+    @:op(A<=B) static inline function lteTerm(expression :Expression, term :Term) : Constraint
     {
         return expression <= new Expression([term]);
     }
 
-    @:op(A<=B) static function lteVariable(expression :Expression, variable :Variable) : Constraint
+    @:op(A<=B) static inline function lteVariable(expression :Expression, variable :Variable) : Constraint
     {
         return expression <= new Term(variable);
     }
 
-    @:op(A<=B) static function lteValue(expression :Expression, constant :Value) : Constraint
+    @:op(A<=B) static inline function lteValue(expression :Expression, constant :Value) : Constraint
     {
         return expression <= new Expression([], constant);
     }
 
-    @:op(A>=B) static function gteExpression(first :Expression, second :Expression) : Constraint
+    @:op(A>=B) static inline function gteExpression(first :Expression, second :Expression) : Constraint
     {
         return new Constraint( first - second, OP_GE );
     }
 
-    @:op(A>=B) static function gteTerm(expression :Expression, term :Term) : Constraint
+    @:op(A>=B) static inline function gteTerm(expression :Expression, term :Term) : Constraint
     {
         return expression >= new Expression([term]);
     }
 
-    @:op(A>=B) static function gteVariable(expression :Expression, variable :Variable) : Constraint
+    @:op(A>=B) static inline function gteVariable(expression :Expression, variable :Variable) : Constraint
     {
         return expression >= new Term(variable);
     }
 
-    @:op(A>=B) static function gteValue(expression :Expression, constant :Value) : Constraint
+    @:op(A>=B) static inline function gteValue(expression :Expression, constant :Value) : Constraint
     {
         return expression >= new Expression([], constant);
     }

@@ -100,7 +100,7 @@ abstract Constraint(_Constraint_) to _Constraint_ from _Constraint_
         this = _Constraint_.fromExpression(expr, op, strength);
     }
 
-    @:op(A|B) @:commutative static function modifyStrength(constraint :Constraint, strength :Strength) : Constraint
+    @:op(A|B) @:commutative static inline function modifyStrength(constraint :Constraint, strength :Strength) : Constraint
     {
         return _Constraint_.fromConstraint(constraint, strength);
     }
