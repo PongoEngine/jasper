@@ -1,7 +1,7 @@
 Jasper
 =================
 
-[![Build Status](https://travis-ci.org/PongoEngine/jasper.svg?branch=master)](https://travis-ci.org/PongoEngine/jasper)
+[![Build Status](https://travis-ci.org/PongoEngine/jasper.svg?branch=master)](https://travis-ci.org/PongoEngine/jasper) [![Join the chat at https://gitter.im/pongo-jasper/community](https://badges.gitter.im/pongo-jasper/community.svg)](https://gitter.im/pongo-jasper/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Jasper is a port of Kiwi for developing GUIs in haxe.
 
