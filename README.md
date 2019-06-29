@@ -38,5 +38,4 @@ https://github.com/underscorediscovery/cassowary-hx
 
 ## License
 
-Jasper is licensed under the [Modified BSD License]
-(https://www.debian.org/legal/licenses/).
+Jasper is [MIT licensed](./LICENSE).
