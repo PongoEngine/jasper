@@ -1,0 +1,13 @@
+{
+    "name": "jasper",
+    "url" : "https://github.com/PongoEngine/jasper",
+    "license": "BSD",
+    "tags": ["cassowary", "kiwi", "algorithm", "layout", "constraint"],
+    "description": "Haxe port of Kiwi's implementation of the cassowary algorithm.",
+    "version": "0.0.1",
+    "classPath": "Sources/",
+    "releasenote": "Initial release, everything is working correctly.",
+    "contributors": ["Jeremy"],
+    "dependencies": {
+    }
+  }
