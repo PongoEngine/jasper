@@ -49,6 +49,11 @@ class JasperMap<K:{},V> implements IMap<K, V>
         return _map.get(key);
     }
 
+    public function clear() : Void
+    {
+        _map = new Map();
+    }
+
     public function iterator() : JasperIterator<K,V>
     {
         return new JasperIterator(this);
