@@ -19,7 +19,6 @@ class Main
         runner.add(new VariableConstantTest());
         runner.add(new VariableExpression());
         runner.add(new VariableVariableTest());
-        runner.add(new LayoutTest());
         runner.run();
     }
 }
