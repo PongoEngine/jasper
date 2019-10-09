@@ -3,4 +3,5 @@ haxe:
   # - "3.4.4"
   - development      # the latest stable release defined in https://haxe.org/download/list/
 script:
+  - haxelib install hx3compat
   - haxe build.hxml
