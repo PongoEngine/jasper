@@ -4,9 +4,9 @@
     "license": "BSD",
     "tags": ["cassowary", "kiwi", "algorithm", "layout", "constraint"],
     "description": "Haxe port of Kiwi's implementation of the cassowary algorithm.",
-    "version": "0.0.3",
+    "version": "0.1.0",
     "classPath": "Sources/",
-    "releasenote": "added clear",
+    "releasenote": "Compatibility for Haxe < 4.0 and added conceptual layout manager",
     "contributors": ["Jeremy"],
     "dependencies": {
     }
