@@ -1,3 +1,4 @@
 -cp Sources
+-lib hx3compat
 -main tests.Main
 --interp
