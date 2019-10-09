@@ -88,9 +88,11 @@ class JasperMap<K:{},V> implements IMap<K, V>
         return copied;
     }
 
+#if (haxe_ver >= "4.0.0")
     @:runtime public function keyValueIterator() : KeyValueIterator<K, V> {
 		return new haxe.iterators.MapKeyValueIterator(this);
 	}
+#end
 
     public function toString() : String
     {
